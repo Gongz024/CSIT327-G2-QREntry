@@ -1,102 +1,281 @@
-/* Background */
-.registration-container {
-    min-height: 100vh;
+/* --- Base Styles --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
     width: 100%;
-    background: url("../images/event_background.png") no-repeat center center / cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    font-family: Arial, sans-serif; /* Consistent font-family */
+    overflow: hidden; /* Prevent scrolling */
+    color: #fff; /* Default text color for the page */
 }
 
-.registration-overlay {
+/* --- Page Container (Main background) --- */
+.registration-container {
+    height: 100vh;
+    width: 100vw;
+    background: url("../images/event_background.png") no-repeat center center fixed;
+    background-size: cover; /* Ensure background covers the entire area */
+    display: flex; /* Use flexbox to center the form-box */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    position: relative;
+    padding: 20px; /* Some padding for smaller screens */
+    box-sizing: border-box; /* Include padding in element's total dimensions */
+}
+
+/* --- Background Overlay --- */
+.registration-overlay { /* Specific overlay for registration, but similar to login */
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.65); /* Dark overlay from design */
+    z-index: 1; /* Ensures it's behind the form-box but above background */
 }
 
-/* Form box */
+/* --- Form Box (The central content area) --- */
 .form-box {
     position: relative;
-    z-index: 2;
-    background: transparent;
-    color: white;
-    max-width: 400px;
+    z-index: 2; /* Above the overlay */
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    backdrop-filter: blur(5px); /* Subtle blur for modern effect */
+    color: white; /* Default text color for form box */
+    max-width: 380px; /* ADJUSTED: Narrower max-width for a more compact form */
     width: 100%;
-    padding: 20px;
+    padding: 25px 35px; /* ADJUSTED: Reduced padding for a tighter feel */
+    border-radius: 12px; /* Rounded corners from design */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     text-align: center;
+    animation: fadeIn 0.8s ease-out; /* Fade-in animation */
 }
 
-/* Logo */
-.qr-logo {
-    width: 120px;
-    margin-bottom: 15px;
+/* --- Logo and Branding Section --- */
+.logo-section {
+    margin-bottom: 20px; /* ADJUSTED: Slightly reduced margin */
+}
+
+.qr-code-image { /* Your QR code image with embedded "Event CIT" */
+    width: 120px; /* ADJUSTED: Smaller QR code for compactness */
+    height: auto;
+    margin-bottom: 12px; /* ADJUSTED: Reduced spacing below QR */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /* If your logo.png is not white on transparent, you might need filter: invert(100%); */
 }
 
 .brand-name {
-    font-size: 28px;
+    font-size: 28px; /* ADJUSTED: Slightly smaller font size */
     font-weight: 700;
     margin-bottom: 5px;
+    color: #fff;
 }
-.brand-event { color: yellow; }
-.brand-cit { color: red; }
+.brand-event { color: #f8c300; }
+.brand-cit { color: #dc3545; }
 
-/* Tagline */
 .tagline {
-    font-size: 14px;
-    margin-bottom: 30px;
+    font-size: 13px; /* ADJUSTED: Slightly smaller font size */
+    color: #cccccc;
+    margin-bottom: 25px; /* ADJUSTED: Reduced spacing below tagline */
+    font-style: italic;
+    font-weight: 300;
 }
 
-/* Inputs */
-.register-form input {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
+/* --- Form Styles --- */
+.register-form {
+    margin-top: 10px; /* ADJUSTED: Reduced overall form top margin */
+}
+
+.input-field-group {
+    display: flex;
     border-radius: 12px;
-    border: none;
-    font-size: 14px;
+    background-color: #EAEAEA;
+    margin-bottom: 12px; /* ADJUSTED: Reduced spacing between input groups */
+    overflow: hidden;
+    border: 1px solid #c0c0c0;
 }
 
-/* Button */
+.input-icon {
+    background-color: #F0F0F0;
+    color: #333333;
+    padding: 12px 14px; /* ADJUSTED: Reduced padding for icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px; /* ADJUSTED: Slightly smaller icon font size */
+    border-right: 1px solid #ddd;
+}
+
+.register-form input {
+    flex-grow: 1;
+    padding: 12px 15px; /* ADJUSTED: Reduced padding for inputs */
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: #333333;
+}
+
+.register-form input::placeholder {
+    color: #888888;
+}
+
+.register-form input:focus {
+    background: #ffffff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+    color: #ffda00;
+    font-size: 11px; /* ADJUSTED: Smaller error message font size */
+    margin-top: -6px; /* ADJUSTED: Tighter spacing */
+    margin-bottom: 8px; /* ADJUSTED: Tighter spacing */
+    text-align: left;
+    padding-left: 5px;
+}
+
+/* --- Sign Up Button --- */
 .btn-signup {
     width: 100%;
-    padding: 14px;
+    padding: 12px; /* ADJUSTED: Reduced padding for button */
     background: #1e3a5f;
     color: white;
     border: none;
     border-radius: 12px;
-    margin-top: 20px;
-    font-size: 16px;
+    margin-top: 20px; /* Spacing above button */
+    font-size: 15px; /* ADJUSTED: Slightly smaller font size */
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-signup:hover {
-    background: #152a45;
+    background-color: #152a45;
 }
 
-/* Social */
+/* --- Social Connect Section --- */
 .social-connect {
-    margin-top: 20px;
+    margin-top: 25px; /* ADJUSTED: Reduced spacing below button */
+    padding-top: 20px; /* ADJUSTED: Reduced spacing above text after divider */
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
+
+.social-connect-text {
+    font-size: 12px; /* ADJUSTED: Smaller font size */
+    color: #cccccc;
+    margin-bottom: 12px; /* ADJUSTED: Reduced spacing */
+    font-weight: 300;
+}
+
 .social-icons {
     display: flex;
     justify-content: center;
-    gap: 15px;
-}
-.social-icons img {
-    width: 35px;
-    height: 35px;
+    gap: 12px; /* ADJUSTED: Slightly reduced gap */
 }
 
-/* Login */
+.social-icon {
+    width: 38px; /* ADJUSTED: Slightly smaller icon size */
+    height: 38px; /* ADJUSTED: Slightly smaller icon size */
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.social-icon img {
+    width: 22px; /* ADJUSTED: Smaller image size */
+    height: 22px;
+    object-fit: contain;
+}
+
+/* --- Login Link Section --- */
 .login-link {
-    margin-top: 15px;
-    font-size: 14px;
+    margin-top: 20px; /* ADJUSTED: Reduced spacing */
+    font-size: 13px; /* ADJUSTED: Smaller font size */
+    color: #cccccc;
 }
+
+.login-link p {
+    margin: 0;
+}
+
 .login-link a {
-    color: rgb(184, 62, 62);
+    color: #dc3545;
     text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
 }
+
 .login-link a:hover {
+    color: #bd2130;
     text-decoration: underline;
+}
+
+/* --- Messages (Alerts) --- */
+.alert {
+    padding: 10px 15px;
+    margin: 10px 0 15px 0; /* ADJUSTED: Tighter margin */
+    border-radius: 6px;
+    font-size: 12px; /* ADJUSTED: Smaller font size */
+    text-align: center;
+    color: white;
+    background-color: rgba(40, 167, 69, 0.8);
+    border: 1px solid #28a745;
+}
+
+/* --- Accessibility / Hidden elements --- */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* --- Responsive Adjustments (General for screens <= 600px) --- */
+@media (max-width: 600px) {
+    .form-box {
+        padding: 20px 25px; /* Further reduced padding */
+        margin: 5px;
+    }
+    .qr-code-image {
+        width: 100px;
+    }
+    .brand-name {
+        font-size: 22px;
+    }
+    .tagline {
+        font-size: 11px;
+    }
+    .register-form input {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    .auth-button {
+        padding: 10px;
+        font-size: 13px;
+    }
+    .social-icon {
+        width: 30px;
+        height: 30px;
+    }
+    .social-icon img {
+        width: 16px;
+        height: 16px;
+    }
+    .social-connect p, .login-link p {
+        font-size: 11px;
+    }
+}
+
+/* --- Keyframe for FadeIn animation --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

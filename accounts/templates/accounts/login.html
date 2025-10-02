@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Event CIT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="page-container">
+        <div class="form-box">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <img src="{% static 'images/logo.png' %}" alt="QR Logo" class="qr-logo">
+                <h1 class="brand-name">
+                    <span class="brand-event">Event</span> 
+                    <span class="brand-cit">CIT</span>
+                </h1>
+                <p class="tagline">Skip the line, scan your way in.</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
+                <div class="input-group">
+                    <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                    <input type="text" 
+                           name="username" 
+                           placeholder="Type your email or username" 
+                           value="{{ form.username.value|default:'' }}"
+                           required>
+                </div>
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors }}</div>
+                {% endif %}
+
+                <div class="input-group password-field-group">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <input type="password" 
+                           name="password" 
+                           placeholder="Type your password" 
+                           required>
+                </div>
+                <div class="forgot-password-link">
+                    <a href="#" class="forgot-link">Forgot Password?</a>
+                </div>
+                {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors }}</div>
+                {% endif %}
+
+                <button type="submit" class="btn-login">Log In</button>
+            </form>
+
+            <!-- Social Connect -->
+            <div class="social-connect">
+                <p class="social-connect-text">You can Connect with</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><img src="{% static 'images/apple.png' %}" alt="Apple"></a>
+                    <a href="#" class="social-icon"><img src="{% static 'images/google.png' %}" alt="Google"></a>
+                    <a href="#" class="social-icon"><img src="{% static 'images/facebook.png' %}" alt="Facebook"></a>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                <p>Don’t have an account? <a href="{% url 'accounts:register' %}" class="register-here-link">Sign Up here</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

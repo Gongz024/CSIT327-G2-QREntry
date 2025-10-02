@@ -7,16 +7,16 @@
     <title>Sign Up - Event CIT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
-    
 </head>
 <body>
     <div class="registration-container">
-        <div class="registration-overlay"></div>
+        <div class="registration-overlay"></div> {# This provides the solid dark background effect #}
 
         <div class="form-box">
             <!-- Logo Section -->
             <div class="logo-section">
-                <img src="{% static 'images/logo.png' %}" alt="QR Logo" class="qr-logo">
+                {# Assuming 'logo.png' contains the QR code with embedded "Event CIT" #}
+                <img src="{% static 'images/logo.png' %}" alt="QR Code" class="qr-code-image">
                 <h1 class="brand-name">
                     <span class="brand-event">Event</span> 
                     <span class="brand-cit">CIT</span>
@@ -26,7 +26,7 @@
 
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert">{{ message }}</div>
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
 
@@ -34,38 +34,61 @@
             <form method="post" class="register-form">
                 {% csrf_token %}
                 
-                <input type="text" 
-                       name="username" 
-                       placeholder="Type your email or username"
-                       value="{{ form.username.value|default:'' }}" 
-                       required>
+                {# Input group for Email/Username #}
+                <div class="input-field-group">
+                    <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                    <input type="text" 
+                           name="username" 
+                           placeholder="Type your email or username"
+                           value="{{ form.username.value|default:'' }}" 
+                           required>
+                </div>
+                {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors }}</div>
+                {% endif %}
 
-                <input type="password" 
-                       name="password1" 
-                       placeholder="Type your password" 
-                       required>
+                {# Input group for Password #}
+                <div class="input-field-group">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <input type="password" 
+                           name="password1" 
+                           placeholder="Type your password" 
+                           required>
+                </div>
+                {% if form.password1.errors %}
+                    <div class="error-message">{{ form.password1.errors }}</div>
+                {% endif %}
 
-                <input type="password" 
-                       name="password2" 
-                       placeholder="Type your password" 
-                       required>
+                {# Input group for Confirm Password #}
+                <div class="input-field-group">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <input type="password" 
+                           name="password2" 
+                           placeholder="Confirm your password" 
+                           required>
+                </div>
+                {% if form.password2.errors %}
+                    <div class="error-message">{{ form.password2.errors }}</div>
+                {% endif %}
 
                 <button type="submit" class="btn-signup">Sign Up</button>
             </form>
 
-            <!-- Social Connect -->
+            <!-- Social Connect Section -->
             <div class="social-connect">
-                <p>You can Connect with</p>
+                <div class="divider"></div> {# Horizontal line from design #}
+                <p class="social-connect-text">You can Connect with</p>
                 <div class="social-icons">
-                    <a href="#" class="apple-icon"><img src="{% static 'images/apple.png' %}" alt="Apple"></a>
-                    <a href="#" class="google-icon"><img src="{% static 'images/google.png' %}" alt="Google"></a>
-                    <a href="#" class="facebook-icon"><img src="{% static 'images/facebook.png' %}" alt="Facebook"></a>
+                    {# Using images for social icons as per design #}
+                    <a href="#" class="social-icon"><img src="{% static 'images/apple.png' %}" alt="Apple"></a>
+                    <a href="#" class="social-icon"><img src="{% static 'images/google.png' %}" alt="Google"></a>
+                    <a href="#" class="social-icon"><img src="{% static 'images/facebook.png' %}" alt="Facebook"></a>
                 </div>
             </div>
 
             <!-- Login Link -->
             <div class="login-link">
-                <p>have an account already? <a href="#">Login here</a></p>
+                <p>have an account already? <a href="{% url 'accounts:login' %}" class="register-here-link">Login here</a></p>
             </div>
         </div>
     </div>
