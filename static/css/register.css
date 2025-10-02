@@ -1,0 +1,102 @@
+/* Background */
+.registration-container {
+    min-height: 100vh;
+    width: 100%;
+    background: url("../images/event_background.png") no-repeat center center / cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.registration-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Form box */
+.form-box {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    color: white;
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Logo */
+.qr-logo {
+    width: 120px;
+    margin-bottom: 15px;
+}
+
+.brand-name {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.brand-event { color: yellow; }
+.brand-cit { color: red; }
+
+/* Tagline */
+.tagline {
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* Inputs */
+.register-form input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: none;
+    font-size: 14px;
+}
+
+/* Button */
+.btn-signup {
+    width: 100%;
+    padding: 14px;
+    background: #1e3a5f;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-signup:hover {
+    background: #152a45;
+}
+
+/* Social */
+.social-connect {
+    margin-top: 20px;
+}
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.social-icons img {
+    width: 35px;
+    height: 35px;
+}
+
+/* Login */
+.login-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+.login-link a {
+    color: rgb(184, 62, 62);
+    text-decoration: none;
+}
+.login-link a:hover {
+    text-decoration: underline;
+}
