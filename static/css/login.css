@@ -1,0 +1,314 @@
+/* --- Base Styles --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif; /* Using a common sans-serif font */
+    overflow: hidden; /* Prevent scrolling */
+}
+
+/* --- Page Container --- */
+.page-container {
+    height: 100vh;
+    width: 100vw;
+    background: url("../images/event_background.png") no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in element's total dimensions */
+}
+
+.page-container::before { /* Dark overlay */
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.65); /* Dark overlay from design */
+    z-index: 1;
+}
+
+/* --- Form Box (The central card) --- */
+.form-box {
+    position: relative;
+    z-index: 2; /* Above the overlay */
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent dark background */
+    backdrop-filter: blur(5px); /* Subtle blur for modern effect */
+    color: white;
+    max-width: 400px; /* Width matching the design image */
+    width: 100%;
+    padding: 30px 40px; /* Inner padding */
+    border-radius: 12px; /* Rounded corners from design */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    text-align: center;
+    animation: fadeIn 0.8s ease-out; /* Fade-in animation */
+}
+
+/* --- Branding Section --- */
+.logo-section {
+    margin-bottom: 25px;
+}
+
+.qr-logo { /* Your QR code image (e.g., logo.png) */
+    width: 120px; /* Size from design */
+    height: auto;
+    margin-bottom: 10px;
+    /* filter: brightness(0) invert(1); Makes logo white if it's dark */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.brand-name {
+    font-size: 28px; /* Font size from design */
+    font-weight: 400;
+    margin-bottom: 5px;
+    color: #fff; /* Default white */
+}
+.brand-event { color: #f8c300; } /* Yellow for "Event" from design */
+.brand-cit { color: #dc3545; } /* Red for "CIT" from design */
+
+.tagline {
+    font-size: 14px; /* Font size from design */
+    color: #cccccc; /* Lighter grey for tagline */
+    margin-bottom: 30px;
+    font-style: italic;
+    font-weight: 300;
+}
+
+/* --- Form Styles --- */
+.login-form {
+    margin-top: 15px;
+}
+
+.input-group {
+    display: flex; /* Flexbox for icon and input */
+    background-color: #EAEAEA; /* Light grey background from design */
+    border-radius: 12px; /* Rounded corners from design */
+    margin-bottom: 10px; /* Spacing between input groups */
+    overflow: hidden; /* Ensures rounded corners apply to children */
+    border: none; /* No border directly on the group, background handles it */
+}
+
+.input-icon {
+    background-color: #F0F0F0; /* Slightly lighter grey for icon background */
+    color: #333333; /* Darker grey for icon */
+    padding: 14px 15px; /* Padding for icon */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border-right: 1px solid #ddd; /* Separator for icon */
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    flex-grow: 1; /* Input takes up remaining space */
+    padding: 14px 15px; /* Padding for input text */
+    border: none;
+    outline: none;
+    background: transparent; /* Input background is part of the group */
+    font-size: 14px; /* Font size from design */
+    color: #333333; /* Dark text color for input */
+}
+
+.login-form input::placeholder {
+    color: #888888; /* Darker placeholder text from design */
+}
+
+.login-form input:focus {
+    background: #ffffff; /* White background on focus for clarity */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.error-message { /* For Django form errors */
+    color: #ffda00; /* Yellow for errors */
+    font-size: 12px;
+    margin-top: -8px; /* Adjust spacing */
+    margin-bottom: 10px;
+    text-align: left;
+    padding-left: 5px;
+}
+
+/* --- Forgot Password Link --- */
+.forgot-password-link {
+    text-align: right; /* Aligned to the right as in design */
+    margin-bottom: 20px; /* Space before button */
+    font-size: 13px; /* Smaller font size */
+}
+
+.forgot-password-link .forgot-link {
+    color: #aaaaaa; /* Subtle grey color from design */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.forgot-password-link .forgot-link:hover {
+    color: #cccccc;
+    text-decoration: underline;
+}
+
+/* --- Login Button --- */
+.btn-login {
+    width: 100%;
+    padding: 14px; /* Padding from design */
+    background: #1e3a5f; /* Dark blue from design */
+    color: white;
+    border: none;
+    border-radius: 12px; /* Rounded corners from design */
+    margin-top: 20px;
+    font-size: 16px; /* Font size from design */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-login:hover {
+    background-color: #152a45; /* Slightly darker on hover */
+}
+
+/* --- Social Connect Section --- */
+.social-connect {
+    margin-top: 25px; /* Spacing */
+    padding-top: 20px; /* Spacing */
+    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Horizontal line from design */
+}
+
+.social-connect-text {
+    font-size: 13px; /* Smaller text from design */
+    color: #cccccc; /* Light grey text */
+    margin-bottom: 15px;
+    font-weight: 300;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Spacing between icons from design */
+}
+
+.social-icon { /* Small circular icons from design */
+    width: 35px; /* Size from design */
+    height: 35px; /* Size from design */
+    border-radius: 50%; /* Circular */
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.social-icon img { /* Image within the icon */
+    width: 20px; /* Smaller image size */
+    height: 20px;
+    object-fit: contain;
+    filter: invert(100%); /* Makes social icons white */
+}
+
+.social-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Register Link Section --- */
+.register-link {
+    margin-top: 25px; /* Spacing */
+    font-size: 14px; /* Font size from design */
+    color: #cccccc; /* Light grey text */
+}
+
+.register-link p {
+    margin: 0; /* Remove default paragraph margin */
+}
+
+.register-link .register-here-link {
+    color: #dc3545; /* Red color for "Sign Up here" from design */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.register-link .register-here-link:hover {
+    color: #bd2130;
+    text-decoration: underline;
+}
+
+/* --- Messages (Alerts) --- */
+.alert {
+    padding: 10px 15px;
+    margin: -15px 0 20px 0; /* Adjust margin to integrate with form */
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    color: white; /* Ensure text is visible */
+}
+
+.alert.success { /* For Django messages tagged 'success' */
+    background-color: rgba(40, 167, 69, 0.8);
+    border: 1px solid #28a745;
+}
+.alert.error, .alert.warning { /* For Django messages tagged 'error' or 'warning' */
+    background-color: rgba(220, 53, 69, 0.8);
+    border: 1px solid #dc3545;
+}
+
+/* --- Accessibility / Hidden elements --- */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 600px) {
+    .form-box {
+        padding: 25px 20px;
+        margin: 10px;
+    }
+    .qr-logo {
+        width: 100px;
+    }
+    .brand-name {
+        font-size: 24px;
+    }
+    .tagline {
+        font-size: 12px;
+    }
+    .login-form input {
+        padding: 12px 15px;
+        font-size: 13px;
+    }
+    .btn-login {
+        padding: 12px;
+        font-size: 14px;
+    }
+    .social-icon {
+        width: 30px;
+        height: 30px;
+    }
+    .social-icon img {
+        width: 18px;
+        height: 18px;
+    }
+    .forgot-password-link, .register-link {
+        font-size: 12px;
+    }
+}
+
+/* --- Keyframe for FadeIn animation --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
