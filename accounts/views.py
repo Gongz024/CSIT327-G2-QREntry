@@ -3,6 +3,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def home_view(request):
+    """
+    Homepage for logged-in users.
+    """
+    return render(request, "accounts/home.html", {"user": request.user})
+
 
 def register_view(request):
     """
@@ -14,7 +23,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, f"Registration successful! Welcome to Event CIT, {user.username}!")
-            return redirect("dashboard")  # send them to the dashboard after signup
+            return redirect("accounts:home")  # send them to the dashboard after signup
         else:
             messages.error(request, "Please correct the errors below.")
     else:
@@ -29,7 +38,7 @@ def login_view(request):
     If 'remember_me' is checked, session lasts for 2 weeks; otherwise expires on browser close.
     """
     if request.user.is_authenticated:
-        return redirect("dashboard")
+        return redirect("accounts:home")
 
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -46,7 +55,7 @@ def login_view(request):
                 request.session.set_expiry(0)
 
             messages.success(request, f"Welcome back, {user.username}!")
-            return redirect("dashboard")
+            return redirect("accounts:home")
         else:
             # form will contain field-specific errors but we'll add a general message too
             messages.error(request, "Invalid username or password. Please try again.")
