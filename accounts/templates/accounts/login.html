@@ -28,7 +28,7 @@
             {% endif %}
 
             <!-- Login Form -->
-            <form method="post" class="login-form">
+            <form method="post" action="{% url 'accounts:login' %}" class="login-form">
                 {% csrf_token %}
                 
                 <div class="input-group">
