@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from django.contrib.auth import logout
 
 @login_required
 def home_view(request):
@@ -65,3 +67,8 @@ def login_view(request):
         form = AuthenticationForm()
 
     return render(request, "accounts/login.html", {"form": form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("accounts:login")  # redirects back to login after logout
