@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body>
+
     <!-- Hero Section -->
     <div class="hero fade-in">
         <h1>Skip the Line.<br><span>Join the Fun.</span></h1>
@@ -29,5 +30,11 @@
         <div class="category-card fade-in delay-5">⚽<br>Sports</div>
         <div class="category-card fade-in delay-6">🖼️<br>Exhibitions</div>
     </div>
+
+     <!-- Logout Button -->
+    <!-- Logout Button -->
+<div class="logout-container fade-in">
+    <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
+</div>
 </body>
 </html>

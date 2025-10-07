@@ -6,6 +6,31 @@
     transition: 0.3s all ease-in-out;
 }
 
+/* Logout Button (top-right corner) */
+.logout-container {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
+
+.logout-btn {
+    background-color: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #103c6e;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
 body {
     background: #f9f9f9;
     color: #333;
@@ -115,6 +140,7 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+    
 }
 
 /* Delay classes for staggered entry */
