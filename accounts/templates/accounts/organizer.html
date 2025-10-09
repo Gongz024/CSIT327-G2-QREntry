@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/organizer_style.css' %}">
+</head>
+<body>
+
+
+    <div class="logout-container">
+        <form action="{% url 'accounts:logout' %}" method="post">
+            {% csrf_token %}
+            <button class="logout-btn">Logout</button>
+        </form>
+    </div>
+
+    <section class="hero fade-in delay-1">
+        <h1>Welcome <span>Organizer!</span></h1>
+    </section>
+
+    <section class="dashboard fade-in delay-2">
+        <a href="#" class="create-event-btn">CREATE EVENT</a>
+
+        <div class="manage-card fade-in delay-3">
+            <h3>Manage Existing Event</h3>
+            <a href="#">
+                <button class="view-btn">View All</button>
+            </a>
+        </div>
+    </section>
+
+    <div class="logout-container fade-in">
+    <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
+</div>
+</body>
+</html>

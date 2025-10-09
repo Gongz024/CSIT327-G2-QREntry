@@ -7,6 +7,12 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required
+def organizer_view(request):
+    return render(request, "accounts/organizer.html")
+
+
+
+@login_required
 def home_view(request):
     """
     Homepage for logged-in users.
@@ -42,8 +48,6 @@ def login_view(request):
     """
     if request.user.is_authenticated:
         return redirect("accounts:home")
-        # Already logged in → just redirect to login again (or later dashboard)
-        return redirect("accounts:login")
 
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -51,7 +55,13 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
 
-            # remember me handling
+            # Organizer check
+            if user.username == "organizer" and request.POST.get("password") == "organizer_Strong_Password!123":
+                # Optional: set session expiry for organizer
+                request.session.set_expiry(0)
+                return redirect("accounts:organizer")  # make sure you create a URL name for organizer.html
+
+            # Normal user session handling
             if request.POST.get("remember_me"):
                 request.session.set_expiry(1209600)  # 2 weeks
             else:
@@ -59,7 +69,7 @@ def login_view(request):
 
             messages.success(request, f"Welcome back, {user.username}!")
             return redirect("accounts:home")
-            return redirect("accounts:login")  # stays on login page for now
+
         else:
             messages.error(request, "Invalid username or password.")
     else:
