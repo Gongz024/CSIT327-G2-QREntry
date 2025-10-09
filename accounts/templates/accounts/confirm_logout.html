@@ -1,0 +1,26 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Logout</title>
+    <link rel="stylesheet" href="{% static 'css/confirm_logout.css' %}">
+</head>
+<body>
+    <div class="confirm-container fade-in">
+        <h2>Are you sure you want to log out?</h2>
+        <p>You’ll need to log in again to access your account.</p>
+
+        <div class="btn-group">
+            <form action="{% url 'accounts:logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn logout-btn">Yes, Logout</button>
+            </form>
+
+            <a href="{% url 'accounts:home' %}" class="btn cancel-btn">Cancel</a>
+        </div>
+    </div>
+</body>
+</html>

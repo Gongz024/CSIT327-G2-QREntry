@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Finder</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <div class="hero fade-in">
+        <h1>Skip the Line.<br><span>Join the Fun.</span></h1>
+        <div class="search-bar fade-in delay-1">
+            <input type="text" placeholder="Search for event">
+            <button>🔍</button>
+        </div>
+        <p class="fade-in delay-2">Get tickets to concerts, exhibitions, and entertainment events.<br>
+           All in one place.</p>
+    </div>
+
+    <!-- Categories -->
+    <div class="categories">
+        <div class="category-card fade-in delay-1">🎵<br>Concerts</div>
+        <div class="category-card fade-in delay-2">🎉<br>Parties</div>
+        <div class="category-card fade-in delay-3">🎭<br>Festivals</div>
+        <div class="category-card fade-in delay-4">🎬<br>Movies</div>
+        <div class="category-card fade-in delay-5">⚽<br>Sports</div>
+        <div class="category-card fade-in delay-6">🖼️<br>Exhibitions</div>
+    </div>
+
+     
+    <!-- Logout Button -->
+<div class="logout-container fade-in">
+    <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
+</div>
+</body>
+</html>
