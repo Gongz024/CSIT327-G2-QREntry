@@ -1,0 +1,206 @@
+/* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            transition: 0.3s all ease-in-out;
+        }
+
+        /* Body */
+        body {
+            background: linear-gradient(135deg, #e8f0ff, #f9f9f9);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pageFade 1.2s ease-in-out forwards;
+            padding: 20px;
+        }
+
+        /* Fade-in page animation */
+        @keyframes pageFade {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Back button container */
+        .back-btn-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        /* Back button styling */
+        .back-btn {
+            background: linear-gradient(135deg, #007bff, #00a2ff);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #0066d3, #008cff);
+            box-shadow: 0 6px 14px rgba(0, 123, 255, 0.5);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 50px 60px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            animation: floatIn 1.3s ease-out forwards;
+        }
+
+        /* Floating entry animation */
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Page Title */
+        .container h1 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #103c6e;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .container h1::after {
+            content: "";
+            display: block;
+            width: 90px;
+            height: 4px;
+            background: #004aad;
+            margin: 12px auto 0;
+            border-radius: 2px;
+            animation: underlineGrow 1s ease-in-out forwards;
+        }
+
+        @keyframes underlineGrow {
+            from { width: 0; }
+            to { width: 90px; }
+        }
+
+        /* Form Layout */
+        .event-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Form Group */
+        .form-group {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            width: 100%;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.4s; }
+        .form-group:nth-child(3) { animation-delay: 0.6s; }
+        .form-group:nth-child(4) { animation-delay: 0.8s; }
+        .form-group:nth-child(5) { animation-delay: 1s; }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 16px;
+            color: #103c6e;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Input, Textarea, Select Styling */
+        input[type="text"],
+        input[type="datetime-local"],
+        textarea,
+        select {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px 18px;
+            border: 1.5px solid #d0d7ff;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #004aad;
+            box-shadow: 0 0 10px rgba(0, 74, 173, 0.25);
+            outline: none;
+        }
+
+        /* Textarea */
+        textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background-color: #103c6e;
+            color: #fff;
+            border: none;
+            padding: 16px 25px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 35px;
+            cursor: pointer;
+            align-self: center;
+            width: 60%;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit:hover {
+            background-color: #0a2b4d;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(16, 60, 110, 0.3);
+        }
+
+        .btn-submit::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.25);
+            transition: all 0.4s;
+        }
+
+        .btn-submit:hover::after {
+            left: 100%;
+        }
+
+        /* Fade-in Up Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }

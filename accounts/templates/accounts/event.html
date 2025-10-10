@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event List</title>
+    <link rel="stylesheet" href="{% static 'css/event_style.css' %}">
+</head>
+<body>
+
+    <!-- 🔙 Back Button -->
+    <div class="back-btn-container">
+        <a href="{% url 'accounts:organizer' %}" class="back-btn">← Back</a>
+    </div> 
+
+    <div class="container">
+
+        <!-- Page Header -->
+        <header>
+            <h1 class="fade-in delay-1">Upcoming Events</h1>
+            <a href="{% url 'accounts:create_event' %}" class="btn-create fade-in delay-2">+ Create Event</a>
+        </header>
+
+        <!-- Event List -->
+        <div class="event-list">
+            <div class="event-card fade-in delay-3">
+                <h2>Music Fest 2025</h2>
+                <p><strong>Venue:</strong> IT Park Grounds</p>
+                <p><strong>Date:</strong> Oct 21, 2025 | 5:00 PM</p>
+                <p><strong>Category:</strong> Music</p>
+                <p class="desc">A night filled with live bands and DJs.</p>
+                <div class="actions">
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </div>
+            </div>
+
+            <div class="event-card fade-in delay-4">
+                <h2>Tech Conference</h2>
+                <p><strong>Venue:</strong> Waterfront Hotel</p>
+                <p><strong>Date:</strong> Nov 5, 2025 | 9:00 AM</p>
+                <p><strong>Category:</strong> Seminar</p>
+                <p class="desc">A gathering of IT professionals and innovators.</p>
+                <div class="actions">
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </div>
+            </div>
+
+            <!-- Example for dynamic events (Django loop) -->
+            {% for event in events %}
+            <div class="event-card fade-in delay-{{ forloop.counter|add:'4' }}">
+                <h2>{{ event.event_name }}</h2>
+                <p><strong>Venue:</strong> {{ event.venue }}</p>
+                <p><strong>Date:</strong> {{ event.start_time|date:"M d, Y" }} | {{ event.start_time|time:"g:i A" }}</p>
+                <p><strong>Category:</strong> {{ event.category }}</p>
+                <p class="desc">{{ event.description }}</p>
+                <div class="actions">
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</body>
+</html>

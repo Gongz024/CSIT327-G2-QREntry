@@ -131,6 +131,34 @@ body {
     animation: fadeInUp 1s ease-out forwards;
 }
 
+/* Floating Message Styles */
+.floating-message-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    animation: fadeInOut 3s ease forwards;
+}
+
+.floating-message {
+    background-color: #004aad;
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0.95;
+}
+
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;

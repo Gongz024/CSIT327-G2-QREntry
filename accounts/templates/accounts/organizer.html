@@ -9,6 +9,16 @@
 </head>
 <body>
 
+   
+
+<!-- ✅ Always display messages -->
+<div class="message-container">
+    {% for message in messages %}
+        <div class="event-message fade-out">{{ message }}</div>
+    {% endfor %}
+</div>
+
+
 
     <div class="logout-container">
         <form action="{% url 'accounts:logout' %}" method="post">
@@ -22,13 +32,13 @@
     </section>
 
     <section class="dashboard fade-in delay-2">
-        <a href="#" class="create-event-btn">CREATE EVENT</a>
+        <a href="{% url 'accounts:create_event' %}" class="create-event-btn">CREATE EVENT</a>
 
         <div class="manage-card fade-in delay-3">
             <h3>Manage Existing Event</h3>
-            <a href="#">
-                <button class="view-btn">View All</button>
-            </a>
+            <a href="{% url 'accounts:event' %}">
+    <button class="view-btn">View All</button>
+</a>
         </div>
     </section>
 
