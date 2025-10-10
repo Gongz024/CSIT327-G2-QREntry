@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+    <link rel="stylesheet" href="{% static 'css/creates_events.css' %}">
+</head>
+<body>
+
+    <!-- 🔙 Back Button -->
+    <div class="back-btn-container">
+        <a href="{% url 'accounts:organizer' %}" class="back-btn">← Back</a>
+    </div> 
+
+    <div class="container fade-in">
+        <h1>Create New Event</h1>
+
+        <form class="event-form" action="{% url 'accounts:organizer' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="eventName">Event Name</label>
+                <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="venue">Venue</label>
+                <input type="text" id="venue" name="venue" placeholder="Enter event venue" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="Concerts">Concerts</option>
+                    <option value="Party">Party</option>
+                    <option value="Festivals">Festivals</option>
+                    <option value="Movies">Movies</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Exhibitions">Exhibitions</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="startTime">Start Time</label>
+                <input type="datetime-local" id="startTime" name="startTime" required>
+            </div>
+
+            <div class="form-group">
+                <label for="endTime">End Time</label>
+                <input type="datetime-local" id="endTime" name="endTime" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Enter event description" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Create Event</button>
+        </form>
+    </div>
+</body>
+</html>

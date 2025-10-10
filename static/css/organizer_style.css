@@ -181,6 +181,56 @@ body {
     animation: fadeInUp 1s ease-out forwards;
 }
 
+/* Fade-in animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+.event-message {
+    background-color: #007bff; /* blue */
+    color: white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    width: 60%;
+    margin: 20px auto;
+    font-weight: bold;
+    animation: fadeOut 3s ease forwards;
+}
+
+.event-message {
+    background-color: #ff4c4c; /* bright red */
+    color: white;
+    text-align: center;
+    padding: 25px;
+    border-radius: 12px;
+    width: 80%;
+    margin: 40px auto;
+    font-size: 1.5rem;
+    font-weight: bold;
+    z-index: 9999;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    animation: fadeOut 4s ease forwards;
+}
+
+/* Fade out after 3 seconds */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+
+/* Fade out animation */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;

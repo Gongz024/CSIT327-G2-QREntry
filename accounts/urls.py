@@ -10,4 +10,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("confirm_logout/", views.confirm_logout_view, name="confirm_logout"),
     path("organizer/", views.organizer_view, name="organizer"),
+
+    path('organizer/create-event/', views.create_event_view, name='create_event'),
+    path('event/', views.view_events_view, name='event'),
 ]

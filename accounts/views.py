@@ -1,23 +1,62 @@
 # accounts/views.py
-from django.shortcuts import render, redirect
+from asyncio import events
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login,logout
 from django.contrib import messages
+from .models import Event
+from .forms import EventForm
 from django.contrib.auth.decorators import login_required
 
+from django.contrib import messages
+
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import Event
+
+def create_event_view(request):
+    if request.method == 'POST':
+        event_name = request.POST['event_name']
+        venue = request.POST['venue']
+        category = request.POST['category']
+        start_time = request.POST['start_time']
+        end_time = request.POST['end_time']
+        description = request.POST['description']
+
+        Event.objects.create(
+            event_name=event_name,
+            venue=venue,
+            category=category,
+            start_time=start_time,
+            end_time=end_time,
+            description=description,
+            organizer=request.user
+        )
+
+        messages.success(request, '✅ Event successfully created!')
+        return redirect('accounts:organizer')
+
+    return render(request, 'accounts/create_event.html')
+
+
+def view_events_view(request):
+    events = Event.objects.all()
+    return render(request, 'accounts/event.html', {'events': events})
 
 @login_required
 def organizer_view(request):
-    return render(request, "accounts/organizer.html")
+    event_created = request.GET.get('created') == 'true'
+    return render(request, "accounts/organizer.html", {"event_created": event_created})
 
 
 
-@login_required
 def home_view(request):
-    """
-    Homepage for logged-in users.
-    """
-    return render(request, "accounts/home.html", {"user": request.user})
+    category = request.GET.get('category')
+    if category:
+        events = Event.objects.filter(event_category=category)
+    else:
+        events = Event.objects.all()
+    return render(request, 'accounts/home.html', {'events': events})
 
 
 

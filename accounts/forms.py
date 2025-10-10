@@ -3,6 +3,21 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from .models import Event
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = [
+            'event_name', 'event_description', 'event_category', 
+            'event_venue', 'event_date', 'event_time_in', 
+            'event_time_out', 'ticket_price'
+        ]
+        widgets = {
+            'event_date': forms.DateInput(attrs={'type': 'date'}),
+            'event_time_in': forms.TimeInput(attrs={'type': 'time'}),
+            'event_time_out': forms.TimeInput(attrs={'type': 'time'}),
+        }
 
 class RegistrationForm(forms.ModelForm):
     password1 = forms.CharField(
