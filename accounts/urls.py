@@ -12,5 +12,6 @@ urlpatterns = [
     path("organizer/", views.organizer_view, name="organizer"),
 
     path('organizer/create-event/', views.create_event_view, name='create_event'),
+    path('event-created/', views.event_created_view, name='event_created'),
     path('event/', views.view_events_view, name='event'),
 ]

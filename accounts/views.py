@@ -14,30 +14,73 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import Event
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Event
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
 def create_event_view(request):
     if request.method == 'POST':
-        event_name = request.POST['event_name']
-        venue = request.POST['venue']
-        category = request.POST['category']
-        start_time = request.POST['start_time']
-        end_time = request.POST['end_time']
-        description = request.POST['description']
+        event_name = request.POST.get('eventName', '').strip()
+        venue = request.POST.get('venue', '').strip()
+        category = request.POST.get('category', '')
+        event_date = request.POST.get('eventDate', '')
+        start_time = request.POST.get('startTime', '')
+        end_time = request.POST.get('endTime', '')
+        ticket_price = request.POST.get('ticketPrice', '')
+        description = request.POST.get('description', '').strip()
 
+        errors = {}
+
+        # --- Validation ---
+        if not event_name:
+            errors['eventName'] = "Event name is required."
+        if not venue:
+            errors['venue'] = "Venue is required."
+        if not category:
+            errors['category'] = "Please select a category."
+        if not event_date:
+            errors['eventDate'] = "Event date is required."
+        if not start_time:
+            errors['startTime'] = "Start time is required."
+        if not end_time:
+            errors['endTime'] = "End time is required."
+        if ticket_price == '' or float(ticket_price) < 0:
+            errors['ticketPrice'] = "Please enter a valid ticket price."
+        if not description:
+            errors['description'] = "Description is required."
+
+        # Check if any errors exist
+        if errors:
+            return render(request, 'accounts/create_event.html', {
+                'errors': errors,
+                'values': request.POST,  # Keep form values
+            })
+
+        # ✅ If all good, create event
         Event.objects.create(
+            organizer=request.user,
             event_name=event_name,
-            venue=venue,
-            category=category,
-            start_time=start_time,
-            end_time=end_time,
-            description=description,
-            organizer=request.user
+            event_venue=venue,
+            event_category=category,
+            event_date=event_date,
+            event_time_in=start_time,
+            event_time_out=end_time,
+            ticket_price=ticket_price,
+            event_description=description
         )
 
         messages.success(request, '✅ Event successfully created!')
-        return redirect('accounts:organizer')
+        return redirect('accounts:event_created')
 
     return render(request, 'accounts/create_event.html')
 
+
+@login_required
+def event_created_view(request):
+    return render(request, 'accounts/event_created.html')
 
 def view_events_view(request):
     events = Event.objects.all()

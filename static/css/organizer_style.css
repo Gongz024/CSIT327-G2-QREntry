@@ -216,6 +216,7 @@ body {
     animation: fadeOut 4s ease forwards;
 }
 
+
 /* Fade out after 3 seconds */
 @keyframes fadeOut {
     0% { opacity: 1; }

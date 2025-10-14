@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: #f9f9f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container */
+.confirm-container {
+    background: #fff;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+}
+
+/* Success icon */
+.success-icon {
+    background: #28a745;
+    color: white;
+    font-size: 30px;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    animation: popIn 0.6s ease-out forwards;
+}
+
+/* Text */
+.confirm-container h2 {
+    color: #103c6e;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.confirm-container p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 10px 22px;
+    border-radius: 25px;
+    border: 2px solid transparent;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+/* Primary button */
+.back-btn {
+    background: #103c6e;
+    color: #fff;
+    border: 2px solid #103c6e;
+}
+
+.back-btn:hover {
+    background: #fff;
+    color: #103c6e;
+}
+
+/* Secondary button */
+.create-btn {
+    background: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+}
+
+.create-btn:hover {
+    background: #103c6e;
+    color: #fff;
+}
+
+/* Fade-in animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pop-in effect for icon */
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
