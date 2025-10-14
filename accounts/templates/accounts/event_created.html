@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Created</title>
+    <link rel="stylesheet" href="{% static 'css/event_created_styles.css' %}">
+</head>
+<body>
+    <div class="confirm-container fade-in">
+        <div class="success-icon">✓</div>
+        <h2>You've successfully created an event!</h2>
+        <p>Your event has been added to the organizer dashboard.</p>
+
+        <div class="btn-group">
+            <a href="{% url 'accounts:organizer' %}" class="btn back-btn">Go to Dashboard</a>
+            <a href="{% url 'accounts:create_event' %}" class="btn create-btn">Create Another</a>
+        </div>
+    </div>
+</body>
+</html>

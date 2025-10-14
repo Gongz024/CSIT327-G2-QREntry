@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Event</title>
-    <link rel="stylesheet" href="{% static 'css/creates_events.css' %}">
+    <link rel="stylesheet" href="{% static 'css/events_creates.css' %}">
 </head>
 <body>
 
@@ -17,49 +17,93 @@
     <div class="container fade-in">
         <h1>Create New Event</h1>
 
-        <form class="event-form" action="{% url 'accounts:organizer' %}" method="post">
+        <form class="event-form" id="createEventForm" action="{% url 'accounts:create_event' %}" method="post">
             {% csrf_token %}
 
             <div class="form-group">
                 <label for="eventName">Event Name</label>
-                <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required>
+                <input type="text" id="eventName" name="eventName" 
+                       value="{{ values.eventName|default:'' }}" 
+                       placeholder="Enter event name" required>
+                {% if errors.eventName %}
+                    <p class="error-message">{{ errors.eventName }}</p>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 <label for="venue">Venue</label>
-                <input type="text" id="venue" name="venue" placeholder="Enter event venue" required>
+                <input type="text" id="venue" name="venue"
+                       value="{{ values.venue|default:'' }}"
+                       placeholder="Enter event venue" required>
+                {% if errors.venue %}
+                    <p class="error-message">{{ errors.venue }}</p>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 <label for="category">Category</label>
                 <select id="category" name="category" required>
-                    <option value="" disabled selected>Select a category</option>
-                    <option value="Concerts">Concerts</option>
-                    <option value="Party">Party</option>
-                    <option value="Festivals">Festivals</option>
-                    <option value="Movies">Movies</option>
-                    <option value="Sports">Sports</option>
-                    <option value="Exhibitions">Exhibitions</option>
+                    <option value="" disabled {% if not values.category %}selected{% endif %}>Select a category</option>
+                    <option value="Concerts" {% if values.category == 'Concerts' %}selected{% endif %}>Concerts</option>
+                    <option value="Sports" {% if values.category == 'Sports' %}selected{% endif %}>Sports</option>
+                    <option value="Seminars" {% if values.category == 'Seminars' %}selected{% endif %}>Seminars</option>
+                    <option value="Others" {% if values.category == 'Others' %}selected{% endif %}>Others</option>
                 </select>
+                {% if errors.category %}
+                    <p class="error-message">{{ errors.category }}</p>
+                {% endif %}
             </div>
 
             <div class="form-group">
+    <label for="eventDate">Event Date</label>
+    <input type="date" id="eventDate" name="eventDate" 
+           value="{{ values.eventDate|default:'' }}" 
+           min="2025-01-01" max="2026-12-31" required>
+    <small class="note">Please select a date between 2025 and 2026.</small>
+    {% if errors.eventDate %}
+        <p class="error-message">{{ errors.eventDate }}</p>
+    {% endif %}
+</div>
+
+            <div class="form-group">
                 <label for="startTime">Start Time</label>
-                <input type="datetime-local" id="startTime" name="startTime" required>
+                <input type="time" id="startTime" name="startTime" 
+                       value="{{ values.startTime|default:'' }}" required>
+                {% if errors.startTime %}
+                    <p class="error-message">{{ errors.startTime }}</p>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 <label for="endTime">End Time</label>
-                <input type="datetime-local" id="endTime" name="endTime" required>
+                <input type="time" id="endTime" name="endTime" 
+                       value="{{ values.endTime|default:'' }}" required>
+                {% if errors.endTime %}
+                    <p class="error-message">{{ errors.endTime }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="ticketPrice">Ticket Price</label>
+                <input type="number" id="ticketPrice" name="ticketPrice" 
+                       value="{{ values.ticketPrice|default:'' }}"
+                       placeholder="₱ Enter price" step="0.01" required>
+                {% if errors.ticketPrice %}
+                    <p class="error-message">{{ errors.ticketPrice }}</p>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" placeholder="Enter event description" required></textarea>
+                <textarea id="description" name="description" placeholder="Enter event description" required>{{ values.description|default:'' }}</textarea>
+                {% if errors.description %}
+                    <p class="error-message">{{ errors.description }}</p>
+                {% endif %}
             </div>
 
             <button type="submit" class="btn-submit">Create Event</button>
         </form>
     </div>
+
 </body>
 </html>

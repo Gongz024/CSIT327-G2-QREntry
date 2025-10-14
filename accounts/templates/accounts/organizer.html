@@ -9,16 +9,6 @@
 </head>
 <body>
 
-   
-
-<!-- ✅ Always display messages -->
-<div class="message-container">
-    {% for message in messages %}
-        <div class="event-message fade-out">{{ message }}</div>
-    {% endfor %}
-</div>
-
-
 
     <div class="logout-container">
         <form action="{% url 'accounts:logout' %}" method="post">
