@@ -51,7 +51,7 @@
                            required>
                 </div>
                 <div class="forgot-password-link">
-                    <a href="#" class="forgot-link">Forgot Password?</a>
+                    <a href="{% url 'accounts:password_reset' %}" class="forgot-link">Forgot Password?</a>
                 </div>
                 {% if form.password.errors %}
                     <div class="error-message">{{ form.password.errors }}</div>
