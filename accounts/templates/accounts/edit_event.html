@@ -85,6 +85,18 @@ select:focus {
                 </select>
             </div>
 
+        <div class="form-group">
+    <label for="ticket_limit">Ticket Limit</label>
+    <input 
+        type="number" 
+        id="ticket_limit" 
+        name="ticket_limit" 
+        value="{{ event.ticket_limit }}" 
+        min="1"
+        required>
+    </div>
+
+
             <!-- ✅ Event Date Field -->
             <div class="form-group">
                 <label for="event_date">Event Date</label>
