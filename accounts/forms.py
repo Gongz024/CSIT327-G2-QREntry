@@ -3,14 +3,16 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+import re
 from .models import Event
+
 
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = [
-            'event_name', 'event_description', 'event_category', 
-            'event_venue', 'event_date', 'event_time_in', 
+            'event_name', 'event_description', 'event_category',
+            'event_venue', 'event_date', 'event_time_in',
             'event_time_out', 'ticket_price'
         ]
         widgets = {
@@ -19,7 +21,14 @@ class EventForm(forms.ModelForm):
             'event_time_out': forms.TimeInput(attrs={'type': 'time'}),
         }
 
+
 class RegistrationForm(forms.ModelForm):
+    gmail = forms.EmailField(
+        label="Gmail Account",
+        required=True,
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter your Gmail account'})
+    )
+
     password1 = forms.CharField(
         label="Password",
         strip=False,
@@ -34,22 +43,28 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("username", "email")
+        fields = ("username", "gmail")
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'Type your email or username'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'Type your email or username'}),
         }
 
-    def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if email and User.objects.filter(email__iexact=email).exists():
-            raise ValidationError("An account with this email already exists.")
-        return email
+    # --- Custom Gmail Validation ---
+    def clean_gmail(self):
+        gmail = self.cleaned_data.get("gmail", "").strip().lower()
+
+        # Must be a valid Google email
+        if not re.match(r"^[a-zA-Z0-9._%+-]+@gmail\.com$", gmail):
+            raise ValidationError("Please enter a valid Gmail address (must end with @gmail.com).")
+
+        # Prevent duplicate Gmail accounts
+        if User.objects.filter(email__iexact=gmail).exists():
+            raise ValidationError("An account with this Gmail already exists.")
+
+        return gmail
 
     def clean_password1(self):
         password1 = self.cleaned_data.get("password1")
         if password1:
-            # This will run the validators from settings.AUTH_PASSWORD_VALIDATORS
             validate_password(password1, user=None)
         return password1
 
@@ -63,9 +78,8 @@ class RegistrationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.email = self.cleaned_data["gmail"]
         user.set_password(self.cleaned_data["password1"])
-        # Option: require email verification before login (set False)
-        # user.is_active = False
         user.is_active = True
         if commit:
             user.save()
