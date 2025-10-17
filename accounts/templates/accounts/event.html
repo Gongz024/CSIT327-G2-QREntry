@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event List</title>
     <link rel="stylesheet" href="{% static 'css/event_style.css' %}">
+    
+    <style>
+        /* Overall Page */
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f6ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 60px auto;
+        }
+
+        /* Back Button */
+        .back-btn-container {
+            position: fixed;
+            top: 20px;
+            left: 25px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #004aad;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #002f6c;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            color: #004aad;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .btn-create {
+            text-decoration: none;
+            background: #1e88e5;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-create:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+        }
+
+        /* Event Card Styles */
+        .event-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,50,150,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,50,150,0.15);
+        }
+
+        .event-card h2 {
+            color: #004aad;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        .event-card p {
+            color: #333;
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .event-card .desc {
+            color: #555;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        /* Buttons */
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .actions .edit, .actions .delete {
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .actions .edit {
+            background-color: #1e88e5;
+            box-shadow: 0 3px 6px rgba(30,136,229,0.3);
+        }
+
+        .actions .edit:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+        }
+
+        .actions .delete {
+            background-color: #e53935;
+            box-shadow: 0 3px 6px rgba(229,57,53,0.3);
+        }
+
+        .actions .delete:hover {
+            background-color: #c62828;
+            transform: translateY(-2px);
+        }
+
+        /* Grid Layout */
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .no-events {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* Scrollbar Styling */
+        .event-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .event-grid::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 74, 173, 0.4);
+            border-radius: 10px;
+        }
+
+        .event-grid::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 74, 173, 0.6);
+        }
+    </style>
 </head>
 <body>
 
@@ -22,45 +189,27 @@
             <a href="{% url 'accounts:create_event' %}" class="btn-create fade-in delay-2">+ Create Event</a>
         </header>
 
-        <!-- Event List -->
-        <div class="event-list">
-            <div class="event-card fade-in delay-3">
-                <h2>Music Fest 2025</h2>
-                <p><strong>Venue:</strong> IT Park Grounds</p>
-                <p><strong>Date:</strong> Oct 21, 2025 | 5:00 PM</p>
-                <p><strong>Category:</strong> Music</p>
-                <p class="desc">A night filled with live bands and DJs.</p>
-                <div class="actions">
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </div>
-            </div>
-
-            <div class="event-card fade-in delay-4">
-                <h2>Tech Conference</h2>
-                <p><strong>Venue:</strong> Waterfront Hotel</p>
-                <p><strong>Date:</strong> Nov 5, 2025 | 9:00 AM</p>
-                <p><strong>Category:</strong> Seminar</p>
-                <p class="desc">A gathering of IT professionals and innovators.</p>
-                <div class="actions">
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </div>
-            </div>
-
-            <!-- Example for dynamic events (Django loop) -->
+        <!-- Event Grid -->
+        <div class="event-grid fade-in delay-3">
             {% for event in events %}
             <div class="event-card fade-in delay-{{ forloop.counter|add:'4' }}">
                 <h2>{{ event.event_name }}</h2>
-                <p><strong>Venue:</strong> {{ event.venue }}</p>
-                <p><strong>Date:</strong> {{ event.start_time|date:"M d, Y" }} | {{ event.start_time|time:"g:i A" }}</p>
-                <p><strong>Category:</strong> {{ event.category }}</p>
-                <p class="desc">{{ event.description }}</p>
+                <p><strong>Venue:</strong> {{ event.event_venue }}</p>
+                <p><strong>Category:</strong> {{ event.event_category }}</p>
+                <p><strong>Date:</strong> {{ event.event_date|date:"M d, Y" }}</p>
+                <p><strong>Time In:</strong> {{ event.event_time_in|time:"g:i A" }}</p>
+                <p><strong>Time Out:</strong> {{ event.event_time_out|time:"g:i A" }}</p>
+                <p><strong>Ticket Price:</strong> ₱{{ event.ticket_price|intcomma }}</p>
+                <p class="desc"><strong>Description:</strong> {{ event.event_description }}</p>
+
                 <div class="actions">
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
+                    <a href="{% url 'accounts:edit_event' event.id %}" class="edit">Edit</a>
+                    <a href="{% url 'accounts:delete_event' event.id %}" class="delete"
+                       onclick="return confirm('Are you sure you want to delete this event?');">Delete</a>
                 </div>
             </div>
+            {% empty %}
+            <p class="no-events">No events created yet.</p>
             {% endfor %}
         </div>
 

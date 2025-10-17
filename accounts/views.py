@@ -6,6 +6,7 @@ from django.contrib.auth import login,logout
 from django.contrib import messages
 from .models import Event
 from .forms import EventForm
+from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
@@ -104,22 +105,17 @@ def home_view(request):
 
 
 def register_view(request):
-    """
-    Register using Django's UserCreationForm.
-    """
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, f"Registration successful! Welcome to Event CIT, {user.username}!")
-            return redirect("accounts:home")  # send them to the dashboard after signup
-            messages.success(request, f"Registration successful! Welcome, {user.username}!")
-            return redirect("accounts:login")  # after register, go to login
+            return redirect("accounts:home")
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        form = UserCreationForm()
+        form = RegistrationForm()
 
     return render(request, "accounts/register.html", {"form": form})
 

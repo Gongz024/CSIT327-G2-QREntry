@@ -47,6 +47,19 @@
                     <div class="error-message">{{ form.username.errors }}</div>
                 {% endif %}
 
+                <!-- Gmail Account -->
+                <div class="input-field-group">
+                <span class="input-icon"><i class="fas fa-at"></i></span>
+                <input type="email"
+                 name="gmail"
+                placeholder="Enter your Gmail account"
+                value="{{ form.gmail.value|default:'' }}"
+                required>
+                </div>
+                {% if form.gmail.errors %}
+            <div class="error-message">{{ form.gmail.errors }}</div>
+                {% endif %}
+
                 {# Input group for Password #}
                 <div class="input-field-group">
                     <span class="input-icon"><i class="fas fa-lock"></i></span>
