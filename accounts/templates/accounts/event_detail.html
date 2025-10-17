@@ -10,10 +10,12 @@
 </head>
 <body>
 
+    <!-- 🔙 Back Button -->
     <div class="back-btn-container">
         <a href="{% url 'accounts:home' %}" class="back-btn">← Back</a>
     </div>
 
+    <!-- 🌟 Event Details Container -->
     <div class="event-detail-container fade-in">
         <h1>{{ event.event_name }}</h1>
 
@@ -22,6 +24,7 @@
             <div class="info-box"><strong>📅 Date:</strong> {{ event.event_date|date:"F j, Y" }}</div>
             <div class="info-box"><strong>🕒 Time:</strong> {{ event.event_time_in|time:"h:i A" }} - {{ event.event_time_out|time:"h:i A" }}</div>
             <div class="info-box"><strong>💵 Ticket Price:</strong> ₱{{ event.ticket_price }}</div>
+            <div class="info-box"><strong>🎟️ Ticket Limit:</strong> {{ event.ticket_limit }}</div>
         </div>
 
         <div class="event-description">

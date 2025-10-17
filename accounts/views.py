@@ -25,6 +25,7 @@ def create_event_view(request):
         event_date = request.POST.get('eventDate', '')
         start_time = request.POST.get('startTime', '')
         end_time = request.POST.get('endTime', '')
+        ticket_limit = request.POST.get('ticketLimit')
         ticket_price = request.POST.get('ticketPrice', '')
         description = request.POST.get('description', '').strip()
 
@@ -64,6 +65,7 @@ def create_event_view(request):
             event_date=event_date,
             event_time_in=start_time,
             event_time_out=end_time,
+            ticket_limit=ticket_limit,
             ticket_price=ticket_price,
             event_description=description
         )
@@ -96,6 +98,7 @@ def edit_event_view(request, event_id):
         event_date = request.POST.get('event_date', '').strip()
         event_time_in = request.POST.get('event_time_in', '').strip()
         event_time_out = request.POST.get('event_time_out', '').strip()
+        event.ticket_limit = request.POST.get('ticket_limit', '').strip()
         ticket_price = request.POST.get('ticket_price', '').replace(',', '').strip()
         event_description = request.POST.get('event_description', '').strip()
 

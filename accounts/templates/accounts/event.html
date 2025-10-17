@@ -200,6 +200,7 @@
                 <p><strong>Time In:</strong> {{ event.event_time_in|time:"g:i A" }}</p>
                 <p><strong>Time Out:</strong> {{ event.event_time_out|time:"g:i A" }}</p>
                 <p><strong>Ticket Price:</strong> ₱{{ event.ticket_price|intcomma }}</p>
+                <p><strong>Ticket Limit:</strong> {{ event.ticket_limit }}</p>
                 <p class="desc"><strong>Description:</strong> {{ event.event_description }}</p>
 
                 <div class="actions">
