@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.event_name }}</title>
+    <link rel="stylesheet" href="{% static 'css/event_details_style.css' %}">
+</head>
+<body>
+
+    <div class="back-btn-container">
+        <a href="{% url 'accounts:home' %}" class="back-btn">← Back</a>
+    </div>
+
+    <div class="event-detail-container fade-in">
+        <h1>{{ event.event_name }}</h1>
+
+        <div class="event-info">
+            <div class="info-box"><strong>📍 Venue:</strong> {{ event.event_venue }}</div>
+            <div class="info-box"><strong>📅 Date:</strong> {{ event.event_date|date:"F j, Y" }}</div>
+            <div class="info-box"><strong>🕒 Time:</strong> {{ event.event_time_in|time:"h:i A" }} - {{ event.event_time_out|time:"h:i A" }}</div>
+            <div class="info-box"><strong>💵 Ticket Price:</strong> ₱{{ event.ticket_price }}</div>
+        </div>
+
+        <div class="event-description">
+            <p>{{ event.event_description }}</p>
+        </div>
+
+        <a href="#" class="buy-btn">🎟️ Buy Ticket Now!</a>
+    </div>
+
+</body>
+</html>

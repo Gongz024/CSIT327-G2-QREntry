@@ -2,21 +2,16 @@
 from asyncio import events
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login,logout
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from .models import Event
 from .forms import EventForm
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
-
-from django.contrib import messages
+from datetime import datetime  # ✅ fixed import
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .models import Event
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
 from .models import Event
 from django.contrib.auth.decorators import login_required
 
@@ -83,9 +78,110 @@ def create_event_view(request):
 def event_created_view(request):
     return render(request, 'accounts/event_created.html')
 
+
 def view_events_view(request):
     events = Event.objects.all()
     return render(request, 'accounts/event.html', {'events': events})
+
+
+@login_required
+def edit_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id, organizer=request.user)
+
+    if request.method == 'POST':
+        # Get form input
+        event_name = request.POST.get('event_name', '').strip()
+        event_venue = request.POST.get('event_venue', '').strip()
+        event_category = request.POST.get('event_category', '').strip()
+        event_date = request.POST.get('event_date', '').strip()
+        event_time_in = request.POST.get('event_time_in', '').strip()
+        event_time_out = request.POST.get('event_time_out', '').strip()
+        ticket_price = request.POST.get('ticket_price', '').replace(',', '').strip()
+        event_description = request.POST.get('event_description', '').strip()
+
+        # Validate all required fields
+        if not all([event_name, event_venue, event_category, event_date, event_time_in, event_time_out, ticket_price, event_description]):
+            messages.error(request, '⚠️ Please fill in all fields before saving.')
+            event.event_name = event_name
+            event.event_venue = event_venue
+            event.event_category = event_category
+            event.event_date = event_date
+            event.event_time_in = event_time_in
+            event.event_time_out = event_time_out
+            event.event_description = event_description
+            return render(request, 'accounts/edit_event.html', {'event': event})
+
+        # ✅ Validate event date (must be between 2025 and 2030)
+        try:
+            event_year = datetime.strptime(event_date, "%Y-%m-%d").year
+            if event_year < 2025 or event_year > 2030:
+                messages.error(request, "⚠️ Event year must be between 2025 and 2030.")
+                event.event_name = event_name
+                event.event_venue = event_venue
+                event.event_category = event_category
+                event.event_date = event_date
+                event.event_time_in = event_time_in
+                event.event_time_out = event_time_out
+                event.event_description = event_description
+                event.ticket_price = ticket_price
+                return render(request, 'accounts/edit_event.html', {'event': event})
+        except ValueError:
+            messages.error(request, "⚠️ Invalid date format. Please select a valid date.")
+            return render(request, 'accounts/edit_event.html', {'event': event})
+
+        # Validate ticket price
+        try:
+            ticket_price_value = float(ticket_price)
+            if ticket_price_value <= 0:
+                messages.error(request, "⚠️ Ticket price cannot be less than or equal to 0.")
+                event.event_name = event_name
+                event.event_venue = event_venue
+                event.event_category = event_category
+                event.event_date = event_date
+                event.event_time_in = event_time_in
+                event.event_time_out = event_time_out
+                event.event_description = event_description
+                event.ticket_price = ticket_price
+                return render(request, 'accounts/edit_event.html', {'event': event})
+        except ValueError:
+            messages.error(request, "⚠️ Please enter a valid numeric ticket price.")
+            event.event_name = event_name
+            event.event_venue = event_venue
+            event.event_category = event_category
+            event.event_date = event_date
+            event.event_time_in = event_time_in
+            event.event_time_out = event_time_out
+            event.event_description = event_description
+            event.ticket_price = ticket_price
+            return render(request, 'accounts/edit_event.html', {'event': event})
+
+        # If all is valid, save
+        event.event_name = event_name
+        event.event_venue = event_venue
+        event.event_category = event_category
+        event.event_date = event_date
+        event.event_time_in = event_time_in
+        event.event_time_out = event_time_out
+        event.ticket_price = ticket_price_value
+        event.event_description = event_description
+        event.save()
+
+        messages.success(request, '✅ Event updated successfully!')
+        return redirect('accounts:event')
+
+    return render(request, 'accounts/edit_event.html', {'event': event})
+
+
+@login_required
+def delete_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id, organizer=request.user)
+    if request.method == 'POST':
+        event.delete()
+        messages.success(request, '🗑️ Event deleted successfully!')
+        return redirect('accounts:event')
+
+    return render(request, 'accounts/confirm_delete.html', {'event': event})
+
 
 @login_required
 def organizer_view(request):
@@ -93,15 +189,16 @@ def organizer_view(request):
     return render(request, "accounts/organizer.html", {"event_created": event_created})
 
 
-
 def home_view(request):
-    category = request.GET.get('category')
-    if category:
-        events = Event.objects.filter(event_category=category)
-    else:
-        events = Event.objects.all()
+    """Display only event names on homepage."""
+    events = Event.objects.all()
     return render(request, 'accounts/home.html', {'events': events})
 
+
+def event_detail_view(request, event_id):
+    """Show event details when clicked from home."""
+    event = get_object_or_404(Event, id=event_id)
+    return render(request, 'accounts/event_detail.html', {'event': event})
 
 
 def register_view(request):
@@ -121,9 +218,7 @@ def register_view(request):
 
 
 def login_view(request):
-    """
-    Login view with error messages + session handling.
-    """
+    """Login view with error messages + session handling."""
     if request.user.is_authenticated:
         return redirect("accounts:home")
 
@@ -133,21 +228,17 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
 
-            # Organizer check
             if user.username == "organizer" and request.POST.get("password") == "organizer_Strong_Password!123":
-                # Optional: set session expiry for organizer
                 request.session.set_expiry(0)
-                return redirect("accounts:organizer")  # make sure you create a URL name for organizer.html
+                return redirect("accounts:organizer")
 
-            # Normal user session handling
             if request.POST.get("remember_me"):
-                request.session.set_expiry(1209600)  # 2 weeks
+                request.session.set_expiry(1209600)
             else:
-                request.session.set_expiry(0)  # until browser close
+                request.session.set_expiry(0)
 
             messages.success(request, f"Welcome back, {user.username}!")
             return redirect("accounts:home")
-
         else:
             messages.error(request, "Invalid username or password.")
     else:
@@ -158,7 +249,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("accounts:login")  # redirects back to login after logout
+    return redirect("accounts:login")
 
 
 def confirm_logout_view(request):
