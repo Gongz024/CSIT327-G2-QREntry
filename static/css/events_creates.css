@@ -19,6 +19,8 @@
             padding: 20px;
         }
 
+        
+
         /* Fade-in page animation */
         @keyframes pageFade {
             from { opacity: 0; transform: scale(0.97); }

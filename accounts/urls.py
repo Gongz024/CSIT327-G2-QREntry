@@ -8,6 +8,7 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("register/", views.register_view, name="register"),
     path("home/", views.home_view, name="home"),
+     path('event/<int:event_id>/', views.event_detail_view, name='event_detail'),
     path("logout/", views.logout_view, name="logout"),
     path("confirm_logout/", views.confirm_logout_view, name="confirm_logout"),
     path("organizer/", views.organizer_view, name="organizer"),
@@ -15,6 +16,8 @@ urlpatterns = [
     path('organizer/create-event/', views.create_event_view, name='create_event'),
     path('event-created/', views.event_created_view, name='event_created'),
     path('event/', views.view_events_view, name='event'),
+    path('event/<int:event_id>/edit/', views.edit_event_view, name='edit_event'),
+    path('event/<int:event_id>/delete/', views.delete_event_view, name='delete_event'),
 
     # Forgot Password
     path(

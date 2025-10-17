@@ -1,0 +1,153 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event</title>
+    <link rel="stylesheet" href="{% static 'css/edit_event_style.css' %}">
+</head>
+
+<style>
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+select:focus {
+    border-color: #1e88e5;
+    outline: none;
+}
+
+.messages {
+    margin-top: 5px;
+}
+
+.alert {
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.alert.error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #f44336;
+}
+
+.alert.success {
+    background-color: #e8f5e9;
+    color: #388e3c;
+    border: 1px solid #4caf50;
+}
+</style>
+
+<body>
+
+    <!-- 🔙 Back Button -->
+    <div class="back-btn-container">
+        <a href="{% url 'accounts:event' %}" class="back-btn">← Back</a>
+    </div>
+
+    <div class="container fade-in delay-1">
+        <header>
+            <h1>Edit Event</h1>
+        </header>
+
+        <form method="POST" class="edit-form fade-in delay-2">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="event_name">Event Name</label>
+                <input type="text" id="event_name" name="event_name" value="{{ event.event_name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="event_venue">Venue</label>
+                <input type="text" id="event_venue" name="event_venue" value="{{ event.event_venue }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="event_category">Category</label>
+                <select id="event_category" name="event_category" required>
+                    <option value="" disabled {% if not event.event_category %}selected{% endif %}>Select a category</option>
+                    <option value="Concerts" {% if event.event_category == 'Concerts' %}selected{% endif %}>Concerts</option>
+                    <option value="Sports" {% if event.event_category == 'Sports' %}selected{% endif %}>Sports</option>
+                    <option value="Seminars" {% if event.event_category == 'Seminars' %}selected{% endif %}>Seminars</option>
+                    <option value="Others" {% if event.event_category == 'Others' %}selected{% endif %}>Others</option>
+                </select>
+            </div>
+
+            <!-- ✅ Event Date Field -->
+            <div class="form-group">
+                <label for="event_date">Event Date</label>
+                <input 
+                    type="date" 
+                    id="event_date" 
+                    name="event_date" 
+                    value="{{ event.event_date|date:'Y-m-d' }}" 
+                    min="2025-01-01"
+                    max="2030-12-31"
+                    required>
+
+                <!-- ✅ Show messages here (so date errors appear below the date field) -->
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            {% if "date" in message.message or "year" in message.message %}
+                                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="event_time_in">Start Time</label>
+                <input type="time" id="event_time_in" name="event_time_in" value="{{ event.event_time_in|time:'H:i' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="event_time_out">End Time</label>
+                <input type="time" id="event_time_out" name="event_time_out" value="{{ event.event_time_out|time:'H:i' }}" required>
+            </div>
+
+            <div class="form-group">
+    <label for="ticket_price">Ticket Price</label>
+    <input 
+        type="number" 
+        id="ticket_price" 
+        name="ticket_price" 
+        value="{{ event.ticket_price }}" 
+        min="1"
+        required>
+
+    <!-- ⚠️ Dynamic error message placeholder -->
+    <div id="price-error" class="alert error" style="display: none;">
+        Ticket price must be greater than 0.
+    </div>
+</div>
+
+            <div class="form-group">
+                <label for="event_description">Description</label>
+                <textarea id="event_description" name="event_description" rows="4" required>{{ event.event_description }}</textarea>
+            </div>
+
+            <div class="form-actions fade-in delay-3">
+                <button type="submit" class="btn-save">💾 Save Changes</button>
+                <a href="{% url 'accounts:event' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

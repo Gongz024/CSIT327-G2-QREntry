@@ -1,0 +1,233 @@
+/* ===============================
+   RESET & BASE STYLES
+   =============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease-in-out;
+}
+
+body {
+    background: #f0f6ff;
+    color: #333;
+}
+
+/* ===============================
+   BACK BUTTON
+   =============================== */
+.back-btn-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    animation: floatIn 1.3s ease-out forwards;
+}
+
+.back-btn {
+    background: linear-gradient(135deg, #007bff, #00a2ff);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, #0066d3, #008cff);
+    box-shadow: 0 6px 14px rgba(0, 123, 255, 0.5);
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* ===============================
+   PAGE CONTAINER
+   =============================== */
+.container {
+    max-width: 850px; /* ⬅ widened from 700px */
+    margin: 100px auto;
+    padding: 30px;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #004aad;
+    font-size: 2.3rem;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s forwards;
+    animation-delay: 0.3s;
+}
+
+/* ===============================
+   FORM STYLES
+   =============================== */
+.edit-form {
+    background: #fff;
+    padding: 40px;
+    max-width: 800px; /* ⬅ widened from 600px */
+    margin: 0 auto;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 74, 173, 0.1);
+    width: 100%; /* ⬅ ensure full width */
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* ⬅ make sure each input fills available space */
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #004aad;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    width: 100%; /* ⬅ inputs fully stretch */
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #004aad;
+    box-shadow: 0 0 8px rgba(0, 74, 173, 0.2);
+}
+
+/* ===============================
+   ALERT MESSAGES
+   =============================== */
+.messages {
+    margin-top: 10px;
+}
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.alert.error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #f44336;
+}
+
+.alert.success {
+    background-color: #e8f5e9;
+    color: #388e3c;
+    border: 1px solid #4caf50;
+}
+
+/* ===============================
+   BUTTONS
+   =============================== */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #004aad, #0066ff);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.2);
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, #00337a, #005ae0);
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(108,117,125,0.2);
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* ===============================
+   ANIMATIONS
+   =============================== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Delay utility classes */
+.fade-in { animation: fadeInUp 0.8s ease-out forwards; }
+.delay-1 { animation-delay: 0.3s; }
+.delay-2 { animation-delay: 0.6s; }
+.delay-3 { animation-delay: 0.9s; }
+
+/* ===============================
+   RESPONSIVE DESIGN
+   =============================== */
+@media (max-width: 700px) {
+    .container {
+        padding: 20px;
+        margin: 60px auto;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .edit-form {
+        padding: 25px 20px;
+        max-width: 100%;
+    }
+
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

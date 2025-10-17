@@ -12,6 +12,45 @@ body {
     color: #333;
 }
 
+
+delete-container {
+            text-align: center;
+            padding: 50px;
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .delete-container h2 {
+            color: #d9534f;
+            margin-bottom: 20px;
+        }
+        .delete-container p {
+            color: #444;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .btn-delete {
+            background: #d9534f;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .btn-delete:hover { background: #c9302c; }
+        .btn-cancel:hover { background: #5a6268; }
+
+        
 /* Back button container */
         .back-btn-container {
             position: fixed;
@@ -202,3 +241,227 @@ header h1 {
 .delay-4 { animation-delay: 1.2s; }
 .delay-5 { animation-delay: 1.5s; }
 .delay-6 { animation-delay: 1.8s; }
+
+/* ==========================
+   EDIT EVENT & DELETE STYLES
+   ========================== */
+
+/* Form Container */
+.edit-form {
+    background: #fff;
+    padding: 40px;
+    max-width: 600px;
+    margin: 40px auto;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 74, 173, 0.1);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #004aad;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #004aad;
+    box-shadow: 0 0 8px rgba(0, 74, 173, 0.2);
+}
+
+/* Buttons */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #004aad, #0066ff);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.2);
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, #00337a, #005ae0);
+    transform: translateY(-2px);
+}
+
+/* Delete Confirmation Container */
+.delete-container {
+    text-align: center;
+    padding: 50px;
+    max-width: 500px;
+    margin: 100px auto;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+}
+
+.delete-container h2 {
+    color: #d9534f;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.delete-container p {
+    color: #444;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+/* Delete and Cancel Buttons */
+.btn-delete {
+    background: #d9534f;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(213,83,79,0.2);
+}
+
+.btn-delete:hover {
+    background: #b52b27;
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(108,117,125,0.2);
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns fixed */
+    gap: 25px;
+    max-height: 80vh; /* Limit visible area */
+    overflow-y: auto; /* Scroll vertically if too many events */
+    padding-right: 10px;
+    scroll-behavior: smooth;
+}
+
+/* Hide scrollbar (optional but clean) */
+.event-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.event-grid::-webkit-scrollbar-thumb {
+    background: #cfd8dc;
+    border-radius: 10px;
+}
+.event-grid::-webkit-scrollbar-thumb:hover {
+    background: #90a4ae;
+}
+
+/* Event Card */
+.event-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,50,150,0.1);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s forwards;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,50,150,0.15);
+}
+
+/* Empty Message */
+.no-events {
+    grid-column: span 3;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    margin-top: 20px;
+}
+
+.actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .actions .edit,
+        .actions .delete {
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* ✏️ Edit Button Style */
+        .actions .edit {
+            background-color: #1e88e5; /* blue */
+            box-shadow: 0 3px 6px rgba(30,136,229,0.3);
+        }
+
+        .actions .edit:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(21,101,192,0.3);
+        }
+
+        /* 🗑️ Delete Button Style */
+        .actions .delete {
+            background-color: #e53935; /* red */
+            box-shadow: 0 3px 6px rgba(229,57,53,0.3);
+        }
+
+        .actions .delete:hover {
+            background-color: #c62828;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(198,40,40,0.3);
+        }
+
+/* Responsive Fix (for small screens) */
+@media (max-width: 1024px) {
+    .event-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 700px) {
+    .event-grid {
+        grid-template-columns: 1fr;
+    }
+}

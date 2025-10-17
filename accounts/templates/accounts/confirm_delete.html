@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Delete</title>
+    <link rel="stylesheet" href="{% static 'css/event_delete.css' %}">
+</head>
+<body>
+
+    <!-- 🔙 Back Button -->
+    <div class="back-btn-container">
+        <a href="{% url 'accounts:organizer' %}" class="back-btn">← Back</a>
+    </div>
+
+    <div class="delete-container fade-in delay-1">
+        <h2>⚠️ Confirm Deletion</h2>
+        <p>Are you sure you want to delete the event <strong>"{{ event.event_name }}"</strong>?</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">Yes, Delete</button>
+            <a href="{% url 'accounts:organizer' %}" class="btn-cancel">Cancel</a>
+        </form>
+    </div>
+
+</body>
+</html>
