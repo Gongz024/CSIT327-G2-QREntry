@@ -14,8 +14,15 @@
     <div class="hero fade-in">
         <h1>Skip the Line.<br><span>Join the Fun.</span></h1>
         <div class="search-bar fade-in delay-1">
-            <input type="text" placeholder="Search for event">
-            <button>🔍</button>
+    <form method="get" action="">
+        <input 
+            type="text" 
+            name="q" 
+            placeholder="Search for event"
+            value="{{ query|default:'' }}"
+        >
+        <button type="submit">🔍</button>
+            </form>
         </div>
         <p class="fade-in delay-2">
             Get tickets to concerts, exhibitions, and entertainment events.<br>
@@ -37,8 +44,16 @@
             {% endfor %}
         </div>
         {% else %}
+    {% if query %}
+        <div class="no-results">
+            <p>No event named "<strong>{{ query }}</strong>" found.</p>
+            <p>Do you wish to go back?</p>
+            <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Go Back</a>
+        </div>
+    {% else %}
         <p>No events available yet.</p>
-        {% endif %}
+    {% endif %}
+{% endif %}
     </div>
 
     <!-- Logout Button -->

@@ -193,9 +193,17 @@ def organizer_view(request):
 
 
 def home_view(request):
-    """Display only event names on homepage."""
-    events = Event.objects.all()
-    return render(request, 'accounts/home.html', {'events': events})
+    """Display only event names on homepage with search filter."""
+    query = request.GET.get('q', '').strip()  # Get the search query from the URL
+    if query:
+        events = Event.objects.filter(event_name__icontains=query)  # Case-insensitive search
+    else:
+        events = Event.objects.all()
+
+    return render(request, 'accounts/home.html', {
+        'events': events,
+        'query': query,  # Pass current search value back to the template
+    })
 
 
 def event_detail_view(request, event_id):
