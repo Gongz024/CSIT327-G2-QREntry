@@ -105,23 +105,62 @@ body {
 }
 
 /* ============================= */
-/* Buy Ticket Button */
+/* Buttons Container + Buttons */
 /* ============================= */
+.button-container {
+    display: flex;
+    justify-content: center;       /* center both buttons horizontally */
+    align-items: center;           /* fix vertical alignment */
+    gap: 20px;                     /* consistent space between buttons */
+    margin-top: 30px;
+    flex-wrap: wrap;               /* prevent layout break on small screens */
+}
+
+/* Buy Ticket Button */
 .buy-btn {
-    display: inline-block;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     background-color: #103c6e;
     color: #fff;
     padding: 12px 25px;
     border-radius: 25px;
     text-decoration: none;
     font-weight: 600;
-    margin-top: 30px;
+    border: none;
+    cursor: pointer;
     transition: background 0.3s, transform 0.3s;
 }
 
 .buy-btn:hover {
     background-color: #0d2e55;
     transform: translateY(-2px);
+}
+
+/* Bookmark Button */
+.bookmark-btn {
+    display: inline-flex;           /* makes button respect flex alignment */
+    align-items: center;            /* centers text vertically */
+    justify-content: center;
+    background-color: #ffeb3b;
+    color: black;
+    padding: 12px 25px;             /* balanced horizontal padding */
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.bookmark-btn:hover {
+    background-color: #fdd835;
+    transform: translateY(-2px);    /* subtle hover lift */
+}
+
+.bookmarked {
+    background-color: #ffc107;
 }
 
 /* ============================= */

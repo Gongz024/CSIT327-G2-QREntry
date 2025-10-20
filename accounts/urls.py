@@ -18,6 +18,9 @@ urlpatterns = [
     path('event/', views.view_events_view, name='event'),
     path('event/<int:event_id>/edit/', views.edit_event_view, name='edit_event'),
     path('event/<int:event_id>/delete/', views.delete_event_view, name='delete_event'),
+    path('event/<int:event_id>/bookmark/', views.add_bookmark_view, name='add_bookmark'),
+    path('bookmarks/', views.bookmarks_view, name='bookmarks'),
+    path('remove-bookmark/<int:event_id>/', views.remove_bookmark, name='remove_bookmark'),
 
     # Forgot Password
     path(
