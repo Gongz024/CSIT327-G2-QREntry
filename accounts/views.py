@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from .models import Event
+from .models import Event, Bookmark
 from .forms import EventForm
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,6 @@ from datetime import datetime  # ✅ fixed import
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .models import Event
 from django.contrib.auth.decorators import login_required
 
 
@@ -79,6 +78,36 @@ def create_event_view(request):
 @login_required
 def event_created_view(request):
     return render(request, 'accounts/event_created.html')
+
+
+@login_required
+def add_bookmark_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    # Prevent duplicate bookmarks
+    Bookmark.objects.get_or_create(user=request.user, event=event)
+    return redirect("accounts:event_detail", event_id=event_id)
+
+
+@login_required
+def remove_bookmark_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    # Delete the bookmark if it exists
+    Bookmark.objects.filter(user=request.user, event=event).delete()
+    return redirect("accounts:event_detail", event_id=event_id)
+
+
+@login_required
+def bookmarks_view(request):
+    # Get all bookmarks for the logged-in user
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related("event")
+    return render(request, "accounts/bookmark.html", {"bookmarks": bookmarks})
+
+@login_required
+def remove_bookmark(request, event_id):
+    bookmark = Bookmark.objects.filter(user=request.user, event_id=event_id).first()
+    if bookmark:
+        bookmark.delete()
+    return redirect('accounts:bookmarks')
 
 
 def view_events_view(request):
