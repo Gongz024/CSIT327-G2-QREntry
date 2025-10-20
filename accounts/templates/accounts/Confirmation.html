@@ -1,0 +1,29 @@
+<!-- tickets/templates/tickets/confirmation.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ticket Confirmation</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .qr { margin-top: 12px; }
+    .info { margin-bottom: 8px; }
+    img.qr-code { max-width: 320px; height: auto; border: 1px solid #ddd; padding: 8px; background: #fff; }
+    .download { margin-top: 10px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h2>🎟️ Ticket Confirmation</h2>
+
+  <div class="info"><strong>Event:</strong> {{ ticket.event.event_name }}</div>
+  <div class="info"><strong>Ticket ID:</strong> {{ ticket.ticket_identifier }}</div>
+
+  <div class="qr">
+    <p>Show this QR at event entry:</p>
+    <img class="qr-code" src="{{ qr_data_uri }}" alt="Ticket QR code" />
+    <div class="download">
+      <a href="{{ qr_data_uri }}" download="ticket-{{ ticket.ticket_identifier }}.png">Download QR</a>
+    </div>
+  </div>
+</body>
+</html>
