@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Sent</title>
+    <link rel="stylesheet" href="{% static 'css/qr_code_sent.css' %}">
+</head>
+<body>
+    <div class="back-btn-container">
+        <a href="{% url 'accounts:home' %}" class="back-btn">← Back to Home</a>
+    </div>
+
+    <div class="qr-container">
+        <h1>🎉 Ticket Successfully Availed!</h1>
+        <p class="message">
+            Your ticket has been successfully availed, and your unique QR code has been sent to your email.
+        </p>
+
+        <div class="info-box">
+            <p><strong>Note:</strong> Please check your inbox (or spam folder) for the email containing your QR code.</p>
+        </div>
+
+        <div class="button-container">
+            <a href="{% url 'accounts:home' %}" class="buy-btn">Back to Home</a>
+            <a href="{% url 'accounts:bookmarks' %}" class="bookmark-btn">View Saved Events</a>
+        </div>
+    </div>
+</body>
+</html>
