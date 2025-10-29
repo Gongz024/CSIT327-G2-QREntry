@@ -17,3 +17,5 @@ def dashboard_view(request):
     Dashboard view for authenticated users (for future QR entry features).
     """
     return render(request, 'dashboard.html', {'user': request.user})
+
+ 

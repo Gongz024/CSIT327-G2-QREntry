@@ -3,14 +3,20 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-# ✅ Load environment variables
-BASE_DIR = Path(__file__).resolve().parent.parent  # fixed _file_ → __file__
+# Load environment variables
+BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
+# -------------------------
+# Core settings
+# -------------------------
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = ["*"]
 
+# -------------------------
+# Installed apps & middleware
+# -------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -35,6 +41,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'qreentry_project.urls'
 
+# -------------------------
+# Templates
+# -------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -52,7 +61,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'qreentry_project.wsgi.application'
 
-# ✅ Supabase Database config
+# -------------------------
+# Database (Supabase PostgreSQL)
+# -------------------------
 DATABASES = {
     "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
@@ -61,6 +72,9 @@ DATABASES = {
     )
 }
 
+# -------------------------
+# Authentication
+# -------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {"NAME": 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -68,28 +82,44 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# -------------------------
+# Localization
+# -------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# -------------------------
+# Static files
+# -------------------------
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+<<<<<<< HEAD
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+=======
+
+# -------------------------
+# Auth redirects
+# -------------------------
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+>>>>>>> feature/qr-ticket-generation
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
-# ✅ Email Configuration (reads everything from .env)
+# -------------------------
+# Gmail Email Configuration
+# -------------------------
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_FAIL_SILENTLY = os.getenv("EMAIL_FAIL_SILENTLY", "False").lower() in ("1", "true", "yes")
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp-relay.brevo.com")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "0")) or 587
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "QREntry Support <noreply@qreentry.local>")
