@@ -14,6 +14,55 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+import qrcode
+from io import BytesIO
+from django.core.mail import EmailMessage
+from django.conf import settings
+from .models import Ticket
+
+
+@login_required
+def avail_ticket(request, event_id):
+    user = request.user
+    event_name = "Sample Event"  # Replace this with your event logic
+
+    # 1️⃣ Create ticket record
+    ticket = Ticket.objects.create(user=user, event_name=event_name)
+
+    # 2️⃣ Generate QR code
+    qr = qrcode.make(str(ticket.qr_code_id))
+    buffer = BytesIO()
+    qr.save(buffer, format="PNG")
+    qr_img = buffer.getvalue()
+
+    # 3️⃣ Send email with QR code
+    subject = f"Your Ticket for {event_name}"
+    message = (
+        f"Hi {user.first_name or user.username},\n\n"
+        f"You have successfully availed a ticket for {event_name}!\n"
+        f"Please present this QR code at the event for validation.\n\n"
+        f"Ticket ID: {ticket.qr_code_id}\n\n"
+        f"Thank you!"
+    )
+
+    email = EmailMessage(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+    )
+
+    # Attach QR image
+    email.attach(f"ticket_{ticket.qr_code_id}.png", qr_img, "image/png")
+    email.send()
+
+    # 4️⃣ Redirect to confirmation page
+    return redirect('accounts:qr_code_sent')
+
+@login_required
+def qr_code_sent_view(request):
+    return render(request, 'accounts/qr_code_sent.html')
+
 
 @login_required
 def create_event_view(request):

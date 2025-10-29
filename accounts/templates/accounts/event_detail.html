@@ -30,7 +30,7 @@
         </div>
 
         <div class="button-container">
-            <a href="#" class="buy-btn">🎟️ Buy Ticket Now!</a>
+            <a href="{% url 'accounts:qr_code_sent' %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
 
             {% if is_bookmarked %}
                 <button class="bookmark-btn bookmarked" disabled>Bookmarked</button>
