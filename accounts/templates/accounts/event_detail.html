@@ -10,8 +10,7 @@
 </head>
 <body>
 
-   
-
+    <!-- Event Details -->
     <div class="event-detail-container fade-in">
         <h1>{{ event.event_name }}</h1>
 
@@ -28,7 +27,7 @@
         </div>
 
         <div class="button-container">
-              <a href="{% url 'accounts:avail_ticket' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
+            <a href="{% url 'accounts:avail_ticket' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
 
             {% if is_bookmarked %}
                 <button class="bookmark-btn bookmarked" disabled>Bookmarked</button>
@@ -36,6 +35,11 @@
                 <a href="{% url 'accounts:add_bookmark' event.id %}" class="bookmark-btn">Bookmark</a>
             {% endif %}
         </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="back-btn-container fade-in">
+        <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Events</a>
     </div>
 
 </body>
