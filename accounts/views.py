@@ -55,44 +55,65 @@ def user_profile_view(request):
         'profile_form': profile_form
     })
 
-
 @login_required
 def avail_ticket(request, event_id):
     user = request.user
-    event_name = "Sample Event"  # Replace this with your event logic
+    event = get_object_or_404(Event, id=event_id)
 
-    # 1️⃣ Create ticket record
-    ticket = Ticket.objects.create(user=user, event_name=event_name)
+    # 1️⃣ Create or get existing ticket (prevent duplicate)
+    ticket, created = Ticket.objects.get_or_create(
+        user=user,
+        event_name=event.event_name,
+    )
 
-    # 2️⃣ Generate QR code
-    qr = qrcode.make(str(ticket.qr_code_id))
+    # 2️⃣ Generate a QR Code (always unique for this ticket)
+    qr_data = f"""
+    Ticket ID: {ticket.qr_code_id}
+    Event: {event.event_name}
+    User: {user.username}
+    """
+    qr = qrcode.make(qr_data.strip())
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
     qr_img = buffer.getvalue()
 
-    # 3️⃣ Send email with QR code
-    subject = f"Your Ticket for {event_name}"
+    # 3️⃣ Email Details
+    subject = f"🎟️ Your Ticket for {event.event_name}"
     message = (
-        f"Hi {user.first_name or user.username},\n\n"
-        f"You have successfully availed a ticket for {event_name}!\n"
-        f"Please present this QR code at the event for validation.\n\n"
+        f"Hello {user.first_name or user.username},\n\n"
+        f"You have successfully availed a ticket for '{event.event_name}'.\n\n"
+        f"Event Details:\n"
+        f"📍 Venue: {event.event_venue}\n"
+        f"📅 Date: {event.event_date}\n"
+        f"🕒 Time: {event.event_time_in} - {event.event_time_out}\n"
+        f"💵 Price: ₱{event.ticket_price}\n\n"
+        f"Please present the attached QR code at the event gate.\n\n"
         f"Ticket ID: {ticket.qr_code_id}\n\n"
-        f"Thank you!"
+        f"Thank you for using QREntry!"
     )
 
-    email = EmailMessage(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-    )
+    # 4️⃣ Send Email
+    try:
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[user.email],
+        )
+        email.attach(f"ticket_{ticket.qr_code_id}.png", qr_img, "image/png")
+        sent_count = email.send(fail_silently=False)
 
-    # Attach QR image
-    email.attach(f"ticket_{ticket.qr_code_id}.png", qr_img, "image/png")
-    email.send()
+        if sent_count == 1:
+            messages.success(request, "✅ Ticket email has been sent successfully!")
+        else:
+            messages.warning(request, "⚠️ Email sending returned no confirmation — please check your inbox.")
 
-    # 4️⃣ Redirect to confirmation page
+    except Exception as e:
+        messages.error(request, f"❌ Failed to send email: {e}")
+
+    # 5️⃣ Redirect to confirmation page
     return redirect('accounts:qr_code_sent')
+
 
 @login_required
 def qr_code_sent_view(request):

@@ -10,9 +10,7 @@
 </head>
 <body>
 
-    <div class="back-btn-container">
-        <a href="{% url 'accounts:home' %}" class="back-btn">← Back</a>
-    </div>
+   
 
     <div class="event-detail-container fade-in">
         <h1>{{ event.event_name }}</h1>
@@ -30,7 +28,7 @@
         </div>
 
         <div class="button-container">
-            <a href="{% url 'accounts:qr_code_sent' %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
+              <a href="{% url 'accounts:avail_ticket' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
 
             {% if is_bookmarked %}
                 <button class="bookmark-btn bookmarked" disabled>Bookmarked</button>
