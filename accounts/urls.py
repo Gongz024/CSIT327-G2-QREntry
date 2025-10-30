@@ -22,6 +22,7 @@ urlpatterns = [
     path('bookmarks/', views.bookmarks_view, name='bookmarks'),
     path('remove-bookmark/<int:event_id>/', views.remove_bookmark, name='remove_bookmark'),
     path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),
+    path("profile/", views.user_profile_view, name="user_profile"),
 
     # Forgot Password
     path(

@@ -1,0 +1,200 @@
+body {
+    background-color: #f5f7fa;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin: 0;
+}
+
+/* Page Container */
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Header Banner */
+.profile-header {
+    width: 100%;
+    background: linear-gradient(135deg, #103c6e, #2b7fd9);
+    color: white;
+    text-align: center;
+    padding: 50px 20px 70px 20px;
+    border-bottom-left-radius: 60px;
+    border-bottom-right-radius: 60px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.profile-header h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.profile-header p {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+/* Profile Card */
+.profile-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    margin-top: -50px;
+    padding: 40px 30px;
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* Profile Picture Section */
+.profile-picture-section {
+    display: flex;
+    flex-direction: column;  /* Stack image and button vertically */
+    align-items: center;     /* Center horizontally */
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #103c6e;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    margin-bottom: 12px; /* Space between image and button */
+}
+
+
+.upload-btn {
+    display: inline-block;
+    background-color: #103c6e;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.upload-btn:hover {
+    background-color: #0d2e55;
+    transform: scale(1.03);
+}
+
+.upload-btn input {
+    display: none;
+}
+
+/* Input Fields */
+.form-fields {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 600;
+    color: #103c6e;
+    margin-bottom: 6px;
+}
+
+.form-fields input, 
+.form-fields select, 
+.form-fields textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.form-fields input:focus {
+    border-color: #103c6e;
+    outline: none;
+    box-shadow: 0 0 4px rgba(16, 60, 110, 0.4);
+}
+
+/* Buttons */
+.save-btn {
+    background-color: #103c6e;
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 15px;
+}
+
+.save-btn:hover {
+    background-color: #0d2e55;
+    transform: translateY(-2px);
+}
+
+/* Links */
+.change-password-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #2b7fd9;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.change-password-link:hover {
+    text-decoration: underline;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 25px;
+    text-decoration: none;
+    color: #103c6e;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.back-btn:hover {
+    color: #0d2e55;
+}
+
+/* Flash Messages */
+.messages {
+    margin-bottom: 15px;
+}
+
+.message {
+    background-color: #e9f6ef;
+    border-left: 5px solid #28a745;
+    color: #2c662d;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* Animations */
+.fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

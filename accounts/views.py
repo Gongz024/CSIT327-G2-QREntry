@@ -19,6 +19,41 @@ from io import BytesIO
 from django.core.mail import EmailMessage
 from django.conf import settings
 from .models import Ticket
+from .models import Profile
+from .forms import UserUpdateForm, ProfileUpdateForm
+
+@login_required
+def user_profile_view(request):
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    # 🧹 Check if user clicked the "Remove Profile Photo" button
+    if request.method == 'POST' and 'remove_profile' in request.POST:
+        if profile.profile_picture:
+            profile.profile_picture.delete(save=False)  # delete the file from storage
+        profile.profile_picture = 'profile_pics/default.png'  # reset to default
+        profile.save()
+        messages.success(request, "🗑️ Your profile photo has been reset to default.")
+        return redirect('accounts:user_profile')
+
+    # 🧩 Handle profile update form normally
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, '✅ Your profile has been updated successfully!')
+            return redirect('accounts:user_profile')
+    else:
+        user_form = UserUpdateForm(instance=user)
+        profile_form = ProfileUpdateForm(instance=profile)
+
+    return render(request, 'accounts/user_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
 
 @login_required
