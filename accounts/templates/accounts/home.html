@@ -60,7 +60,12 @@
     <div class="top-right-buttons fade-in">
         <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
         <a href="{% url 'accounts:user_profile' %}" class="profile-btn">
-            <img src="{% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}{% static 'images/default.png' %}{% endif %}" alt="Profile">
+            <img src="{% if request.user.profile.profile_picture %}
+                        {{ request.user.profile.profile_picture.url }}
+                      {% else %}
+                        /media/profile_pics/default.png
+                      {% endif %}" 
+                 alt="Profile">
         </a>
     </div>
 
