@@ -15,7 +15,6 @@ body {
 /*  LOGOUT + BOOKMARK TOP BUTTONS  */
 /* =============================== */
 
-/* Logout Button (top-right corner) */
 .logout-container {
     position: absolute;
     top: 20px;
@@ -40,7 +39,6 @@ body {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Bookmark Button (top-left corner) */
 .bookmark-container {
     position: absolute;
     top: 20px;
@@ -250,3 +248,91 @@ body {
 
 .delay-1 { animation-delay: 0.3s; }
 .delay-2 { animation-delay: 0.6s; }
+
+/* =============================== */
+/* Profile Photo Button */
+/* =============================== */
+
+.profile-container {
+    position: absolute;
+    top: 20px;
+    right: 140px;
+}
+
+.profile-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.profile-photo {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #103c6e;
+    transition: transform 0.3s ease;
+}
+
+.profile-photo:hover {
+    transform: scale(1.1);
+}
+
+/* =============================== */
+/* Top-right buttons (Logout + Profile) */
+/* =============================== */
+.top-right-buttons {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* spacing between logout and profile */
+}
+
+/* Logout Button – keep same style */
+.logout-btn {
+    background-color: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #103c6e;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Profile Button (round image beside Logout) */
+.profile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #103c6e;
+    background-color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s;
+}
+
+.profile-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

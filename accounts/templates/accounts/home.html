@@ -14,14 +14,14 @@
     <div class="hero fade-in">
         <h1>Skip the Line.<br><span>Join the Fun.</span></h1>
         <div class="search-bar fade-in delay-1">
-    <form method="get" action="">
-        <input 
-            type="text" 
-            name="q" 
-            placeholder="Search for event"
-            value="{{ query|default:'' }}"
-        >
-        <button type="submit">🔍</button>
+            <form method="get" action="">
+                <input 
+                    type="text" 
+                    name="q" 
+                    placeholder="Search for event"
+                    value="{{ query|default:'' }}"
+                >
+                <button type="submit">🔍</button>
             </form>
         </div>
         <p class="fade-in delay-2">
@@ -44,21 +44,24 @@
             {% endfor %}
         </div>
         {% else %}
-    {% if query %}
-        <div class="no-results">
-            <p>No event named "<strong>{{ query }}</strong>" found.</p>
-            <p>Do you wish to go back?</p>
-            <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Go Back</a>
-        </div>
-    {% else %}
-        <p>No events available yet.</p>
-    {% endif %}
-{% endif %}
+            {% if query %}
+                <div class="no-results">
+                    <p>No event named "<strong>{{ query }}</strong>" found.</p>
+                    <p>Do you wish to go back?</p>
+                    <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Go Back</a>
+                </div>
+            {% else %}
+                <p>No events available yet.</p>
+            {% endif %}
+        {% endif %}
     </div>
 
-    <!-- Logout Button -->
-    <div class="logout-container fade-in">
+    <!-- Logout + Profile beside each other -->
+    <div class="top-right-buttons fade-in">
         <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
+        <a href="{% url 'accounts:user_profile' %}" class="profile-btn">
+            <img src="{% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}{% static 'images/default.png' %}{% endif %}" alt="Profile">
+        </a>
     </div>
 
     <!-- Top Bookmark Button -->

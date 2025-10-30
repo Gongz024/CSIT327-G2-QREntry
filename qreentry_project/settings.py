@@ -95,22 +95,25 @@ USE_TZ = True
 # -------------------------
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
-<<<<<<< HEAD
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-=======
+
 
 # -------------------------
 # Auth redirects
 # -------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
->>>>>>> feature/qr-ticket-generation
+
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # -------------------------
 # Gmail Email Configuration
