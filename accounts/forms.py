@@ -5,7 +5,21 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import re
 from .models import Event
+from .models import Profile
 
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Username'}),
+            'email': forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'Email'}),
+        }
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['profile_picture']
 
 class EventForm(forms.ModelForm):
     class Meta:

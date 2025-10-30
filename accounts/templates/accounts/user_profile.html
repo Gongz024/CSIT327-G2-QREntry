@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="{% static 'css/user_profile_style.css' %}">
+</head>
+<body>
+    <div class="profile-page fade-in">
+        <!-- Header Banner -->
+        <header class="profile-header">
+            <h1>👤 My Profile</h1>
+            <p>Manage your account information and profile details.</p>
+        </header>
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Profile Picture -->
+                <div class="profile-picture-section">
+                    <!-- ✅ Display uploaded profile or default.png -->
+                    <img 
+                        id="profileImagePreview" 
+                        src="{% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}/media/profile_pics/default.png{% endif %}" 
+                        alt="Profile Picture" 
+                        class="profile-pic"
+                    >
+
+                    <label for="id_profile_picture" class="upload-btn">Change Profile Photo</label>
+                    <input type="file" name="profile_picture" id="id_profile_picture" accept="image/*" style="display: none;">
+                </div>
+
+                <!-- User Info Fields -->
+                <div class="form-fields">
+                    <div class="input-group">
+                        <label>Username</label>
+                        {{ user_form.username }}
+                    </div>
+
+                    <div class="input-group">
+                        <label>Email</label>
+                        {{ user_form.email }}
+                    </div>
+
+                    <a href="{% url 'accounts:password_reset' %}" class="change-password-link">Change Password</a>
+                </div>
+
+                <button type="submit" class="save-btn">💾 Save Changes</button>
+            </form>
+
+            <a href="{% url 'accounts:home' %}" class="back-btn">← Back to Home</a>
+        </div>
+    </div>
+
+    <!-- ✅ JavaScript for Live Profile Photo Preview -->
+    <script>
+        const fileInput = document.getElementById('id_profile_picture');
+        const previewImage = document.getElementById('profileImagePreview');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                previewImage.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
