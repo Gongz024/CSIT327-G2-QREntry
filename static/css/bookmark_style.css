@@ -1,162 +1,205 @@
+/* ===============================
+   Base
+=============================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    transition: 0.3s all ease-in-out;
+    transition: all 0.3s ease;
 }
 
 body {
-    background: #f9f9f9;
+    background: #f4f7fb;
     color: #333;
+    overflow-x: hidden;
 }
 
-/* =============================== */
-/* Top Buttons: Back, Logout, Bookmark */
-/* =============================== */
-.back-btn-container {
-    position: absolute;
-    top: 20px;
-    left: 30px;
+/* ===============================
+   Navigation Buttons
+=============================== */
+.nav-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 40px;
+    position: sticky;
+    top: 0;
+    background: #ffffffd0;
+    backdrop-filter: blur(8px);
+    z-index: 10;
 }
 
-.back-btn {
-    background-color: #fff;
-    color: #103c6e;
-    border: 2px solid #103c6e;
-    border-radius: 25px;
-    padding: 8px 18px;
-    font-size: 14px;
-    font-weight: 600;
+.nav-btn {
     text-decoration: none;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.back-btn:hover {
-    background-color: #103c6e;
-    color: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-.logout-container {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-}
-
-.logout-btn {
-    background-color: #fff;
     color: #103c6e;
+    font-weight: 600;
     border: 2px solid #103c6e;
     border-radius: 25px;
-    padding: 8px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+    padding: 10px 22px;
+    font-size: 15px;
     transition: 0.3s;
 }
 
-.logout-btn:hover {
+.nav-btn:hover {
     background-color: #103c6e;
     color: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(16, 60, 110, 0.3);
 }
 
-.bookmark-container {
-    position: absolute;
-    top: 20px;
-    left: 150px; /* spaced after back button */
-}
-
-.bookmark-btn-top {
+.nav-btn.logout {
     background-color: #fff;
     color: #103c6e;
-    border: 2px solid #103c6e;
-    border-radius: 25px;
-    padding: 8px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: 0.3s;
 }
 
-.bookmark-btn-top:hover {
-    background-color: #103c6e;
-    color: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* =============================== */
-/* Hero Section */
-/* =============================== */
+/* ===============================
+   Hero Section
+=============================== */
 .hero {
-    background: #103c6e;
+    background: linear-gradient(135deg, #103c6e, #0b2f56);
     color: #fff;
-    padding: 60px 20px;
     text-align: center;
+    padding: 90px 20px 70px;
+    border-radius: 0 0 60px 60px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
-.hero h1 {
-    font-size: 42px;
+.hero-content h1 {
+    font-size: 2.8rem;
     font-weight: 700;
+    margin-bottom: 15px;
 }
 
-.hero p {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #ddd;
+.hero-content p {
+    font-size: 1.1rem;
+    color: #d8e4f2;
 }
 
-/* =============================== */
-/* Bookmarks Grid (cards) */
-/* =============================== */
+/* ===============================
+   Carousel Section
+=============================== */
 .events-section {
-    width: 90%;
-    max-width: 1100px;
-    margin: 50px auto;
+    width: 95%;
+    max-width: 1200px;
+    margin: 60px auto;
+    position: relative;
     text-align: center;
 }
 
-.bookmark-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
+.carousel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.event-card {
-    background: #fff;
+.bookmark-carousel {
+    display: flex;
+    gap: 30px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 40px 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #103c6e #e0e0e0;
+}
+
+.bookmark-carousel::-webkit-scrollbar {
+    height: 8px;
+}
+.bookmark-carousel::-webkit-scrollbar-thumb {
+    background: #103c6e;
     border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    padding: 25px;
-    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* ===============================
+   Carousel Buttons
+=============================== */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #103c6e;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.carousel-btn:hover {
+    background-color: #0b2f56;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-btn.prev {
+    left: -25px;
+}
+
+.carousel-btn.next {
+    right: -25px;
+}
+
+/* ===============================
+   Event Card
+=============================== */
+.event-card {
+    flex: 0 0 320px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-.event-card h3 {
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.event-header h3 {
     color: #103c6e;
-    font-size: 1.3rem;
-    margin-bottom: 10px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: left;
+}
+
+.event-icon {
+    font-size: 1.6rem;
+}
+
+.event-card p {
+    font-size: 0.95rem;
+    margin: 6px 0;
+    color: #555;
+    text-align: left;
 }
 
 .button-container {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 15px;
+    justify-content: space-around;
+    margin-top: 18px;
 }
 
 .view-btn, .remove-btn {
     text-decoration: none;
-    padding: 10px 18px;
     border-radius: 25px;
+    padding: 10px 20px;
     font-weight: 600;
-    transition: background 0.3s;
+    transition: 0.3s;
+    display: inline-block;
 }
 
 .view-btn {
@@ -165,37 +208,40 @@ body {
 }
 
 .view-btn:hover {
-    background-color: #0d2e55;
+    background-color: #0b2f56;
 }
 
 .remove-btn {
-    background-color: #ff5252;
+    background-color: #ff4e4e;
     color: #fff;
 }
 
 .remove-btn:hover {
-    background-color: #e04848;
+    background-color: #e04646;
 }
 
-/* No Results */
+/* ===============================
+   No Results
+=============================== */
 .no-results {
-    text-align: center;
+    font-size: 1.3rem;
+    color: #666;
     margin-top: 40px;
-    font-size: 1.2em;
-    color: #555;
 }
 
-/* Animations */
+/* ===============================
+   Animations
+=============================== */
 .fade-in {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(25px);
     animation: fadeInUp 1s ease-out forwards;
 }
 
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(25px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.delay-1 { animation-delay: 0.3s; }
-.delay-2 { animation-delay: 0.6s; }
+.delay-1 { animation-delay: 0.4s; }
+.delay-2 { animation-delay: 0.8s; }
