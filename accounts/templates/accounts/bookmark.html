@@ -5,70 +5,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookmarks</title>
+    <title>My Bookmarked Events</title>
     <link rel="stylesheet" href="{% static 'css/bookmark_style.css' %}">
 </head>
 <body>
 
-    <!-- Navigation Buttons -->
-    <div class="nav-buttons">
-        <a href="{% url 'accounts:home' %}" class="nav-btn">⬅ Back</a>
-        <a href="{% url 'accounts:bookmarks' %}" class="nav-btn">⭐ Bookmarks</a>
-        <a href="{% url 'accounts:confirm_logout' %}" class="nav-btn logout">Logout</a>
+    <!-- Hero Section -->
+    <div class="hero fade-in">
+        <h1>Your Starred Moments 🌟<br><span>Bookmarked Events</span></h1>
+        <p class="fade-in delay-1">
+            All your favorite events in one place — easy to find, easy to revisit.
+        </p>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero fade-in">
-        <div class="hero-content">
-            <h1>⭐ Bookmarked Events</h1>
-            <p>All your favorite events in one place — scroll, explore, and enjoy!</p>
+    <!-- ✅ Success Confirmation -->
+    {% if request.GET.added == 'true' %}
+    <div class="confirm-container fade-in">
+        <div class="success-icon">✓</div>
+        <h2>Event Bookmarked!</h2>
+        <p>Your event has been successfully added to your bookmarks.</p>
+        <div class="btn-group">
+            <a href="{% url 'accounts:home' %}" class="btn back-btn">🏠 Back to Home</a>
+            <a href="{% url 'accounts:bookmarks' %}" class="btn create-btn">View Bookmarks</a>
         </div>
-    </section>
+    </div>
+    {% endif %}
 
-    <!-- Bookmarks Section -->
-    <section class="events-section fade-in delay-1">
+    <!-- Bookmark Cards -->
+    <div class="events-section fade-in delay-1">
         {% if bookmarks %}
-            <div class="carousel-container">
-                <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
-                
-                <div class="bookmark-carousel" id="carousel">
-                    {% for b in bookmarks %}
-                    <div class="event-card">
-                        <div class="event-header">
-                            <h3>{{ b.event.event_name }}</h3>
-                            <span class="event-icon">🎫</span>
-                        </div>
-                        <p><strong>📍 Venue:</strong> {{ b.event.event_venue }}</p>
-                        <p><strong>📅 Date:</strong> {{ b.event.event_date|date:"F j, Y" }}</p>
-                        <div class="button-container">
-                            <a href="{% url 'accounts:event_detail' b.event.id %}" class="view-btn">View</a>
-                            <a href="{% url 'accounts:remove_bookmark' b.event.id %}" class="remove-btn">Remove</a>
-                        </div>
-                    </div>
-                    {% endfor %}
+        <div class="event-grid">
+            {% for b in bookmarks %}
+            <div class="event-card">
+                <h3>{{ b.event.event_name }}</h3>
+                <p><strong>📍 Venue:</strong> {{ b.event.event_venue }}</p>
+                <p><strong>📅 Date:</strong> {{ b.event.event_date|date:"F j, Y" }}</p>
+                <div class="button-container">
+                    <a href="{% url 'accounts:event_detail' b.event.id %}" class="view-btn">View Details</a>
+                    <a href="{% url 'accounts:remove_bookmark' b.event.id %}" class="remove-btn">Remove</a>
                 </div>
-
-                <button class="carousel-btn next" id="nextBtn">&#10095;</button>
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <p class="no-results fade-in delay-2">You haven't bookmarked any events yet.</p>
+        <div class="no-results fade-in delay-2">
+            <p>You haven't bookmarked any events yet.</p>
+            <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Home</a>
+        </div>
         {% endif %}
-    </section>
+    </div>
 
-    <script>
-        // Carousel Controls
-        const carousel = document.getElementById('carousel');
-        const nextBtn = document.getElementById('nextBtn');
-        const prevBtn = document.getElementById('prevBtn');
+    <!-- Top Buttons (Logout, Profile, Bookmark) -->
+    <div class="top-right-buttons fade-in">
+        <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
+        <a href="{% url 'accounts:user_profile' %}" class="profile-btn">
+            <img src="{% if request.user.profile.profile_picture %}
+                        {{ request.user.profile.profile_picture.url }}
+                      {% else %}
+                        /media/profile_pics/default.png
+                      {% endif %}" 
+                 alt="Profile">
+        </a>
+    </div>
 
-        nextBtn.addEventListener('click', () => {
-            carousel.scrollBy({ left: 300, behavior: 'smooth' });
-        });
-
-        prevBtn.addEventListener('click', () => {
-            carousel.scrollBy({ left: -300, behavior: 'smooth' });
-        });
-    </script>
+    <div class="bookmark-container fade-in">
+        <a href="{% url 'accounts:home' %}" class="bookmark-btn-top">🏠 Home</a>
+    </div>
 
 </body>
 </html>

@@ -22,6 +22,9 @@ urlpatterns = [
     path('event/<int:event_id>/delete/', views.delete_event_view, name='delete_event'),
     path('event/<int:event_id>/bookmark/', views.add_bookmark_view, name='add_bookmark'),
     path('bookmarks/', views.bookmarks_view, name='bookmarks'),
+
+    path('event/<int:event_id>/bookmark/confirmation/', views.confirmation_bookmark_view, name='confirmation_bookmark'),
+
     path('remove-bookmark/<int:event_id>/', views.remove_bookmark, name='remove_bookmark'),
     path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),
     path("profile/", views.user_profile_view, name="user_profile"),
