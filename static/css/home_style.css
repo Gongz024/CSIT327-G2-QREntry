@@ -11,6 +11,11 @@ body {
     color: #333;
 }
 
+/* Remove any leftover circular image styling */
+.profile-btn img {
+    display: none;
+}
+
 /* =============================== */
 /*  LOGOUT + BOOKMARK TOP BUTTONS  */
 /* =============================== */
@@ -288,7 +293,9 @@ body {
     right: 30px;
     display: flex;
     align-items: center;
-    gap: 10px; /* spacing between logout and profile */
+    gap: 10px;
+    min-width: 90px;
+    text-align: center; /* spacing between logout and profile */
 }
 
 /* Logout Button – keep same style */

@@ -1,6 +1,5 @@
 /* ===============================
    Base Styles
-=============================== */
 * {
     margin: 0;
     padding: 0;
@@ -12,12 +11,102 @@
 body {
     background: #f9f9f9;
     color: #333;
-    overflow-x: hidden;
 }
 
+/* =============================== */
+/* Top Buttons */
+/* =============================== */
+
+.top-right-buttons {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logout-btn {
+    background-color: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #103c6e;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* =============================== */
+/* Back Button */
+/* =============================== */
+.bookmark-container {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
+
+.bookmark-btn-top {
+    background-color: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.bookmark-btn-top:hover {
+    background-color: #103c6e;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* =============================== */
+/* Hero Section */
+/* =============================== */
+
+.hero {
+    background: #103c6e;
+    color: #fff;
+    padding: 70px 20px 60px;
+    text-align: center;
+    border-radius: 0 0 60px 60px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 1rem;
+    color: #d8e4f2;
+}
+
+/* =============================== */
+/* Event Grid Section */
+/* =============================== */
+
+.events-section {
+    width: 90%;
+    max-width: 1100px;
+    margin: 60px auto;
 /* ===============================
    Hero Section
-=============================== */
 .hero {
     background: #103c6e;
     color: #fff;
@@ -45,7 +134,6 @@ body {
 
 /* ===============================
    Events Section
-=============================== */
 .events-section {
     width: 90%;
     max-width: 1100px;
@@ -56,6 +144,9 @@ body {
 .events-section h2 {
     color: #103c6e;
     font-size: 28px;
+    margin-bottom: 25px;
+}
+
     margin-bottom: 30px;
 }
 
@@ -65,11 +156,24 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
     padding: 10px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.event-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
 }
 
 /* ===============================
    Event Cards
-=============================== */
 .event-card {
     background: #fff;
     border-radius: 12px;
@@ -87,6 +191,7 @@ body {
 .event-card h3 {
     color: #103c6e;
     font-size: 1.3rem;
+    margin-bottom: 15px;
     margin-bottom: 10px;
 }
 
@@ -96,6 +201,9 @@ body {
     margin: 5px 0;
 }
 
+/* =============================== */
+/* Buttons */
+/* =============================== */
 /* Buttons inside cards */
 .button-container {
     display: flex;
@@ -104,6 +212,7 @@ body {
 }
 
 .view-btn, .remove-btn {
+    display: inline-block;
     text-decoration: none;
     border-radius: 25px;
     padding: 10px 18px;
@@ -131,9 +240,15 @@ body {
     background-color: #e04646;
 }
 
+/* =============================== */
+/* No Results */
+/* =============================== */
+.no-results {
+    text-align: center;
+    margin-top: 50px;
+    color: #666;
 /* ===============================
    Top Buttons (Logout + Profile)
-=============================== */
 .top-right-buttons {
     position: absolute;
     top: 20px;
@@ -187,7 +302,6 @@ body {
 
 /* ===============================
    Top Bookmark/Home Button
-=============================== */
 .bookmark-container {
     position: absolute;
     top: 20px;
@@ -214,7 +328,6 @@ body {
 
 /* ===============================
    No Results Message
-=============================== */
 .no-results {
     margin-top: 50px;
     color: #555;
@@ -227,6 +340,9 @@ body {
     padding: 10px 20px;
     background-color: #103c6e;
     color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease;
     border-radius: 25px;
     text-decoration: none;
 }
@@ -235,9 +351,9 @@ body {
     background-color: #0d2e55;
 }
 
-/* ===============================
-   Animations
-=============================== */
+/* =============================== */
+/* Animations */
+/* =============================== */
 .fade-in {
     opacity: 0;
     transform: translateY(20px);
@@ -249,12 +365,13 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+.delay-1 { animation-delay: 0.3s; }
+.delay-2 { animation-delay: 0.6s; }
 .delay-1 { animation-delay: 0.4s; }
 .delay-2 { animation-delay: 0.8s; }
 
 /* ===============================
    Pop-in Checkmark Notification
-=============================== */
 .confirm-container {
     background: #fff;
     padding: 30px 40px;
