@@ -1,183 +1,143 @@
-/* ===============================
-   Base
-=============================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    transition: all 0.3s ease;
+    transition: 0.3s all ease-in-out;
 }
 
 body {
-    background: #f4f7fb;
+    background: #f9f9f9;
     color: #333;
-    overflow-x: hidden;
 }
 
-/* ===============================
-   Navigation Buttons
-=============================== */
-.nav-buttons {
+/* =============================== */
+/* Top Buttons */
+/* =============================== */
+
+.top-right-buttons {
+    position: absolute;
+    top: 20px;
+    right: 30px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    gap: 15px;
-    padding: 20px 40px;
-    position: sticky;
-    top: 0;
-    background: #ffffffd0;
-    backdrop-filter: blur(8px);
-    z-index: 10;
+    gap: 10px;
 }
 
-.nav-btn {
-    text-decoration: none;
+.logout-btn {
+    background-color: #fff;
     color: #103c6e;
-    font-weight: 600;
     border: 2px solid #103c6e;
     border-radius: 25px;
-    padding: 10px 22px;
-    font-size: 15px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
     transition: 0.3s;
 }
 
-.nav-btn:hover {
+.logout-btn:hover {
     background-color: #103c6e;
     color: #fff;
-    box-shadow: 0 4px 10px rgba(16, 60, 110, 0.3);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-.nav-btn.logout {
+/* =============================== */
+/* Back Button */
+/* =============================== */
+.bookmark-container {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
+
+.bookmark-btn-top {
     background-color: #fff;
     color: #103c6e;
+    border: 2px solid #103c6e;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-/* ===============================
-   Hero Section
-=============================== */
-.hero {
-    background: linear-gradient(135deg, #103c6e, #0b2f56);
+.bookmark-btn-top:hover {
+    background-color: #103c6e;
     color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* =============================== */
+/* Hero Section */
+/* =============================== */
+
+.hero {
+    background: #103c6e;
+    color: #fff;
+    padding: 70px 20px 60px;
     text-align: center;
-    padding: 90px 20px 70px;
     border-radius: 0 0 60px 60px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-.hero-content h1 {
-    font-size: 2.8rem;
+.hero h1 {
+    font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-.hero-content p {
-    font-size: 1.1rem;
+.hero p {
+    font-size: 1rem;
     color: #d8e4f2;
 }
 
-/* ===============================
-   Carousel Section
-=============================== */
+/* =============================== */
+/* Event Grid Section */
+/* =============================== */
+
 .events-section {
-    width: 95%;
-    max-width: 1200px;
+    width: 90%;
+    max-width: 1100px;
     margin: 60px auto;
-    position: relative;
     text-align: center;
 }
 
-.carousel-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.events-section h2 {
+    color: #103c6e;
+    font-size: 28px;
+    margin-bottom: 25px;
 }
 
-.bookmark-carousel {
-    display: flex;
-    gap: 30px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 40px 10px;
-    scrollbar-width: thin;
-    scrollbar-color: #103c6e #e0e0e0;
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 10px;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
-.bookmark-carousel::-webkit-scrollbar {
-    height: 8px;
-}
-.bookmark-carousel::-webkit-scrollbar-thumb {
-    background: #103c6e;
-    border-radius: 10px;
-}
-
-/* ===============================
-   Carousel Buttons
-=============================== */
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #103c6e;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 5;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.carousel-btn:hover {
-    background-color: #0b2f56;
-    transform: translateY(-50%) scale(1.1);
-}
-
-.carousel-btn.prev {
-    left: -25px;
-}
-
-.carousel-btn.next {
-    right: -25px;
-}
-
-/* ===============================
-   Event Card
-=============================== */
 .event-card {
-    flex: 0 0 320px;
     background: #fff;
-    border-radius: 16px;
-    padding: 25px 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .event-card:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-.event-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.event-header h3 {
+.event-card h3 {
     color: #103c6e;
-    font-size: 1.4rem;
-    font-weight: 700;
-    text-align: left;
-}
-
-.event-icon {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
 }
 
 .event-card p {
@@ -187,19 +147,22 @@ body {
     text-align: left;
 }
 
+/* =============================== */
+/* Buttons */
+/* =============================== */
 .button-container {
     display: flex;
-    justify-content: space-around;
-    margin-top: 18px;
+    justify-content: space-between;
+    margin-top: 15px;
 }
 
 .view-btn, .remove-btn {
+    display: inline-block;
     text-decoration: none;
     border-radius: 25px;
-    padding: 10px 20px;
+    padding: 10px 18px;
     font-weight: 600;
     transition: 0.3s;
-    display: inline-block;
 }
 
 .view-btn {
@@ -208,7 +171,7 @@ body {
 }
 
 .view-btn:hover {
-    background-color: #0b2f56;
+    background-color: #0d2e55;
 }
 
 .remove-btn {
@@ -220,28 +183,44 @@ body {
     background-color: #e04646;
 }
 
-/* ===============================
-   No Results
-=============================== */
+/* =============================== */
+/* No Results */
+/* =============================== */
 .no-results {
-    font-size: 1.3rem;
+    text-align: center;
+    margin-top: 50px;
     color: #666;
-    margin-top: 40px;
+    font-size: 1.2em;
 }
 
-/* ===============================
-   Animations
-=============================== */
+.back-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #103c6e;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background-color: #0d2e55;
+}
+
+/* =============================== */
+/* Animations */
+/* =============================== */
 .fade-in {
     opacity: 0;
-    transform: translateY(25px);
+    transform: translateY(20px);
     animation: fadeInUp 1s ease-out forwards;
 }
 
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(25px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.delay-1 { animation-delay: 0.4s; }
-.delay-2 { animation-delay: 0.8s; }
+.delay-1 { animation-delay: 0.3s; }
+.delay-2 { animation-delay: 0.6s; }
