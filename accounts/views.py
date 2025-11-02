@@ -185,12 +185,19 @@ def event_created_view(request):
     return render(request, 'accounts/event_created.html')
 
 
+# ✅ Modified: redirect to confirmation page after bookmarking
 @login_required
 def add_bookmark_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    # Prevent duplicate bookmarks
     Bookmark.objects.get_or_create(user=request.user, event=event)
-    return redirect("accounts:event_detail", event_id=event_id)
+    return redirect('accounts:confirmation_bookmark', event_id=event.id)
+
+
+# ✅ New confirmation page view
+@login_required
+def confirmation_bookmark_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    return render(request, 'accounts/confirmation_bookmark.html', {'event': event})
 
 
 @login_required
