@@ -21,6 +21,34 @@
     <div class="events-section fade-in delay-2">
         <h2>⭐ Saved Events</h2>
 
+    <title>My Bookmarked Events</title>
+    <link rel="stylesheet" href="{% static 'css/bookmark_style.css' %}">
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <div class="hero fade-in">
+        <h1>Your Starred Moments 🌟<br><span>Bookmarked Events</span></h1>
+        <p class="fade-in delay-1">
+            All your favorite events in one place — easy to find, easy to revisit.
+        </p>
+    </div>
+
+    <!-- ✅ Success Confirmation -->
+    {% if request.GET.added == 'true' %}
+    <div class="confirm-container fade-in">
+        <div class="success-icon">✓</div>
+        <h2>Event Bookmarked!</h2>
+        <p>Your event has been successfully added to your bookmarks.</p>
+        <div class="btn-group">
+            <a href="{% url 'accounts:home' %}" class="btn back-btn">🏠 Back to Home</a>
+            <a href="{% url 'accounts:bookmarks' %}" class="btn create-btn">View Bookmarks</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Bookmark Cards -->
+    <div class="events-section fade-in delay-1">
         {% if bookmarks %}
         <div class="event-grid">
             {% for b in bookmarks %}
@@ -57,6 +85,29 @@
         <a href="{% url 'accounts:home' %}" class="bookmark-btn-top">⬅ Back</a>
     </div>
 
+        <div class="no-results fade-in delay-2">
+            <p>You haven't bookmarked any events yet.</p>
+            <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Home</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Top Buttons (Logout, Profile, Bookmark) -->
+    <div class="top-right-buttons fade-in">
+        <a href="{% url 'accounts:confirm_logout' %}" class="logout-btn">Logout</a>
+        <a href="{% url 'accounts:user_profile' %}" class="profile-btn">
+            <img src="{% if request.user.profile.profile_picture %}
+                        {{ request.user.profile.profile_picture.url }}
+                      {% else %}
+                        /media/profile_pics/default.png
+                      {% endif %}" 
+                 alt="Profile">
+        </a>
+    </div>
+
+    <div class="bookmark-container fade-in">
+        <a href="{% url 'accounts:home' %}" class="bookmark-btn-top">🏠 Home</a>
+    </div>
 
 </body>
 </html>
