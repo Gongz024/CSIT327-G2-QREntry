@@ -37,7 +37,7 @@ urlpatterns = [
         email_template_name="accounts/password_reset_email.html",
         subject_template_name="accounts/password_reset_subject.txt",
         extra_email_context={"brand_name": "Event CIT"},
-        from_email="Event CIT <noreply.eventcit@gmail.com>",  # Optional custom sender name
+        from_email="Event CIT <johnharleycruz592@gmail.com>",  # Optional custom sender name
         success_url="/accounts/password_reset_done/",
     ),
     name="password_reset",
