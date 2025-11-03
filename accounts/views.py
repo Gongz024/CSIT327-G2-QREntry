@@ -9,6 +9,7 @@ from .forms import EventForm
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime  # ✅ fixed import
+import base64
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -21,6 +22,9 @@ from django.conf import settings
 from .models import Ticket
 from .models import Profile
 from .forms import UserUpdateForm, ProfileUpdateForm
+
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 
 @login_required
 def user_profile_view(request):
@@ -57,27 +61,39 @@ def user_profile_view(request):
 
 @login_required
 def avail_ticket(request, event_id):
+    import base64
+    import qrcode
+    from io import BytesIO
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+    from django.conf import settings
+    from django.contrib import messages
+    from django.shortcuts import render, redirect, get_object_or_404
+    from .models import Event, Ticket
+
     user = request.user
     event = get_object_or_404(Event, id=event_id)
 
-    # 1️⃣ Create or get existing ticket (prevent duplicate)
+    # 1️⃣ Create or get existing ticket
     ticket, created = Ticket.objects.get_or_create(
         user=user,
         event_name=event.event_name,
     )
 
-    # 2️⃣ Generate a QR Code (always unique for this ticket)
+    # 2️⃣ Generate QR Code
     qr_data = f"""
     Ticket ID: {ticket.qr_code_id}
     Event: {event.event_name}
     User: {user.username}
+    Email: {user.email}
     """
     qr = qrcode.make(qr_data.strip())
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
     qr_img = buffer.getvalue()
+    qr_base64 = base64.b64encode(qr_img).decode("utf-8")
 
-    # 3️⃣ Email Details
+    # 3️⃣ Prepare Email
     subject = f"🎟️ Your Ticket for {event.event_name}"
     message = (
         f"Hello {user.first_name or user.username},\n\n"
@@ -92,27 +108,45 @@ def avail_ticket(request, event_id):
         f"Thank you for using QREntry!"
     )
 
-    # 4️⃣ Send Email
+    # 4️⃣ Send Email using SendGrid
     try:
-        email = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=settings.EMAIL_HOST_USER,
-            to=[user.email],
-        )
-        email.attach(f"ticket_{ticket.qr_code_id}.png", qr_img, "image/png")
-        sent_count = email.send(fail_silently=False)
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
 
-        if sent_count == 1:
+        email = Mail(
+            from_email=settings.FROM_EMAIL,
+            to_emails=user.email,
+            subject=subject,
+            plain_text_content=message,
+        )
+
+        # ✅ FIXED — must be plural “attachments”
+        attached_qr = Attachment(
+            FileContent(qr_base64),
+            FileName(f"ticket_{ticket.qr_code_id}.png"),
+            FileType("image/png"),
+            Disposition("attachment")
+        )
+        email.add_attachment(attached_qr)
+
+        # 🔍 Debug print for Render logs
+        response = sg.send(email)
+        print("📨 SENDGRID RESPONSE:", response.status_code, response.body)
+
+        if response.status_code in [200, 202]:
             messages.success(request, "✅ Ticket email has been sent successfully!")
         else:
-            messages.warning(request, "⚠️ Email sending returned no confirmation — please check your inbox.")
+            messages.warning(
+                request,
+                f"⚠️ SendGrid returned {response.status_code}. "
+                f"Please check logs or verify sender identity."
+            )
 
     except Exception as e:
+        print("❌ Email sending error:", e)
         messages.error(request, f"❌ Failed to send email: {e}")
 
     # 5️⃣ Redirect to confirmation page
-    return redirect('accounts:qr_code_sent')
+    return redirect("accounts:qr_code_sent")
 
 
 @login_required
