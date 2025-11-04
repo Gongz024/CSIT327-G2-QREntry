@@ -122,3 +122,8 @@ FROM_EMAIL = os.getenv("FROM_EMAIL")
 # Optional for better logs
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 SENDGRID_ECHO_TO_STDOUT = True
+
+# ✅ Set the base URL for password reset links
+DEFAULT_DOMAIN = "https://csit327-g2-qrentry.onrender.com"  # replace with your Render domain
+DEFAULT_PROTOCOL = "https"
+DEFAULT_FROM_EMAIL = "Event CIT <johnharleycruz592@gmail.com>"

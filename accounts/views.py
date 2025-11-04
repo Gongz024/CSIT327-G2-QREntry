@@ -129,6 +129,7 @@ def avail_ticket(request, event_id):
         email.add_attachment(attached_qr)
 
         # 🔍 Debug print for Render logs
+        print("📧 Sending email to:", user.email)
         response = sg.send(email)
         print("📨 SENDGRID RESPONSE:", response.status_code, response.body)
 
