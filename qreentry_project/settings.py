@@ -61,9 +61,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'qreentry_project.wsgi.application'
 
-# -------------------------
-# Database (Supabase PostgreSQL)
-# -------------------------
 DATABASES = {
     "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
@@ -122,6 +119,10 @@ FROM_EMAIL = os.getenv("FROM_EMAIL")
 # Optional for better logs
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 SENDGRID_ECHO_TO_STDOUT = True
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 # ✅ Set the base URL for password reset links
 DEFAULT_DOMAIN = "https://csit327-g2-qrentry.onrender.com"  # replace with your Render domain
