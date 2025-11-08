@@ -69,15 +69,43 @@ def avail_ticket(request, event_id):
     from django.conf import settings
     from django.contrib import messages
     from django.shortcuts import render, redirect, get_object_or_404
-    from .models import Event, Ticket
+    from .models import Event, Ticket, Profile
+
+     
 
     user = request.user
     event = get_object_or_404(Event, id=event_id)
+    profile = get_object_or_404(Profile, user=user) # ❗ Get user profile
+    ticket_price = event.ticket_price
+
+    paymongo_key = settings.PAYMONGO_SECRET_KEY
+    print(f"DEBUG: Simulating PayMongo Payment Intent with key ending in: {paymongo_key[-4:]}")
+
+    # 1️⃣ Check Wallet Balance (Simulated Payment Intent)
+    if profile.wallet_balance < ticket_price:
+        messages.error(
+            request, 
+            f"❌ Transaction Failed: Insufficient balance. "
+            f"Your current balance is ₱{profile.wallet_balance:.2f}."
+        )
+        return redirect('accounts:event_detail', event_id=event_id)
+    
+    # 2️⃣ Perform Wallet Subtraction
+    profile.wallet_balance -= ticket_price
+    profile.save() # Save the new balance
+
+    # 3️⃣ Create or get existing ticket
+    ticket, created = Ticket.objects.get_or_create(
+        user=user,
+        event=event
+    )
+
+
 
     # 1️⃣ Create or get existing ticket
     ticket, created = Ticket.objects.get_or_create(
         user=user,
-        event_name=event.event_name,
+        event=event
     )
 
     # 2️⃣ Generate QR Code
@@ -98,6 +126,9 @@ def avail_ticket(request, event_id):
     message = (
         f"Hello {user.first_name or user.username},\n\n"
         f"You have successfully availed a ticket for '{event.event_name}'.\n\n"
+        # ❗ Add payment/balance info to the email
+        f"💳 Simulated Payment Intent Processed.\n"
+        f"💰 Your new wallet balance is: ₱{profile.wallet_balance:.2f}\n\n"
         f"Event Details:\n"
         f"📍 Venue: {event.event_venue}\n"
         f"📅 Date: {event.event_date}\n"
@@ -147,7 +178,19 @@ def avail_ticket(request, event_id):
         messages.error(request, f"❌ Failed to send email: {e}")
 
     # 5️⃣ Redirect to confirmation page
-    return redirect("accounts:qr_code_sent")
+    return redirect("accounts:qr_code_sent_with_balance", 
+                price=str(ticket_price), # Convert Decimal to string/slug
+                balance=str(profile.wallet_balance)) # Convert Decimal to string/slug
+
+
+@login_required
+def qr_code_sent_with_balance_view(request, price, balance):
+    # This view is for showing the post-purchase confirmation/balance
+    return render(request, 'accounts/qr_code_sent.html', {
+        'price': price,
+        'balance': balance,
+        'transaction_success': True
+    })
 
 
 @login_required
