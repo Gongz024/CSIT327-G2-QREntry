@@ -11,7 +11,6 @@ urlpatterns = [
     path("home/", views.home_view, name="home"),
     path('event/<int:event_id>/', views.event_detail_view, name='event_detail'),
     path('event/<int:event_id>/avail-ticket/', views.avail_ticket, name='avail_ticket'),
-    path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),   
     path("logout/", views.logout_view, name="logout"),
     path("confirm_logout/", views.confirm_logout_view, name="confirm_logout"),
     path("organizer/", views.organizer_view, name="organizer"),
@@ -27,8 +26,17 @@ urlpatterns = [
     path('event/<int:event_id>/bookmark/confirmation/', views.confirmation_bookmark_view, name='confirmation_bookmark'),
 
     path('remove-bookmark/<int:event_id>/', views.remove_bookmark, name='remove_bookmark'),
-    path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),
+    
     path("profile/", views.user_profile_view, name="user_profile"),
+
+    path(
+    'qr-code-sent/<str:price>/<str:balance>/',  # Use str instead of slug
+    views.qr_code_sent_with_balance_view, 
+    name='qr_code_sent_with_balance'
+    ),
+
+    
+    path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),
 
     # Forgot Password
     path(

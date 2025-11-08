@@ -61,9 +61,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'qreentry_project.wsgi.application'
 
+DATABASE_URL_ENV = os.getenv("DATABASE_URL")
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
+        default=DATABASE_URL_ENV,
         conn_max_age=600,
         ssl_require=True,
     )
@@ -128,3 +130,6 @@ logging.basicConfig(level=logging.DEBUG)
 DEFAULT_DOMAIN = "csit327-g2-qrentry.onrender.com"  # replace with your Render domain
 DEFAULT_PROTOCOL = "https"
 DEFAULT_FROM_EMAIL = "Event CIT <johnharleycruz592@gmail.com>"
+
+PAYMONGO_SECRET_KEY = os.getenv("PAYMONGO_SECRET_KEY")
+PAYMONGO_PUBLIC_KEY = os.getenv("PAYMONGO_PUBLIC_KEY")
