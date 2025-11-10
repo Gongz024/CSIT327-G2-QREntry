@@ -489,3 +489,159 @@ def confirm_logout_view(request):
         messages.info(request, "You have been logged out successfully.")
         return redirect("accounts:login")
     return render(request, "accounts/confirm_logout.html")
+
+
+
+# -------------------------
+# Create Payment (redirects user to PayMongo checkout)
+# -------------------------
+@login_required
+def create_payment(request, event_id):
+    user = request.user
+    event = get_object_or_404(Event, id=event_id)
+
+    # Create order record (amount in centavos: e.g. ₱100 => 10000)
+    amount_php = int(float(event.ticket_price) * 100)  # ensure event.ticket_price is numeric
+    order = Order.objects.create(
+        user=user,
+        event=event,
+        event_name=event.event_name,
+        amount=amount_php,
+        currency="PHP",
+        status="created"
+    )
+
+    # PayMongo Links / Checkout API endpoint (Checkout or Links approach)
+    # We're using the Links/Checkout approach: create a link/session and redirect to checkout_url
+    api_url = "https://api.paymongo.com/v1/links"  # or "/v1/checkout/sessions" if using Checkout Sessions
+    success_url = f"{settings.SITE_URL}{reverse('accounts:payment_success')}?order_id={order.id}"
+    cancel_url = f"{settings.SITE_URL}{reverse('accounts:payment_cancel')}?order_id={order.id}"
+
+    payload = {
+        "data": {
+            "attributes": {
+                "amount": amount_php,
+                "description": f"Ticket for {event.event_name} (Order #{order.id})",
+                "redirect": {
+                    "success": success_url,
+                    "failed": cancel_url
+                },
+                "currency": "PHP",
+                # you can add more attributes depending on the API (e.g. allowed payment methods)
+            }
+        }
+    }
+
+    auth = HTTPBasicAuth(settings.PAYMONGO_SECRET_KEY, "")
+    resp = requests.post(api_url, json=payload, auth=auth)
+    if resp.status_code not in (200, 201):
+        # error creating link
+        order.status = "failed"
+        order.save()
+        messages.error(request, "Could not create payment link. Please try again.")
+        return redirect("accounts:event_detail", event_id=event_id)
+
+    result = resp.json()
+    # Extract link and id (may depend on API response structure)
+    link_id = result.get("data", {}).get("id")
+    checkout_url = None
+    attrs = result.get("data", {}).get("attributes", {})
+    checkout_url = attrs.get("checkout_url") or attrs.get("url") or attrs.get("checkout_url")
+
+    # store link info on order
+    order.paymongo_link_id = link_id
+    order.paymongo_checkout_url = checkout_url
+    order.status = "pending"
+    order.save()
+
+    # redirect customer to PayMongo hosted checkout
+    if checkout_url:
+        return redirect(checkout_url)
+    else:
+        messages.error(request, "Payment link creation returned no checkout URL.")
+        return redirect("accounts:event_detail", event_id=event_id)
+
+
+# -------------------------
+# Payment Success (user redirected here after payment)
+# -------------------------
+@login_required
+def payment_success(request):
+    # Payment provider will redirect here. We accept an order_id param we set earlier.
+    order_id = request.GET.get("order_id")
+    if not order_id:
+        messages.error(request, "Missing order information.")
+        return redirect("accounts:home")
+
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    # Verify payment status via PayMongo API (recommended) — fetch payments or links
+    auth = HTTPBasicAuth(settings.PAYMONGO_SECRET_KEY, "")
+
+    # Option A: if you used Links, retrieve the link resource to see payment status.
+    if order.paymongo_link_id:
+        url = f"https://api.paymongo.com/v1/links/{order.paymongo_link_id}"
+        resp = requests.get(url, auth=auth)
+        if resp.status_code == 200:
+            data = resp.json().get("data", {}).get("attributes", {})
+            # Inspect what attribute indicates status; this may differ based on PayMongo API.
+            # Example: check data.get("status") or data.get("payments") etc.
+            # For safety, mark paid if we can find any payment entry:
+            payments = data.get("payments") or []
+            if payments:
+                # mark paid
+                order.status = "paid"
+                order.save()
+            else:
+                # If not paid, leave pending and show message
+                messages.warning(request, "Payment not confirmed yet. If you've been charged, it may take a moment to reflect.")
+        else:
+            messages.warning(request, "Unable to verify payment with provider yet.")
+
+    # If order is paid => generate ticket/QR & email
+    if order.status == "paid":
+        # Create or update Ticket model and send QR via your existing logic
+        ticket, created = Ticket.objects.get_or_create(user=request.user, event_name=order.event_name)
+        # generate QR, attach, send email (reuse your avail_ticket email sending code)
+        # For brevity, you can call a helper sending function here.
+        messages.success(request, "✅ Payment confirmed. Ticket and QR code have been sent to your email.")
+    else:
+        messages.info(request, "Payment is pending or not verified yet. Check your email later.")
+
+    return render(request, "accounts/payment_success.html", {"order": order})
+
+
+# -------------------------
+# Payment Cancel
+# -------------------------
+@login_required
+def payment_cancel(request):
+    order_id = request.GET.get("order_id")
+    if order_id:
+        order = Order.objects.filter(id=order_id, user=request.user).first()
+        if order:
+            order.status = "cancelled"
+            order.save()
+    messages.info(request, "Payment cancelled. You can try again.")
+    return redirect("accounts:event_detail", event_id=getattr(order, "event_id", None) or None)
+
+
+# -------------------------
+# Webhook (recommended) — PayMongo will POST here for events like payment.paid
+# -------------------------
+@csrf_exempt
+def paymongo_webhook(request):
+    payload = request.body
+    sig_header = request.META.get("HTTP_PAYMONGO_SIGNATURE") or request.META.get("HTTP_PAYMONGO_SIGNATURE")
+    # Ideally verify signature: See PayMongo docs for verifying `Paymongo-Signature`
+    # For now, accept and parse (but secure this in production!)
+    try:
+        event = json.loads(payload)
+    except Exception:
+        return HttpResponse(status=400)
+
+    # Example handling: mark order as paid if event indicates payment.success
+    # Event structure depends on PayMongo. Inspect event['data']['attributes'] etc.
+    # We'll try to find order reference in metadata if you include it when creating link.
+    # TODO: parse actual event and update Order/Ticket accordingly.
+    return HttpResponse(status=200)

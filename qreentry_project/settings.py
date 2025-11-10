@@ -3,6 +3,13 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
+
+# PayMongo keys (from .env)
+PAYMONGO_PUBLIC_KEY = os.getenv("PAYMONGO_PUBLIC_KEY")
+PAYMONGO_SECRET_KEY = os.getenv("PAYMONGO_SECRET_KEY")
+# Your site URL used for redirect/callback (change to your ngrok/public URL in dev if using webhooks)
+SITE_URL = os.getenv("SITE_URL", "http://127.0.0.1:8080")
+
 # Load environment variables
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")

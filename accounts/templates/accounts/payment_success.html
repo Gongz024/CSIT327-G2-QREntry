@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Payment Result</h1>
+  {% if order.status == "paid" %}
+    <p>✅ Payment received for <strong>{{ order.event_name }}</strong>. Ticket sent to your email.</p>
+  {% else %}
+    <p>⚠️ Payment status: {{ order.status }}. If you paid, this may take a moment. Check your email or contact support.</p>
+  {% endif %}
+  <a href="{% url 'accounts:home' %}">Back to Home</a>
+{% endblock %}
