@@ -9,6 +9,7 @@ from .forms import EventForm
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime  # ✅ fixed import
+import base64
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -22,12 +23,8 @@ from .models import Ticket
 from .models import Profile
 from .forms import UserUpdateForm, ProfileUpdateForm
 
-import requests
-from requests.auth import HTTPBasicAuth
-from django.urls import reverse
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Order
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 
 @login_required
 def user_profile_view(request):
@@ -64,31 +61,74 @@ def user_profile_view(request):
 
 @login_required
 def avail_ticket(request, event_id):
+    import base64
+    import qrcode
+    from io import BytesIO
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+    from django.conf import settings
+    from django.contrib import messages
+    from django.shortcuts import render, redirect, get_object_or_404
+    from .models import Event, Ticket, Profile
+
+     
+
     user = request.user
     event = get_object_or_404(Event, id=event_id)
+    profile = get_object_or_404(Profile, user=user) # ❗ Get user profile
+    ticket_price = event.ticket_price
 
-    # 1️⃣ Create or get existing ticket (prevent duplicate)
+    paymongo_key = settings.PAYMONGO_SECRET_KEY
+    print(f"DEBUG: Simulating PayMongo Payment Intent with key ending in: {paymongo_key[-4:]}")
+
+    # 1️⃣ Check Wallet Balance (Simulated Payment Intent)
+    if profile.wallet_balance < ticket_price:
+        messages.error(
+            request, 
+            f"❌ Transaction Failed: Insufficient balance. "
+            f"Your current balance is ₱{profile.wallet_balance:.2f}."
+        )
+        return redirect('accounts:event_detail', event_id=event_id)
+    
+    # 2️⃣ Perform Wallet Subtraction
+    profile.wallet_balance -= ticket_price
+    profile.save() # Save the new balance
+
+    # 3️⃣ Create or get existing ticket
     ticket, created = Ticket.objects.get_or_create(
         user=user,
-        event_name=event.event_name,
+        event=event
     )
 
-    # 2️⃣ Generate a QR Code (always unique for this ticket)
+
+
+    # 1️⃣ Create or get existing ticket
+    ticket, created = Ticket.objects.get_or_create(
+        user=user,
+        event=event
+    )
+
+    # 2️⃣ Generate QR Code
     qr_data = f"""
     Ticket ID: {ticket.qr_code_id}
     Event: {event.event_name}
     User: {user.username}
+    Email: {user.email}
     """
     qr = qrcode.make(qr_data.strip())
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
     qr_img = buffer.getvalue()
+    qr_base64 = base64.b64encode(qr_img).decode("utf-8")
 
-    # 3️⃣ Email Details
+    # 3️⃣ Prepare Email
     subject = f"🎟️ Your Ticket for {event.event_name}"
     message = (
         f"Hello {user.first_name or user.username},\n\n"
         f"You have successfully availed a ticket for '{event.event_name}'.\n\n"
+        # ❗ Add payment/balance info to the email
+        f"💳 Simulated Payment Intent Processed.\n"
+        f"💰 Your new wallet balance is: ₱{profile.wallet_balance:.2f}\n\n"
         f"Event Details:\n"
         f"📍 Venue: {event.event_venue}\n"
         f"📅 Date: {event.event_date}\n"
@@ -99,27 +139,58 @@ def avail_ticket(request, event_id):
         f"Thank you for using QREntry!"
     )
 
-    # 4️⃣ Send Email
+    # 4️⃣ Send Email using SendGrid
     try:
-        email = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=settings.EMAIL_HOST_USER,
-            to=[user.email],
-        )
-        email.attach(f"ticket_{ticket.qr_code_id}.png", qr_img, "image/png")
-        sent_count = email.send(fail_silently=False)
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
 
-        if sent_count == 1:
+        email = Mail(
+            from_email=settings.FROM_EMAIL,
+            to_emails=user.email,
+            subject=subject,
+            plain_text_content=message,
+        )
+
+        # ✅ FIXED — must be plural “attachments”
+        attached_qr = Attachment(
+            FileContent(qr_base64),
+            FileName(f"ticket_{ticket.qr_code_id}.png"),
+            FileType("image/png"),
+            Disposition("attachment")
+        )
+        email.add_attachment(attached_qr)
+
+        # 🔍 Debug print for Render logs
+        print("📧 Sending email to:", user.email)
+        response = sg.send(email)
+        print("📨 SENDGRID RESPONSE:", response.status_code, response.body)
+
+        if response.status_code in [200, 202]:
             messages.success(request, "✅ Ticket email has been sent successfully!")
         else:
-            messages.warning(request, "⚠️ Email sending returned no confirmation — please check your inbox.")
+            messages.warning(
+                request,
+                f"⚠️ SendGrid returned {response.status_code}. "
+                f"Please check logs or verify sender identity."
+            )
 
     except Exception as e:
+        print("❌ Email sending error:", e)
         messages.error(request, f"❌ Failed to send email: {e}")
 
     # 5️⃣ Redirect to confirmation page
-    return redirect('accounts:qr_code_sent')
+    return redirect("accounts:qr_code_sent_with_balance", 
+                price=str(ticket_price), # Convert Decimal to string/slug
+                balance=str(profile.wallet_balance)) # Convert Decimal to string/slug
+
+
+@login_required
+def qr_code_sent_with_balance_view(request, price, balance):
+    # This view is for showing the post-purchase confirmation/balance
+    return render(request, 'accounts/qr_code_sent.html', {
+        'price': price,
+        'balance': balance,
+        'transaction_success': True
+    })
 
 
 @login_required
@@ -192,12 +263,19 @@ def event_created_view(request):
     return render(request, 'accounts/event_created.html')
 
 
+# ✅ Modified: redirect to confirmation page after bookmarking
 @login_required
 def add_bookmark_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    # Prevent duplicate bookmarks
     Bookmark.objects.get_or_create(user=request.user, event=event)
-    return redirect("accounts:event_detail", event_id=event_id)
+    return redirect('accounts:confirmation_bookmark', event_id=event.id)
+
+
+# ✅ New confirmation page view
+@login_required
+def confirmation_bookmark_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    return render(request, 'accounts/confirmation_bookmark.html', {'event': event})
 
 
 @login_required

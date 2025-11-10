@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmark Confirmation</title>
+    <link rel="stylesheet" href="{% static 'css/confirmation_bookmark_style.css' %}">
+</head>
+<body>
+
+    <div class="confirmation-container fade-in">
+        <div class="confirmation-card">
+            <h1>✅ Event Successfully Bookmarked!</h1>
+            <p>Your selected event has been added to your bookmarks.</p>
+
+            <a href="{% url 'accounts:event_detail' event.id %}" class="confirm-btn">Confirm</a>
+        </div>
+    </div>
+
+</body>
+</html>

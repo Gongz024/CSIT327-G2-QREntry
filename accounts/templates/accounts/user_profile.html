@@ -27,20 +27,6 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <!-- Profile Picture -->
-                <div class="profile-picture-section">
-                    <!-- ✅ Display uploaded profile or default.png -->
-                    <img 
-                        id="profileImagePreview" 
-                        src="{% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}/media/profile_pics/default.png{% endif %}" 
-                        alt="Profile Picture" 
-                        class="profile-pic"
-                    >
-
-                    <label for="id_profile_picture" class="upload-btn">Change Profile Photo</label>
-                    <input type="file" name="profile_picture" id="id_profile_picture" accept="image/*" style="display: none;">
-                </div>
-
                 <!-- User Info Fields -->
                 <div class="form-fields">
                     <div class="input-group">

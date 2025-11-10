@@ -1,11 +1,38 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Sent</title>
+    <title>Ticket Confirmation</title>
     <link rel="stylesheet" href="{% static 'css/qr_code_sent.css' %}">
+    <style>
+        /* Minimal inline CSS for clarity on the new feature */
+        .transaction-summary {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .transaction-summary p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+        .transaction-summary strong {
+            display: inline-block;
+            width: 150px; /* Aligns the colons */
+        }
+        .new-balance {
+            color: #28a745; /* Green for success/balance */
+            font-weight: bold;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="back-btn-container">
@@ -13,10 +40,26 @@
     </div>
 
     <div class="qr-container">
-        <h1>🎉 Ticket Successfully Availed!</h1>
-        <p class="message">
-            Your ticket has been successfully availed, and your unique QR code has been sent to your email.
-        </p>
+        <h1>🎉 Ticket Purchase Successful!</h1>
+        
+        {% if transaction_success %}
+            <p class="message">
+                Your **simulated payment intent** was successful. Here is your transaction summary:
+            </p>
+            <div class="transaction-summary">
+                <p><strong>Ticket Price:</strong> <span style="float: right;">**₱{{ price|floatformat:2 }}**</span></p>
+                <div class="new-balance">
+                    <p><strong>Remaining Wallet Balance:</strong> <span style="float: right;">**₱{{ balance|floatformat:2 }}**</span></p>
+                </div>
+            </div>
+            <p class="message">
+                Your unique QR code and ticket details have been sent to your email ({{ user.email }}).
+            </p>
+        {% else %}
+            <p class="message">
+                Your ticket has been successfully availed, and your unique QR code has been sent to your email.
+            </p>
+        {% endif %}
 
         <div class="info-box">
             <p><strong>Note:</strong> Please check your inbox (or spam folder) for the email containing your QR code.</p>
@@ -24,7 +67,6 @@
 
         <div class="button-container">
             <a href="{% url 'accounts:home' %}" class="buy-btn">Back to Home</a>
-            <a href="{% url 'accounts:bookmarks' %}" class="bookmark-btn">View Saved Events</a>
         </div>
     </div>
 </body>

@@ -36,8 +36,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Keep for serving static files
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,12 +68,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'qreentry_project.wsgi.application'
 
-# -------------------------
-# Database (Supabase PostgreSQL)
-# -------------------------
+DATABASE_URL_ENV = os.getenv("DATABASE_URL")
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
+        default=DATABASE_URL_ENV,
         conn_max_age=600,
         ssl_require=True,
     )
@@ -114,16 +113,30 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/images/'
+MEDIA_ROOT = BASE_DIR / 'images'
 
 # -------------------------
 # Gmail Email Configuration
 # -------------------------
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "QREntry Support <noreply@qreentry.local>")
+
+# 📧 SendGrid Configuration (Render-safe)
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+FROM_EMAIL = os.getenv("FROM_EMAIL")
+
+# Optional for better logs
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+SENDGRID_ECHO_TO_STDOUT = True
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+# ✅ Set the base URL for password reset links
+DEFAULT_DOMAIN = "csit327-g2-qrentry.onrender.com"  # replace with your Render domain
+DEFAULT_PROTOCOL = "https"
+DEFAULT_FROM_EMAIL = "Event CIT <johnharleycruz592@gmail.com>"
+
+PAYMONGO_SECRET_KEY = os.getenv("PAYMONGO_SECRET_KEY")
+PAYMONGO_PUBLIC_KEY = os.getenv("PAYMONGO_PUBLIC_KEY")

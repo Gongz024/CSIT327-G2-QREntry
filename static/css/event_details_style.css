@@ -14,6 +14,27 @@ body {
     color: #333;
 }
 
+/* Message styling */
+        .bookmark-message {
+            display: none;
+            color: #28a745;
+            margin-top: 15px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .bookmark-message.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Transparent button after bookmarking */
+        .bookmark-btn.transparent {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
 /* ============================= */
 /* Back Button */
 /* ============================= */
@@ -176,3 +197,5 @@ body {
         transform: translateY(0);
     }
 }
+
+

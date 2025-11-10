@@ -1,3 +1,6 @@
+/* ================================ */
+/* Base Styles */
+/* ================================ */
 * {
     margin: 0;
     padding: 0;
@@ -12,40 +15,19 @@ body {
 }
 
 /* =============================== */
-/* Top Buttons: Back, Logout, Bookmark */
+/* Top Buttons (Logout + Profile) */
 /* =============================== */
-.back-btn-container {
-    position: absolute;
-    top: 20px;
-    left: 30px;
-}
-
-.back-btn {
-    background-color: #fff;
-    color: #103c6e;
-    border: 2px solid #103c6e;
-    border-radius: 25px;
-    padding: 8px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.back-btn:hover {
-    background-color: #103c6e;
-    color: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
-
-.logout-container {
+.top-right-buttons {
     position: absolute;
     top: 20px;
     right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.logout-btn {
+.logout-btn,
+.profile-btn {
     background-color: #fff;
     color: #103c6e;
     border: 2px solid #103c6e;
@@ -54,19 +36,26 @@ body {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+    text-decoration: none;
     transition: 0.3s;
+    display: inline-block;
+    text-align: center;
 }
 
-.logout-btn:hover {
+.logout-btn:hover,
+.profile-btn:hover {
     background-color: #103c6e;
     color: #fff;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* =============================== */
+/* Back / Home Button */
+/* =============================== */
 .bookmark-container {
     position: absolute;
     top: 20px;
-    left: 150px; /* spaced after back button */
+    left: 30px;
 }
 
 .bookmark-btn-top {
@@ -77,8 +66,8 @@ body {
     padding: 8px 18px;
     font-size: 14px;
     font-weight: 600;
-    text-decoration: none;
     cursor: pointer;
+    text-decoration: none;
     transition: 0.3s;
 }
 
@@ -94,23 +83,30 @@ body {
 .hero {
     background: #103c6e;
     color: #fff;
-    padding: 60px 20px;
+    padding: 70px 20px;
     text-align: center;
+    border-radius: 0 0 50px 50px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 .hero h1 {
-    font-size: 42px;
+    font-size: 40px;
     font-weight: 700;
 }
 
+.hero h1 span {
+    font-weight: 400;
+    color: #d9e3f0;
+}
+
 .hero p {
-    margin-top: 10px;
     font-size: 16px;
-    color: #ddd;
+    color: #d9e3f0;
+    margin-top: 15px;
 }
 
 /* =============================== */
-/* Bookmarks Grid (cards) */
+/* Events Section */
 /* =============================== */
 .events-section {
     width: 90%;
@@ -119,22 +115,35 @@ body {
     text-align: center;
 }
 
-.bookmark-grid {
+.events-section h2 {
+    color: #103c6e;
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+.event-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
+    padding: 10px;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
+/* =============================== */
+/* Event Cards */
+/* =============================== */
 .event-card {
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
@@ -144,19 +153,29 @@ body {
     margin-bottom: 10px;
 }
 
+.event-card p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* =============================== */
+/* Buttons in Cards */
+/* =============================== */
 .button-container {
     display: flex;
-    justify-content: center;
-    gap: 15px;
+    justify-content: space-between;
     margin-top: 15px;
 }
 
 .view-btn, .remove-btn {
     text-decoration: none;
-    padding: 10px 18px;
     border-radius: 25px;
+    padding: 10px 18px;
     font-weight: 600;
-    transition: background 0.3s;
+    transition: 0.3s;
+    text-align: center;
+    display: inline-block;
 }
 
 .view-btn {
@@ -169,23 +188,75 @@ body {
 }
 
 .remove-btn {
-    background-color: #ff5252;
+    background-color: #ff4e4e;
     color: #fff;
 }
 
 .remove-btn:hover {
-    background-color: #e04848;
+    background-color: #e04646;
 }
 
+/* =============================== */
 /* No Results */
+/* =============================== */
 .no-results {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 50px;
+    color: #666;
     font-size: 1.2em;
-    color: #555;
 }
 
+.back-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #103c6e;
+    color: white;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.back-btn:hover {
+    background-color: #0d2e55;
+}
+
+/* =============================== */
+/* Pop-in Confirmation */
+/* =============================== */
+.confirm-container {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.success-icon {
+    background: #28a745;
+    color: white;
+    font-size: 28px;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    animation: popIn 0.6s ease-out forwards;
+}
+
+/* =============================== */
 /* Animations */
+/* =============================== */
 .fade-in {
     opacity: 0;
     transform: translateY(20px);
@@ -197,5 +268,11 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.delay-1 { animation-delay: 0.3s; }
-.delay-2 { animation-delay: 0.6s; }
+.delay-1 { animation-delay: 0.4s; }
+.delay-2 { animation-delay: 0.8s; }
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}

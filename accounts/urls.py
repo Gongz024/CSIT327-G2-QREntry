@@ -1,6 +1,7 @@
 from django.urls import path, reverse_lazy
 from . import views
 from django.contrib.auth import views as auth_views
+from django.conf import settings
 
 app_name = "accounts"
 
@@ -10,7 +11,6 @@ urlpatterns = [
     path("home/", views.home_view, name="home"),
     path('event/<int:event_id>/', views.event_detail_view, name='event_detail'),
     path('event/<int:event_id>/avail-ticket/', views.avail_ticket, name='avail_ticket'),
-    path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),   
     path("logout/", views.logout_view, name="logout"),
     path("confirm_logout/", views.confirm_logout_view, name="confirm_logout"),
     path("organizer/", views.organizer_view, name="organizer"),
@@ -29,23 +29,39 @@ urlpatterns = [
     path('event/<int:event_id>/delete/', views.delete_event_view, name='delete_event'),
     path('event/<int:event_id>/bookmark/', views.add_bookmark_view, name='add_bookmark'),
     path('bookmarks/', views.bookmarks_view, name='bookmarks'),
+
+    path('event/<int:event_id>/bookmark/confirmation/', views.confirmation_bookmark_view, name='confirmation_bookmark'),
+
     path('remove-bookmark/<int:event_id>/', views.remove_bookmark, name='remove_bookmark'),
-    path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),
+    
     path("profile/", views.user_profile_view, name="user_profile"),
+
+    path(
+    'qr-code-sent/<str:price>/<str:balance>/',  # Use str instead of slug
+    views.qr_code_sent_with_balance_view, 
+    name='qr_code_sent_with_balance'
+    ),
+
+    
+    path('qr-code-sent/', views.qr_code_sent_view, name='qr_code_sent'),
 
     # Forgot Password
     path(
         "password_reset/",
-    auth_views.PasswordResetView.as_view(
-        template_name="accounts/password_reset.html",
-        email_template_name="accounts/password_reset_email.html",
-        subject_template_name="accounts/password_reset_subject.txt",
-        extra_email_context={"brand_name": "Event CIT"},
-        from_email="Event CIT <noreply.eventcit@gmail.com>",  # Optional custom sender name
-        success_url="/accounts/password_reset_done/",
+        auth_views.PasswordResetView.as_view(
+            template_name="accounts/password_reset.html",
+            email_template_name="accounts/password_reset_email.html",
+            subject_template_name="accounts/password_reset_subject.txt",
+            extra_email_context={
+                "brand_name": "Event CIT",
+                "domain": getattr(settings, "DEFAULT_DOMAIN", "qreentry-7.onrender.com"),  # ✅ For Render domain
+                "protocol": getattr(settings, "DEFAULT_PROTOCOL", "https"),  # ✅ Ensure HTTPS links
+            },
+            from_email="Event CIT <johnharleycruz592@gmail.com>",  # Sender name still works with SendGrid
+            success_url="/accounts/password_reset_done/",
+        ),
+        name="password_reset",
     ),
-    name="password_reset",
-),
     path(
         "password_reset_done/",
         auth_views.PasswordResetDoneView.as_view(
