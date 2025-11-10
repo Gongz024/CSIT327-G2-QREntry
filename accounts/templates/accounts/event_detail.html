@@ -28,7 +28,8 @@
         </div>
 
         <div class="button-container">
-              <a href="{% url 'accounts:avail_ticket' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
+             <a href="{% url 'accounts:create_payment' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
+
 
             {% if is_bookmarked %}
                 <button class="bookmark-btn bookmarked" disabled>Bookmarked</button>

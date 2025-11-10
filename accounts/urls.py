@@ -15,6 +15,13 @@ urlpatterns = [
     path("confirm_logout/", views.confirm_logout_view, name="confirm_logout"),
     path("organizer/", views.organizer_view, name="organizer"),
 
+    path('event/<int:event_id>/create-payment/', views.create_payment, name='create_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    # optional webhook endpoint (for PayMongo to call)
+    path('webhooks/paymongo/', views.paymongo_webhook, name='paymongo_webhook'),
+
+
     path('organizer/create-event/', views.create_event_view, name='create_event'),
     path('event-created/', views.event_created_view, name='event_created'),
     path('event/', views.view_events_view, name='event'),

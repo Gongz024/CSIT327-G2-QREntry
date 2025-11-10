@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
 from django.contrib.auth.models import User
 import uuid
 
@@ -54,3 +56,27 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return f"{self.user.username} bookmarked {self.event.event_name}"
+
+
+# ✅ Payment method integration model
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ("created", "Created"),
+        ("pending", "Pending"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event_name = models.CharField(max_length=255)
+    event = models.ForeignKey("Event", on_delete=models.CASCADE, null=True, blank=True)
+    amount = models.IntegerField(help_text="Amount in centavos", default=0)  # PHP centavos
+    currency = models.CharField(max_length=10, default="PHP")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="created")
+    paymongo_link_id = models.CharField(max_length=255, null=True, blank=True)
+    paymongo_checkout_url = models.URLField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Order #{self.id} - {self.event_name} - {self.user}"
