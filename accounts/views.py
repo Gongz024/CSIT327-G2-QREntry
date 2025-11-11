@@ -1,50 +1,37 @@
 # accounts/views.py
-from asyncio import events
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from .models import Event, Bookmark
-from .forms import EventForm
-from .forms import RegistrationForm
+from .models import Event, Bookmark, Ticket, Profile
+from .forms import RegistrationForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
-from datetime import datetime  # ✅ fixed import
-import base64
-
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-
+from datetime import datetime
+from django.db import transaction
+from django.db.models import F
 import qrcode
 from io import BytesIO
-from django.core.mail import EmailMessage
-from django.conf import settings
-from .models import Ticket
-from .models import Profile
-from .forms import UserUpdateForm, ProfileUpdateForm
-
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+from django.conf import settings
+from decimal import Decimal
 
 @login_required
 def user_profile_view(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
 
-    # 🧹 Check if user clicked the "Remove Profile Photo" button
     if request.method == 'POST' and 'remove_profile' in request.POST:
         if profile.profile_picture:
-            profile.profile_picture.delete(save=False)  # delete the file from storage
-        profile.profile_picture = 'profile_pics/default.png'  # reset to default
+            profile.profile_picture.delete(save=False)
+        profile.profile_picture = 'profile_pics/default.png'
         profile.save()
         messages.success(request, "🗑️ Your profile photo has been reset to default.")
         return redirect('accounts:user_profile')
 
-    # 🧩 Handle profile update form normally
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
-
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -59,28 +46,26 @@ def user_profile_view(request):
         'profile_form': profile_form
     })
 
+
 @login_required
 def avail_ticket(request, event_id):
-    import base64
-    import qrcode
-    from io import BytesIO
-    from sendgrid import SendGridAPIClient
-    from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
-    from django.conf import settings
-    from django.contrib import messages
-    from django.shortcuts import render, redirect, get_object_or_404
-    from .models import Event, Ticket, Profile
-
-     
-
+    """
+    Purchase/avail a ticket:
+    - Prevent duplicate tickets
+    - Use transaction + select_for_update to avoid race conditions
+    - Use Decimal arithmetic (no float/Decimal mixing)
+    - Decrement ticket_limit safely with F()
+    """
     user = request.user
     event = get_object_or_404(Event, id=event_id)
-    profile = get_object_or_404(Profile, user=user) # ❗ Get user profile
-    ticket_price = event.ticket_price
+    profile = get_object_or_404(Profile, user=user)
 
-    paymongo_key = settings.PAYMONGO_SECRET_KEY
-    print(f"DEBUG: Simulating PayMongo Payment Intent with key ending in: {paymongo_key[-4:]}")
+    # Prevent duplicate ticket purchase
+    if Ticket.objects.filter(user=user, event=event).exists():
+        messages.warning(request, "⚠️ You already have a ticket for this event.")
+        return redirect('accounts:event_detail', event_id=event.id)
 
+<<<<<<< HEAD
     # 1️⃣ Check Wallet Balance (Simulated Payment Intent)
     if profile.wallet_balance < ticket_price:
         storage = messages.get_messages(request)
@@ -98,56 +83,78 @@ def avail_ticket(request, event_id):
     # 2️⃣ Perform Wallet Subtraction
     profile.wallet_balance -= ticket_price
     profile.save() # Save the new balance
+=======
+    try:
+        with transaction.atomic():
+            # Lock rows
+            locked_event = Event.objects.select_for_update().get(id=event.id)
+            locked_profile = Profile.objects.select_for_update().get(user=user)
+>>>>>>> feature/availTicket
 
-    # 3️⃣ Create or get existing ticket
-    ticket, created = Ticket.objects.get_or_create(
-        user=user,
-        event=event
-    )
+            # ticket_price is a DecimalField on Event => it's already a Decimal
+            ticket_price = locked_event.ticket_price
+            # ensure types
+            if not isinstance(ticket_price, Decimal):
+                ticket_price = Decimal(str(ticket_price or "0"))
 
+            # remaining tickets (int)
+            remaining = int(locked_event.ticket_limit or 0)
 
+            if remaining <= 0:
+                messages.error(request, "❌ This event is sold out.")
+                return redirect('accounts:event_detail', event_id=event.id)
 
-    # 1️⃣ Create or get existing ticket
-    ticket, created = Ticket.objects.get_or_create(
-        user=user,
-        event=event
-    )
+            if locked_profile.wallet_balance < ticket_price:
+                messages.error(request, f"❌ Insufficient wallet balance (₱{locked_profile.wallet_balance:.2f}).")
+                return redirect('accounts:event_detail', event_id=event.id)
 
-    # 2️⃣ Generate QR Code
-    qr_data = f"""
-    Ticket ID: {ticket.qr_code_id}
-    Event: {event.event_name}
-    User: {user.username}
-    Email: {user.email}
-    """
+            # Deduct wallet using Decimal arithmetic
+            locked_profile.wallet_balance = locked_profile.wallet_balance - ticket_price
+            locked_profile.save(update_fields=["wallet_balance"])
+
+            # Decrement ticket_limit using F()
+            locked_event.ticket_limit = F('ticket_limit') - 1
+            locked_event.save(update_fields=["ticket_limit"])
+            # refresh to get actual integer value after F() expression
+            locked_event.refresh_from_db(fields=['ticket_limit'])
+
+            # Create Ticket
+            ticket = Ticket.objects.create(user=user, event=locked_event)
+
+    except Event.DoesNotExist:
+        messages.error(request, "Event not found.")
+        return redirect('accounts:home')
+    except Profile.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect('accounts:home')
+    except Exception as e:
+        print("❌ Transaction failed:", e)
+        messages.error(request, "❌ Something went wrong while processing your ticket. Please try again.")
+        return redirect('accounts:event_detail', event_id=event.id)
+
+    # Generate QR and email
+    qr_data = f"Ticket ID: {ticket.qr_code_id}\nEvent: {locked_event.event_name}\nUser: {user.username}\nEmail: {user.email}"
     qr = qrcode.make(qr_data.strip())
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
-    qr_img = buffer.getvalue()
-    qr_base64 = base64.b64encode(qr_img).decode("utf-8")
+    qr_base64 = buffer.getvalue()
+    qr_base64_b64 = __import__('base64').b64encode(qr_base64).decode("utf-8")
 
-    # 3️⃣ Prepare Email
-    subject = f"🎟️ Your Ticket for {event.event_name}"
+    subject = f"🎟️ Your Ticket for {locked_event.event_name}"
     message = (
         f"Hello {user.first_name or user.username},\n\n"
-        f"You have successfully availed a ticket for '{event.event_name}'.\n\n"
-        # ❗ Add payment/balance info to the email
-        f"💳 Simulated Payment Intent Processed.\n"
-        f"💰 Your new wallet balance is: ₱{profile.wallet_balance:.2f}\n\n"
+        f"You have successfully purchased a ticket for '{locked_event.event_name}'.\n"
+        f"💰 Remaining balance: ₱{locked_profile.wallet_balance:.2f}\n\n"
         f"Event Details:\n"
-        f"📍 Venue: {event.event_venue}\n"
-        f"📅 Date: {event.event_date}\n"
-        f"🕒 Time: {event.event_time_in} - {event.event_time_out}\n"
-        f"💵 Price: ₱{event.ticket_price}\n\n"
-        f"Please present the attached QR code at the event gate.\n\n"
+        f"📍 {locked_event.event_venue}\n"
+        f"📅 {locked_event.event_date}\n"
+        f"🕒 {locked_event.event_time_in} - {locked_event.event_time_out}\n\n"
         f"Ticket ID: {ticket.qr_code_id}\n\n"
         f"Thank you for using QREntry!"
     )
 
-    # 4️⃣ Send Email using SendGrid
     try:
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-
         email = Mail(
             from_email=settings.FROM_EMAIL,
             to_emails=user.email,
@@ -155,42 +162,26 @@ def avail_ticket(request, event_id):
             plain_text_content=message,
         )
 
-        # ✅ FIXED — must be plural “attachments”
         attached_qr = Attachment(
-            FileContent(qr_base64),
+            FileContent(qr_base64_b64),
             FileName(f"ticket_{ticket.qr_code_id}.png"),
             FileType("image/png"),
             Disposition("attachment")
         )
         email.add_attachment(attached_qr)
-
-        # 🔍 Debug print for Render logs
-        print("📧 Sending email to:", user.email)
-        response = sg.send(email)
-        print("📨 SENDGRID RESPONSE:", response.status_code, response.body)
-
-        if response.status_code in [200, 202]:
-            messages.success(request, "✅ Ticket email has been sent successfully!")
-        else:
-            messages.warning(
-                request,
-                f"⚠️ SendGrid returned {response.status_code}. "
-                f"Please check logs or verify sender identity."
-            )
-
+        sg.send(email)
+        messages.success(request, "✅ Ticket purchased successfully! Check your email for the QR code.")
     except Exception as e:
-        print("❌ Email sending error:", e)
-        messages.error(request, f"❌ Failed to send email: {e}")
+        print("❌ Email sending failed:", e)
+        messages.warning(request, "Ticket created but failed to send email. Check your inbox later.")
 
-    # 5️⃣ Redirect to confirmation page
-    return redirect("accounts:qr_code_sent_with_balance", 
-                price=str(ticket_price), # Convert Decimal to string/slug
-                balance=str(profile.wallet_balance)) # Convert Decimal to string/slug
+    return redirect("accounts:qr_code_sent_with_balance",
+                    price=str(ticket_price),
+                    balance=str(locked_profile.wallet_balance))
 
 
 @login_required
 def qr_code_sent_with_balance_view(request, price, balance):
-    # This view is for showing the post-purchase confirmation/balance
     return render(request, 'accounts/qr_code_sent.html', {
         'price': price,
         'balance': balance,
@@ -217,8 +208,6 @@ def create_event_view(request):
         description = request.POST.get('description', '').strip()
 
         errors = {}
-
-        # --- Validation ---
         if not event_name:
             errors['eventName'] = "Event name is required."
         if not venue:
@@ -236,14 +225,12 @@ def create_event_view(request):
         if not description:
             errors['description'] = "Description is required."
 
-        # Check if any errors exist
         if errors:
             return render(request, 'accounts/create_event.html', {
                 'errors': errors,
-                'values': request.POST,  # Keep form values
+                'values': request.POST,
             })
 
-        # ✅ If all good, create event
         Event.objects.create(
             organizer=request.user,
             event_name=event_name,
@@ -252,8 +239,8 @@ def create_event_view(request):
             event_date=event_date,
             event_time_in=start_time,
             event_time_out=end_time,
-            ticket_limit=ticket_limit,
-            ticket_price=ticket_price,
+            ticket_limit=int(ticket_limit or 0),
+            ticket_price=Decimal(str(ticket_price)),
             event_description=description
         )
 
@@ -268,7 +255,6 @@ def event_created_view(request):
     return render(request, 'accounts/event_created.html')
 
 
-# ✅ Modified: redirect to confirmation page after bookmarking
 @login_required
 def add_bookmark_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
@@ -276,7 +262,6 @@ def add_bookmark_view(request, event_id):
     return redirect('accounts:confirmation_bookmark', event_id=event.id)
 
 
-# ✅ New confirmation page view
 @login_required
 def confirmation_bookmark_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
@@ -286,16 +271,15 @@ def confirmation_bookmark_view(request, event_id):
 @login_required
 def remove_bookmark_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    # Delete the bookmark if it exists
     Bookmark.objects.filter(user=request.user, event=event).delete()
     return redirect("accounts:event_detail", event_id=event_id)
 
 
 @login_required
 def bookmarks_view(request):
-    # Get all bookmarks for the logged-in user
     bookmarks = Bookmark.objects.filter(user=request.user).select_related("event")
     return render(request, "accounts/bookmark.html", {"bookmarks": bookmarks})
+
 
 @login_required
 def remove_bookmark(request, event_id):
@@ -315,20 +299,19 @@ def edit_event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id, organizer=request.user)
 
     if request.method == 'POST':
-        # Get form input
         event_name = request.POST.get('event_name', '').strip()
         event_venue = request.POST.get('event_venue', '').strip()
         event_category = request.POST.get('event_category', '').strip()
         event_date = request.POST.get('event_date', '').strip()
         event_time_in = request.POST.get('event_time_in', '').strip()
         event_time_out = request.POST.get('event_time_out', '').strip()
-        event.ticket_limit = request.POST.get('ticket_limit', '').strip()
+        event.ticket_limit = int(request.POST.get('ticket_limit', '').strip() or 0)
         ticket_price = request.POST.get('ticket_price', '').replace(',', '').strip()
         event_description = request.POST.get('event_description', '').strip()
 
-        # Validate all required fields
         if not all([event_name, event_venue, event_category, event_date, event_time_in, event_time_out, ticket_price, event_description]):
             messages.error(request, '⚠️ Please fill in all fields before saving.')
+            # re-populate form values back into template via event instance
             event.event_name = event_name
             event.event_venue = event_venue
             event.event_category = event_category
@@ -338,58 +321,31 @@ def edit_event_view(request, event_id):
             event.event_description = event_description
             return render(request, 'accounts/edit_event.html', {'event': event})
 
-        # ✅ Validate event date (must be between 2025 and 2030)
         try:
             event_year = datetime.strptime(event_date, "%Y-%m-%d").year
             if event_year < 2025 or event_year > 2030:
                 messages.error(request, "⚠️ Event year must be between 2025 and 2030.")
-                event.event_name = event_name
-                event.event_venue = event_venue
-                event.event_category = event_category
-                event.event_date = event_date
-                event.event_time_in = event_time_in
-                event.event_time_out = event_time_out
-                event.event_description = event_description
-                event.ticket_price = ticket_price
                 return render(request, 'accounts/edit_event.html', {'event': event})
         except ValueError:
             messages.error(request, "⚠️ Invalid date format. Please select a valid date.")
             return render(request, 'accounts/edit_event.html', {'event': event})
 
-        # Validate ticket price
         try:
             ticket_price_value = float(ticket_price)
             if ticket_price_value <= 0:
                 messages.error(request, "⚠️ Ticket price cannot be less than or equal to 0.")
-                event.event_name = event_name
-                event.event_venue = event_venue
-                event.event_category = event_category
-                event.event_date = event_date
-                event.event_time_in = event_time_in
-                event.event_time_out = event_time_out
-                event.event_description = event_description
-                event.ticket_price = ticket_price
                 return render(request, 'accounts/edit_event.html', {'event': event})
         except ValueError:
             messages.error(request, "⚠️ Please enter a valid numeric ticket price.")
-            event.event_name = event_name
-            event.event_venue = event_venue
-            event.event_category = event_category
-            event.event_date = event_date
-            event.event_time_in = event_time_in
-            event.event_time_out = event_time_out
-            event.event_description = event_description
-            event.ticket_price = ticket_price
             return render(request, 'accounts/edit_event.html', {'event': event})
 
-        # If all is valid, save
         event.event_name = event_name
         event.event_venue = event_venue
         event.event_category = event_category
         event.event_date = event_date
         event.event_time_in = event_time_in
         event.event_time_out = event_time_out
-        event.ticket_price = ticket_price_value
+        event.ticket_price = Decimal(str(ticket_price))
         event.event_description = event_description
         event.save()
 
@@ -406,7 +362,6 @@ def delete_event_view(request, event_id):
         event.delete()
         messages.success(request, '🗑️ Event deleted successfully!')
         return redirect('accounts:event')
-
     return render(request, 'accounts/confirm_delete.html', {'event': event})
 
 
@@ -417,23 +372,35 @@ def organizer_view(request):
 
 
 def home_view(request):
-    """Display only event names on homepage with search filter."""
-    query = request.GET.get('q', '').strip()  # Get the search query from the URL
+    query = request.GET.get('q', '').strip()
     if query:
-        events = Event.objects.filter(event_name__icontains=query)  # Case-insensitive search
+        events = Event.objects.filter(event_name__icontains=query)
     else:
         events = Event.objects.all()
-
     return render(request, 'accounts/home.html', {
         'events': events,
-        'query': query,  # Pass current search value back to the template
+        'query': query,
     })
 
 
 def event_detail_view(request, event_id):
-    """Show event details when clicked from home."""
     event = get_object_or_404(Event, id=event_id)
-    return render(request, 'accounts/event_detail.html', {'event': event})
+    user_has_ticket = False
+    if request.user.is_authenticated:
+        user_has_ticket = Ticket.objects.filter(user=request.user, event=event).exists()
+
+    try:
+        remaining = int(event.ticket_limit)
+    except Exception:
+        remaining = event.ticket_limit or 0
+
+    sold_out = (remaining <= 0)
+
+    return render(request, 'accounts/event_detail.html', {
+        'event': event,
+        'user_has_ticket': user_has_ticket,
+        'sold_out': sold_out,
+    })
 
 
 def register_view(request):
@@ -448,12 +415,10 @@ def register_view(request):
             messages.error(request, "Please correct the errors below.")
     else:
         form = RegistrationForm()
-
     return render(request, "accounts/register.html", {"form": form})
 
 
 def login_view(request):
-    """Login view with error messages + session handling."""
     if request.user.is_authenticated:
         return redirect("accounts:home")
 
@@ -462,23 +427,19 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-
             if user.username == "organizer" and request.POST.get("password") == "organizer_Strong_Password!123":
                 request.session.set_expiry(0)
                 return redirect("accounts:organizer")
-
             if request.POST.get("remember_me"):
                 request.session.set_expiry(1209600)
             else:
                 request.session.set_expiry(0)
-
             messages.success(request, f"Welcome back, {user.username}!")
             return redirect("accounts:home")
         else:
             messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm()
-
     return render(request, "accounts/login.html", {"form": form})
 
 
@@ -488,7 +449,6 @@ def logout_view(request):
 
 
 def confirm_logout_view(request):
-    """Show a confirmation page before logout."""
     if request.method == "POST":
         logout(request)
         messages.info(request, "You have been logged out successfully.")
