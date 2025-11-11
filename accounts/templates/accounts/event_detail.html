@@ -27,14 +27,20 @@
         </div>
 
         <div class="button-container">
-            <a href="{% url 'accounts:avail_ticket' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
+    {% if sold_out %}
+        <button class="buy-btn disabled" disabled>🎟️ Sold Out</button>
+    {% elif user_has_ticket %}
+        <button class="buy-btn disabled" disabled>✅ Ticket Owned</button>
+    {% else %}
+        <a href="{% url 'accounts:avail_ticket' event.id %}" class="buy-btn">🎟️ Buy Ticket Now!</a>
+    {% endif %}
 
-            {% if is_bookmarked %}
-                <button class="bookmark-btn bookmarked" disabled>Bookmarked</button>
-            {% else %}
-                <a href="{% url 'accounts:add_bookmark' event.id %}" class="bookmark-btn">Bookmark</a>
-            {% endif %}
-        </div>
+    {% if is_bookmarked %}
+        <button class="bookmark-btn bookmarked" disabled>Bookmarked</button>
+    {% else %}
+        <a href="{% url 'accounts:add_bookmark' event.id %}" class="bookmark-btn">Bookmark</a>
+    {% endif %}
+</div>
     </div>
 
     <!-- Back Button -->
