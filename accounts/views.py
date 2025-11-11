@@ -83,6 +83,11 @@ def avail_ticket(request, event_id):
 
     # 1️⃣ Check Wallet Balance (Simulated Payment Intent)
     if profile.wallet_balance < ticket_price:
+        storage = messages.get_messages(request)
+        for message in list(storage):
+            if message.tags in ['success', 'info', 'warning']:
+                storage.used = True
+                
         messages.error(
             request, 
             f"❌ Transaction Failed: Insufficient balance. "
