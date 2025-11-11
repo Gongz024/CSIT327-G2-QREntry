@@ -65,31 +65,11 @@ def avail_ticket(request, event_id):
         messages.warning(request, "⚠️ You already have a ticket for this event.")
         return redirect('accounts:event_detail', event_id=event.id)
 
-<<<<<<< HEAD
-    # 1️⃣ Check Wallet Balance (Simulated Payment Intent)
-    if profile.wallet_balance < ticket_price:
-        storage = messages.get_messages(request)
-        for message in list(storage):
-            if message.tags in ['success', 'info', 'warning']:
-                storage.used = True
-                
-        messages.error(
-            request, 
-            f"❌ Transaction Failed: Insufficient balance. "
-            f"Your current balance is ₱{profile.wallet_balance:.2f}."
-        )
-        return redirect('accounts:event_detail', event_id=event_id)
-    
-    # 2️⃣ Perform Wallet Subtraction
-    profile.wallet_balance -= ticket_price
-    profile.save() # Save the new balance
-=======
     try:
         with transaction.atomic():
             # Lock rows
             locked_event = Event.objects.select_for_update().get(id=event.id)
             locked_profile = Profile.objects.select_for_update().get(user=user)
->>>>>>> feature/availTicket
 
             # ticket_price is a DecimalField on Event => it's already a Decimal
             ticket_price = locked_event.ticket_price
