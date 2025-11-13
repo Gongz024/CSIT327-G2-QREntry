@@ -343,3 +343,28 @@ body {
     height: 100%;
     object-fit: cover;
 }
+
+.ticket-container {
+    position: absolute;
+    top: 20px;
+    left: 180px;
+}
+
+.ticket-btn-top {
+    background-color: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+    border-radius: 25px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.ticket-btn-top:hover {
+    background-color: #103c6e;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}

@@ -22,6 +22,8 @@ urlpatterns = [
     path('event/<int:event_id>/delete/', views.delete_event_view, name='delete_event'),
     path('event/<int:event_id>/bookmark/', views.add_bookmark_view, name='add_bookmark'),
     path('bookmarks/', views.bookmarks_view, name='bookmarks'),
+    path('my-tickets/', views.ticket_owned_view, name='ticket_owned'),
+    path('delete-ticket/<int:ticket_id>/', views.delete_ticket_view, name='delete_ticket'),
 
     path('event/<int:event_id>/bookmark/confirmation/', views.confirmation_bookmark_view, name='confirmation_bookmark'),
 

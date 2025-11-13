@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets</title>
+    <link rel="stylesheet" href="{% static 'css/ticket_owned_styles.css' %}">
+</head>
+<body>
+    <div class="header">
+        <h1>🎟️ My Tickets</h1>
+        <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Home</a>
+    </div>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if tickets %}
+        <div class="ticket-grid">
+            {% for ticket in tickets %}
+                <div class="ticket-card">
+                    <h3>{{ ticket.event.event_name }}</h3>
+                    <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
+                    <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
+                    <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>
+                    <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
+
+                    <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn">Delete & Refund</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-tickets">You don’t own any tickets yet.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,226 @@
+/* =============================== */
+/* Global & Base Styling */
+/* =============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    transition: 0.3s all ease-in-out;
+}
+
+body {
+    background: #f9f9f9;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* =============================== */
+/* Header Section */
+/* =============================== */
+.header {
+    text-align: center;
+    background-color: #103c6e;
+    color: white;
+    padding: 30px 0;
+    position: relative;
+    animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.header .back-btn {
+    position: absolute;
+    left: 30px;
+    top: 22px;
+    background-color: #fff;
+    color: #103c6e;
+    border: 2px solid #103c6e;
+    padding: 8px 18px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease-in-out;
+}
+
+.header .back-btn:hover {
+    background-color: #103c6e;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transform: scale(1.05);
+}
+
+/* =============================== */
+/* Ticket Grid Layout */
+/* =============================== */
+.ticket-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    width: 90%;
+    max-width: 1100px;
+    margin: 50px auto;
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+/* =============================== */
+/* Ticket Cards */
+/* =============================== */
+.ticket-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    color: #333;
+    position: relative;
+    overflow: hidden;
+    transform: translateY(20px);
+    opacity: 0;
+    animation: fadeUpCard 0.8s ease forwards;
+}
+
+.ticket-card:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+.ticket-card:nth-child(even) {
+    animation-delay: 0.3s;
+}
+
+.ticket-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(16, 60, 110, 0.2);
+}
+
+/* Decorative top border */
+.ticket-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background-color: #103c6e;
+    transition: 0.4s ease;
+}
+.ticket-card:hover::before {
+    width: 100%;
+}
+
+.ticket-card h3 {
+    color: #103c6e;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.ticket-card p {
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
+
+/* =============================== */
+/* Delete Button */
+/* =============================== */
+.delete-btn {
+    margin-top: 15px;
+    background-color: #d9534f;
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.delete-btn:hover {
+    background-color: #b52b27;
+    box-shadow: 0 0 10px rgba(181, 43, 39, 0.4);
+    transform: scale(1.03);
+}
+
+/* =============================== */
+/* No Tickets Message */
+/* =============================== */
+.no-tickets {
+    text-align: center;
+    color: #555;
+    margin-top: 80px;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease 0.3s forwards;
+}
+
+/* =============================== */
+/* Messages */
+/* =============================== */
+.messages {
+    max-width: 700px;
+    margin: 20px auto;
+    text-align: center;
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 6px solid #28a745;
+}
+
+.alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 6px solid #dc3545;
+}
+
+/* =============================== */
+/* Scrollbar Styling */
+/* =============================== */
+.ticket-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.ticket-grid::-webkit-scrollbar-thumb {
+    background-color: rgba(16, 60, 110, 0.4);
+    border-radius: 10px;
+}
+.ticket-grid::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(16, 60, 110, 0.7);
+}
+
+/* =============================== */
+/* Animations */
+/* =============================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUpCard {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
