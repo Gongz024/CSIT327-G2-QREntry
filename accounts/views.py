@@ -17,6 +17,49 @@ from django.conf import settings
 from decimal import Decimal
 
 @login_required
+def ticket_owned_view(request):
+    """
+    Displays all tickets owned by the logged-in user.
+    """
+    tickets = Ticket.objects.filter(user=request.user).select_related('event')
+    return render(request, 'accounts/ticket_owned.html', {'tickets': tickets})
+
+
+@login_required
+def delete_ticket_view(request, ticket_id):
+    """
+    Deletes a user's ticket and refunds the price to their wallet.
+    """
+    ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
+    event = ticket.event
+    profile = get_object_or_404(Profile, user=request.user)
+
+    try:
+        with transaction.atomic():
+            # Refund
+            profile.wallet_balance += event.ticket_price
+            profile.save(update_fields=['wallet_balance'])
+
+            # Increase ticket availability
+            event.ticket_limit = F('ticket_limit') + 1
+            event.save(update_fields=['ticket_limit'])
+
+            # Delete ticket
+            ticket.delete()
+
+        messages.success(
+            request,
+            f"🗑️ Ticket for '{event.event_name}' deleted successfully! "
+            f"Refunded ₱{event.ticket_price:.2f} to your wallet."
+        )
+    except Exception as e:
+        print("❌ Error deleting ticket:", e)
+        messages.error(request, "❌ Something went wrong while deleting your ticket. Please try again.")
+
+    return redirect('accounts:ticket_owned')
+
+
+@login_required
 def user_profile_view(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
