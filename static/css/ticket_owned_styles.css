@@ -44,7 +44,6 @@ body {
     border-radius: 25px;
     text-decoration: none;
     font-weight: 600;
-    transition: 0.3s ease-in-out;
 }
 
 .header .back-btn:hover {
@@ -84,12 +83,8 @@ body {
     animation: fadeUpCard 0.8s ease forwards;
 }
 
-.ticket-card:nth-child(odd) {
-    animation-delay: 0.1s;
-}
-.ticket-card:nth-child(even) {
-    animation-delay: 0.3s;
-}
+.ticket-card:nth-child(odd) { animation-delay: 0.1s; }
+.ticket-card:nth-child(even) { animation-delay: 0.3s; }
 
 .ticket-card:hover {
     transform: translateY(-8px);
@@ -107,6 +102,7 @@ body {
     background-color: #103c6e;
     transition: 0.4s ease;
 }
+
 .ticket-card:hover::before {
     width: 100%;
 }
@@ -117,6 +113,56 @@ body {
     font-size: 1.3rem;
 }
 
+/* When event is deleted */
+.ticket-card.deleted {
+    background-color: rgba(255, 255, 255, 0.4); /* Transparent white */
+    filter: grayscale(40%); /* optional, makes it look disabled */
+}
+
+/* Re-enable clicking for elements inside deleted cards */
+.ticket-card.deleted * {
+    pointer-events: auto !important;
+}
+
+/* =============================== */
+/* Edited + Deleted warnings */
+/* =============================== */
+.edited-warning {
+    background-color: #deffdd;
+    color: #48b300;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #4fff8a;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.deleted-text {
+    background-color: #ffdddd;
+    color: #b30000;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #ff4f4f;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Edited badge (optional small badge) */
+.edit-badge {
+    background: #ffca28;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+/* =============================== */
+/* Paragraph Defaults */
+/* =============================== */
 .ticket-card p {
     margin: 5px 0;
     font-size: 0.95rem;
@@ -134,8 +180,8 @@ body {
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.3s ease;
     width: 100%;
+    transition: all 0.3s ease;
 }
 
 .delete-btn:hover {
@@ -157,80 +203,8 @@ body {
 }
 
 /* =============================== */
-/* Messages */
+/* Flash Messages */
 /* =============================== */
-.messages {
-    max-width: 700px;
-    margin: 20px auto;
-    text-align: center;
-    animation: fadeIn 0.8s ease-out forwards;
-}
-
-.alert {
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    font-weight: 500;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.alert.success {
-    background-color: #d4edda;
-    color: #155724;
-    border-left: 6px solid #28a745;
-}
-
-.alert.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border-left: 6px solid #dc3545;
-}
-
-/* =============================== */
-/* Scrollbar Styling */
-/* =============================== */
-.ticket-grid::-webkit-scrollbar {
-    width: 8px;
-}
-.ticket-grid::-webkit-scrollbar-thumb {
-    background-color: rgba(16, 60, 110, 0.4);
-    border-radius: 10px;
-}
-.ticket-grid::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(16, 60, 110, 0.7);
-}
-
-.ticket-card.deleted {
-    opacity: 0.4;
-    position: relative;
-}
-
-/* Re-enable clicking for everything inside the card */
-.ticket-card.deleted * {
-    pointer-events: auto !important;
-}
-
-.edit-badge {
-    background: #ffca28;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 12px;
-    margin-left: 8px;
-}
-
-.deleted-text {
-    color: #b30000;
-    font-weight: bold;
-}
-
-
-
-/* =============================== */
-/* Flash Messages (Django)         */
-/* =============================== */
-
 .messages {
     position: fixed;
     top: 20px;
@@ -242,22 +216,8 @@ body {
     gap: 12px;
     width: 90%;
     max-width: 480px;
-    pointer-events: none; /* so it doesn’t block clicking below */
+    pointer-events: none;
 }
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.message.fade-out {
-    animation: fadeOut 0.6s ease forwards;
-}
-
 
 .message {
     padding: 14px 18px;
@@ -268,58 +228,14 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: fadeSlideDown 0.6s ease-out forwards;
     opacity: 0;
-    pointer-events: auto; /* allow dismissing */
+    pointer-events: auto;
     cursor: pointer;
 }
 
-/* Success */
-.message.success {
-    background-color: #e6ffed;
-    color: #0f5132;
-    border-left: 5px solid #198754;
-}
-
-/* Error */
-.message.error {
-    background-color: #f8d7da;
-    color: #842029;
-    border-left: 5px solid #dc3545;
-}
-
-/* Warning */
-.message.warning {
-    background-color: #fff3cd;
-    color: #856404;
-    border-left: 5px solid #ffca2c;
-}
-
-/* Info */
-.message.info {
-    background-color: #cfe2ff;
-    color: #084298;
-    border-left: 5px solid #0d6efd;
-}
-
-input[disabled], input[readonly] {
-    background-color: #e6edf7 !important;
-    color: #6a7a90 !important;
-    cursor: not-allowed !important;
-    opacity: 1 !important;
-}
-
-
-/* Animation */
-@keyframes fadeSlideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+.message.success { background-color: #e6ffed; color: #0f5132; border-left: 5px solid #198754; }
+.message.error { background-color: #f8d7da; color: #842029; border-left: 5px solid #dc3545; }
+.message.warning { background-color: #fff3cd; color: #856404; border-left: 5px solid #ffca2c; }
+.message.info { background-color: #cfe2ff; color: #084298; border-left: 5px solid #0d6efd; }
 
 /* =============================== */
 /* Animations */
@@ -341,5 +257,10 @@ input[disabled], input[readonly] {
 
 @keyframes fadeUpCard {
     from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }

@@ -26,15 +26,16 @@
             {% for ticket in tickets %}
                 <div class="ticket-card {% if ticket.event.is_deleted %}deleted{% endif %}">
 
-                    <h3>
-                        {{ ticket.event.event_name }}
-                        {% if ticket.event.is_edited %}
-                            <span class="edit-badge">✏️ Edited</span>
-                        {% endif %}
-                    </h3>
+                    <h3>{{ ticket.event.event_name }}</h3>
+
+                    {% if ticket.event.is_edited and not ticket.event.is_deleted %}
+                    <div class="edited-warning">
+                    ⚠ This event has been modified
+                    </div>
+                    {% endif %}
 
                     {% if ticket.event.is_deleted %}
-                        <p class="deleted-text">This event has been deleted by the organizer.</p>
+                        <div class="deleted-text">This event has been deleted</div>
                     {% endif %}
 
                     <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>

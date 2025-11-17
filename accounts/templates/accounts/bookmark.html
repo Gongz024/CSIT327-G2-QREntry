@@ -29,14 +29,14 @@
 
                 <h3>{{ b.event.event_name }}</h3>
 
-                {% if b.event.is_edited %}
-                    <span class="edited-indicator">
-                        EVENT HAS BEEN EDITED BY THE ORGANIZER
-                    </span>
+                {% if b.event.is_edited and not b.event.is_deleted %}
+                    <div class="edited-warning">
+                        This event has been modified
+                    </div>
                 {% endif %}
 
                 {% if b.event.is_deleted %}
-                    <p class="deleted-text">❌ This event has been deleted by the organizer.</p>
+                    <p class="deleted-text">❌ This event has been deleted</p>
                 {% endif %}
 
                 <p><strong>📍 Venue:</strong> {{ b.event.event_venue }}</p>
