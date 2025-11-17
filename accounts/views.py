@@ -123,6 +123,7 @@ def avail_ticket(request, event_id):
 
             # ticket_price is a DecimalField on Event => it's already a Decimal
             ticket_price = locked_event.ticket_price
+            # ensure types
             if not isinstance(ticket_price, Decimal):
                 ticket_price = Decimal(str(ticket_price or "0"))
 
@@ -137,13 +138,14 @@ def avail_ticket(request, event_id):
                 messages.error(request, f"❌ Insufficient wallet balance (₱{locked_profile.wallet_balance:.2f}).")
                 return redirect('accounts:event_detail', event_id=event.id)
 
-            # Deduct wallet
+            # Deduct wallet using Decimal arithmetic
             locked_profile.wallet_balance = locked_profile.wallet_balance - ticket_price
             locked_profile.save(update_fields=["wallet_balance"])
 
-            # Decrement ticket limit
+            # Decrement ticket_limit using F()
             locked_event.ticket_limit = F('ticket_limit') - 1
             locked_event.save(update_fields=["ticket_limit"])
+            # refresh to get actual integer value after F() expression
             locked_event.refresh_from_db(fields=['ticket_limit'])
 
             # Create Ticket
@@ -161,10 +163,7 @@ def avail_ticket(request, event_id):
         return redirect('accounts:event_detail', event_id=event.id)
 
     # Generate QR and email
-    qr_data = (
-        f"Ticket ID: {ticket.qr_code_id}\nEvent: {locked_event.event_name}\n"
-        f"User: {user.username}\nEmail: {user.email}"
-    )
+    qr_data = f"Ticket ID: {ticket.qr_code_id}\nEvent: {locked_event.event_name}\nUser: {user.username}\nEmail: {user.email}"
     qr = qrcode.make(qr_data.strip())
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
@@ -184,40 +183,31 @@ def avail_ticket(request, event_id):
         f"Thank you for using QREntry!"
     )
 
-    # ---------------------------
-    # STEP 1: FIX — Email must not be empty
-    # ---------------------------
-    if not user.email or user.email.strip() == "":
-        print(f"❌ Cannot send email: user '{user.username}' has no email address.")
-        messages.warning(request, "⚠️ Ticket created, but no email was sent because your account has no email address.")
-    else:
-        try:
-            sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-            email = Mail(
-                from_email=settings.FROM_EMAIL,
-                to_emails=user.email,
-                subject=subject,
-                plain_text_content=message,
-            )
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        email = Mail(
+            from_email=settings.FROM_EMAIL,
+            to_emails=user.email,
+            subject=subject,
+            plain_text_content=message,
+        )
 
-            attached_qr = Attachment(
-                FileContent(qr_base64_b64),
-                FileName(f"ticket_{ticket.qr_code_id}.png"),
-                FileType("image/png"),
-                Disposition("attachment")
-            )
-            email.add_attachment(attached_qr)
-            sg.send(email)
-            messages.success(request, "✅ Ticket purchased successfully! Check your email for the QR code.")
-        except Exception as e:
-            print("❌ Email sending failed:", e)
-            messages.warning(request, "Ticket created but failed to send email. Check your inbox later.")
+        attached_qr = Attachment(
+            FileContent(qr_base64_b64),
+            FileName(f"ticket_{ticket.qr_code_id}.png"),
+            FileType("image/png"),
+            Disposition("attachment")
+        )
+        email.add_attachment(attached_qr)
+        sg.send(email)
+        messages.success(request, "✅ Ticket purchased successfully! Check your email for the QR code.")
+    except Exception as e:
+        print("❌ Email sending failed:", e)
+        messages.warning(request, "Ticket created but failed to send email. Check your inbox later.")
 
-    return redirect(
-        "accounts:qr_code_sent_with_balance",
-        price=str(ticket_price),
-        balance=str(locked_profile.wallet_balance)
-    )
+    return redirect("accounts:qr_code_sent_with_balance",
+                    price=str(ticket_price),
+                    balance=str(locked_profile.wallet_balance))
 
 
 
