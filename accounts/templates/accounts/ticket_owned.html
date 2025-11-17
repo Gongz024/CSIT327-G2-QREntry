@@ -13,13 +13,25 @@
         <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Home</a>
     </div>
 
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+
+<script>
+    // Wait 5 seconds then fade out each message
+    setTimeout(() => {
+        document.querySelectorAll('.message').forEach(msg => {
+            msg.classList.add('fade-out');
+
+            // Remove from DOM after animation finishes (0.6s)
+            setTimeout(() => msg.remove(), 600);
+        });
+    }, 5000);
+</script>
+{% endif %}
 
     {% if tickets %}
         <div class="ticket-grid">
