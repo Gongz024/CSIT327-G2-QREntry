@@ -12,9 +12,22 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = ['username', 'email']
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Username'}),
-            'email': forms.EmailInput(attrs={'class': 'input-field', 'placeholder': 'Email'}),
+            'username': forms.TextInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Username'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Email',
+                'readonly': 'readonly',   # <-- user cannot edit
+                'style': 'background-color:#e6edf7; cursor:not-allowed;'  # nicer design
+            }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Force-disable email field (Django-level lock)
+        self.fields['email'].disabled = True
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
