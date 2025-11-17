@@ -254,6 +254,47 @@ body {
     animation: popIn 0.6s ease-out forwards;
 }
 
+.event-card.deleted {
+    opacity: 0.5;
+    background: #ffe5e5;
+}
+
+.deleted-text {
+    color: #b30000;
+    font-weight: bold;
+}
+
+.edit-badge {
+    background: #ffd966;
+    color: #6a4f00;
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+/* =============================== */
+/* Edited Indicator (Red Badge Box) */
+/* =============================== */
+.edited-indicator {
+    background: #ffcccc;
+    color: #990000;
+    border: 1px solid #ff6666;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: block;
+    box-shadow: 0 2px 6px rgba(153, 0, 0, 0.15);
+}
+
+/* Make Remove button fully visible even when event is deleted */
+.event-card.deleted .remove-btn {
+    opacity: 1 !important;
+    filter: brightness(1) !important;
+}
+
+
 /* =============================== */
 /* Animations */
 /* =============================== */
