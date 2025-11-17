@@ -63,7 +63,11 @@ def delete_ticket_view(request, ticket_id):
 def user_profile_view(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
-
+    
+    # Fetch bookmarks and tickets related to user
+    bookmarks = Bookmark.objects.filter(user=user).select_related('event')
+    tickets = Ticket.objects.filter(user=user).select_related('event')
+    
     if request.method == 'POST' and 'remove_profile' in request.POST:
         if profile.profile_picture:
             profile.profile_picture.delete(save=False)
@@ -86,7 +90,10 @@ def user_profile_view(request):
 
     return render(request, 'accounts/user_profile.html', {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'profile': profile,
+        'bookmarks': bookmarks,
+        'tickets': tickets,
     })
 
 
