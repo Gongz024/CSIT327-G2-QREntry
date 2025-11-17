@@ -288,8 +288,44 @@ body {
     box-shadow: 0 2px 6px rgba(153, 0, 0, 0.15);
 }
 
+/* =============================== */
+/* Edited + Deleted warnings */
+/* =============================== */
+.edited-warning {
+    background-color: #deffdd;
+    color: #48b300;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #4fff8a;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.deleted-text {
+    background-color: #ffdddd;
+    color: #810000;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #ff4f4f;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Edited badge (optional small badge) */
+.edit-badge {
+    background: #ffca28;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
 /* Make Remove button fully visible even when event is deleted */
-.event-card.deleted .remove-btn {
+.event-card.deleted {
     opacity: 1 !important;
     filter: brightness(1) !important;
 }
