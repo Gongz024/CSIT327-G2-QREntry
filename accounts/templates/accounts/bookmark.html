@@ -18,19 +18,6 @@
         </p>
     </div>
 
-    <!-- ✅ Success Confirmation -->
-    {% if request.GET.added == 'true' %}
-    <div class="confirm-container fade-in">
-        <div class="success-icon">✓</div>
-        <h2>Event Bookmarked!</h2>
-        <p>Your event has been successfully added to your bookmarks.</p>
-        <div class="btn-group">
-            <a href="{% url 'accounts:home' %}" class="btn back-btn">🏠 Back to Home</a>
-            <a href="{% url 'accounts:bookmarks' %}" class="btn create-btn">View Bookmarks</a>
-        </div>
-    </div>
-    {% endif %}
-
     <!-- Bookmarked Events -->
     <div class="events-section fade-in delay-2">
         <h2>⭐ Saved Events</h2>
@@ -38,14 +25,36 @@
         {% if bookmarks %}
         <div class="event-grid">
             {% for b in bookmarks %}
-            <div class="event-card">
+            <div class="event-card {% if b.event.is_deleted %}deleted{% endif %}">
+
                 <h3>{{ b.event.event_name }}</h3>
+
+                {% if b.event.is_edited %}
+                    <span class="edited-indicator">
+                        EVENT HAS BEEN EDITED BY THE ORGANIZER
+                    </span>
+                {% endif %}
+
+                {% if b.event.is_deleted %}
+                    <p class="deleted-text">❌ This event has been deleted by the organizer.</p>
+                {% endif %}
+
                 <p><strong>📍 Venue:</strong> {{ b.event.event_venue }}</p>
                 <p><strong>📅 Date:</strong> {{ b.event.event_date|date:"F j, Y" }}</p>
+
                 <div class="button-container">
-                    <a href="{% url 'accounts:event_detail' b.event.id %}" class="view-btn">View Details</a>
-                    <a href="{% url 'accounts:remove_bookmark' b.event.id %}" class="remove-btn">Remove</a>
+
+                    {% if not b.event.is_deleted %}
+                        <a href="{% url 'accounts:event_detail' b.event.id %}" class="view-btn">
+                            View Details
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'accounts:remove_bookmark' b.event.id %}" class="remove-btn">
+                        Remove
+                    </a>
                 </div>
+
             </div>
             {% endfor %}
         </div>

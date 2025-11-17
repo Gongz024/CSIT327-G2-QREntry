@@ -24,17 +24,29 @@
     {% if tickets %}
         <div class="ticket-grid">
             {% for ticket in tickets %}
-                <div class="ticket-card">
-                    <h3>{{ ticket.event.event_name }}</h3>
+                <div class="ticket-card {% if ticket.event.is_deleted %}deleted{% endif %}">
+
+                    <h3>
+                        {{ ticket.event.event_name }}
+                        {% if ticket.event.is_edited %}
+                            <span class="edit-badge">✏️ Edited</span>
+                        {% endif %}
+                    </h3>
+
+                    {% if ticket.event.is_deleted %}
+                        <p class="deleted-text">This event has been deleted by the organizer.</p>
+                    {% endif %}
+
                     <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
                     <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
                     <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>
                     <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
 
                     <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-btn">Delete & Refund</button>
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Delete & Refund</button>
                     </form>
+
                 </div>
             {% endfor %}
         </div>

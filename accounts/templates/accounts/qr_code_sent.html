@@ -39,7 +39,7 @@
     .messages {
     width: 90%;
     max-width: 800px;
-    margin: 20px auto;
+    margin: 10px auto;
     text-align: center;
     animation: fadeInDown 0.6s ease-in-out;
 }
@@ -47,7 +47,7 @@
 .message {
     padding: 15px 20px;
     border-radius: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-weight: 600;
     font-size: 15px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
@@ -97,6 +97,8 @@
 
 <body>
 
+<body>
+
     {% if messages %}
 <div class="messages">
     {% for message in messages %}
@@ -104,12 +106,6 @@
     {% endfor %}
 </div>
 {% endif %}
-
-<body>
-    <div class="back-btn-container">
-        <a href="{% url 'accounts:home' %}" class="back-btn">← Back to Home</a>
-    </div>
-
     <div class="qr-container">
         <h1>🎉 Ticket Purchase Successful!</h1>
         
@@ -118,9 +114,9 @@
                 Your **simulated payment intent** was successful. Here is your transaction summary:
             </p>
             <div class="transaction-summary">
-                <p><strong>Ticket Price:</strong> <span style="float: right;">**₱{{ price|floatformat:2 }}**</span></p>
+                <p><strong>Ticket Price:</strong> <span style="float: right;">₱{{ price|floatformat:2 }}</span></p>
                 <div class="new-balance">
-                    <p><strong>Remaining Wallet Balance:</strong> <span style="float: right;">**₱{{ balance|floatformat:2 }}**</span></p>
+                    <p><strong>Remaining Wallet Balance:</strong> <span style="float: right;">₱{{ balance|floatformat:2 }}</span></p>
                 </div>
             </div>
             <p class="message">
