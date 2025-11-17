@@ -136,8 +136,107 @@ hr {
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(16, 60, 110, 0.08);
 }
+
+
+
+/* Forgot Password Button */
+.forgot-password-section {
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.btn-forgot {
+    display: inline-block;
+    background: none;
+    color: #103c6e;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-forgot:hover {
+    color: #0d2e55;
+    text-shadow: 0 0 4px rgba(16, 60, 110, 0.2);
+}
+
+
+
 /* Animation */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* =============================== */
+/* Flash Messages (Django)         */
+/* =============================== */
+
+.messages {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 90%;
+    max-width: 480px;
+    pointer-events: none; /* so it doesn’t block clicking below */
+}
+
+.message {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: fadeSlideDown 0.6s ease-out forwards;
+    opacity: 0;
+    pointer-events: auto; /* allow dismissing */
+    cursor: pointer;
+}
+
+/* Success */
+.message.success {
+    background-color: #e6ffed;
+    color: #0f5132;
+    border-left: 5px solid #198754;
+}
+
+/* Error */
+.message.error {
+    background-color: #f8d7da;
+    color: #842029;
+    border-left: 5px solid #dc3545;
+}
+
+/* Warning */
+.message.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 5px solid #ffca2c;
+}
+
+/* Info */
+.message.info {
+    background-color: #cfe2ff;
+    color: #084298;
+    border-left: 5px solid #0d6efd;
+}
+
+/* Animation */
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
