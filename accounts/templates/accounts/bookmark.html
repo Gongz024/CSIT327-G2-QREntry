@@ -59,6 +59,10 @@
                     <p class="deleted-text">❌ This event has been deleted</p>
                 {% endif %}
 
+                {% if not b.event.is_edited and not b.event.is_deleted %}
+                        <div class="blank-status-bar">This event is available</div>
+                    {% endif %}
+
                 <p><strong>📍 Venue:</strong> {{ b.event.event_venue }}</p>
                 <p><strong>📅 Date:</strong> {{ b.event.event_date|date:"F j, Y" }}</p>
 
