@@ -8,6 +8,7 @@
     <title>Event Finder</title>
     <link rel="stylesheet" href="{% static 'css/home_style.css' %}">
 </head>
+
 <body>
 
     {% if messages %}
@@ -39,9 +40,10 @@
             <form method="get" action="">
                 <input 
                     type="text" 
+                    id="search-input"
                     name="q" 
                     placeholder="Search for event"
-                    value="{{ query|default:'' }}"
+                    autocomplete="off"
                 >
                 <button type="submit">🔍</button>
             </form>
@@ -57,6 +59,7 @@
         <h2>Available Events</h2>
 
         {% if events %}
+        
         <div class="event-grid">
             {% for event in events %}
             <div class="event-card">
@@ -94,6 +97,33 @@
         <a href="{% url 'accounts:ticket_owned' %}" class="bookmark-btn-top">🎟️ My Tickets</a>
     </div>
 
+    <script>
 
+document.getElementById("search-input").addEventListener("keyup", function () {
+    const q = this.value;
+
+    fetch("/accounts/live-search/?q=" + encodeURIComponent(q))
+        .then(response => response.json())
+        .then(data => {
+            const grid = document.querySelector(".event-grid");
+            grid.innerHTML = ""; // clear grid
+
+            if (data.events.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1 / -1;">No events found.</p>`;
+                return;
+            }
+
+            data.events.forEach(ev => {
+                grid.innerHTML += `
+                    <div class="event-card">
+                        <h3>${ev.name}</h3>
+                        <a href="/event/${ev.id}/" class="view-btn">View Details</a>
+                    </div>
+                `;
+            });
+        });
+});
+
+</script>
 </body>
 </html>

@@ -170,6 +170,10 @@ def avail_ticket(request, event_id):
     qr_base64 = buffer.getvalue()
     qr_base64_b64 = __import__('base64').b64encode(qr_base64).decode("utf-8")
 
+    # Convert times to AM/PM format
+    start_time = locked_event.event_time_in.strftime("%I:%M %p")
+    end_time = locked_event.event_time_out.strftime("%I:%M %p")
+
     subject = f"🎟️ Your Ticket for {locked_event.event_name}"
     message = (
         f"Hello {user.first_name or user.username},\n\n"
@@ -178,7 +182,7 @@ def avail_ticket(request, event_id):
         f"Event Details:\n"
         f"📍 {locked_event.event_venue}\n"
         f"📅 {locked_event.event_date}\n"
-        f"🕒 {locked_event.event_time_in} - {locked_event.event_time_out}\n\n"
+        f"🕒 {start_time} - {end_time}\n\n"
         f"Ticket ID: {ticket.qr_code_id}\n\n"
         f"Thank you for using QREntry!"
     )
@@ -509,10 +513,16 @@ def organizer_view(request):
 
 def home_view(request):
     query = request.GET.get('q', '').strip()
+
     if query:
-        events = Event.objects.filter(event_name__icontains=query, is_deleted=False)
+        events = Event.objects.filter(
+            event_name__icontains=query,
+            is_deleted=False
+        ).order_by('-created_at')   # NEWEST first
     else:
-        events = Event.objects.filter(is_deleted=False)
+        events = Event.objects.filter(
+            is_deleted=False
+        ).order_by('-created_at')   # NEWEST first
 
     return render(request, 'accounts/home.html', {
         'events': events,
@@ -591,3 +601,21 @@ def confirm_logout_view(request):
         messages.info(request, "You have been logged out successfully.")
         return redirect("accounts:login")
     return render(request, "accounts/confirm_logout.html")
+
+from django.http import JsonResponse
+
+def live_search_events(request):
+    q = request.GET.get("q", "").strip()
+
+    events = Event.objects.filter(
+        event_name__icontains=q,
+        is_deleted=False
+    ).order_by("-created_at")
+
+    results = [
+        {"id": e.id, "name": e.event_name}
+        for e in events
+    ]
+
+    return JsonResponse({"events": results})
+

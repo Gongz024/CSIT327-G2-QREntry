@@ -273,22 +273,6 @@ body {
 }
 
 /* =============================== */
-/* Edited Indicator (Red Badge Box) */
-/* =============================== */
-.edited-indicator {
-    background: #ffcccc;
-    color: #990000;
-    border: 1px solid #ff6666;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    display: block;
-    box-shadow: 0 2px 6px rgba(153, 0, 0, 0.15);
-}
-
-/* =============================== */
 /* Edited + Deleted warnings */
 /* =============================== */
 .edited-warning {
@@ -305,7 +289,7 @@ body {
 
 .deleted-text {
     background-color: #ffdddd;
-    color: #810000;
+    color: #b30000;
     font-weight: 700;
     padding: 10px 14px;
     border-radius: 8px;
@@ -322,6 +306,18 @@ body {
     border-radius: 6px;
     font-size: 12px;
     margin-left: 8px;
+}
+
+.blank-status-bar {
+    background-color: #919191;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #3a3a3a;
+    animation: fadeIn 0.4s ease-out forwards;
 }
 
 /* Make Remove button fully visible even when event is deleted */

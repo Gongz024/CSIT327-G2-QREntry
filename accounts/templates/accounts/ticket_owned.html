@@ -50,6 +50,10 @@
                         <div class="deleted-text">This event has been deleted</div>
                     {% endif %}
 
+                    {% if not ticket.event.is_edited and not ticket.event.is_deleted %}
+                        <div class="blank-status-bar">This event is available</div>
+                    {% endif %}
+
                     <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
                     <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
                     <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>

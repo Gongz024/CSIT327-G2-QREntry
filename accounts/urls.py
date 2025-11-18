@@ -14,6 +14,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("confirm_logout/", views.confirm_logout_view, name="confirm_logout"),
     path("organizer/", views.organizer_view, name="organizer"),
+    path("live-search/", views.live_search_events, name="live_search"),
 
     path('organizer/create-event/', views.create_event_view, name='create_event'),
     path('event-created/', views.event_created_view, name='event_created'),

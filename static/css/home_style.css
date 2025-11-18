@@ -449,6 +449,39 @@ input[disabled], input[readonly] {
     opacity: 1 !important;
 }
 
+.live-results {
+    position: absolute;
+    width: 75%;
+    max-width: 500px;
+    background: white;
+    border-radius: 10px;
+    margin: 10px auto;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 2000;
+    display: none;
+    padding: 10px 0;
+}
+
+.result-item {
+    padding: 12px 18px;
+    display: block;
+    color: #103c6e;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item:hover {
+    background: #f2f2f2;
+}
+
+
 
 /* Animation */
 @keyframes fadeSlideDown {
