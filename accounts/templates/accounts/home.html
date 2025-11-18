@@ -19,19 +19,14 @@
 </div>
 
 <script>
-    // Wait 5 seconds then fade out each message
     setTimeout(() => {
         document.querySelectorAll('.message').forEach(msg => {
             msg.classList.add('fade-out');
-
-            // Remove from DOM after animation finishes (0.6s)
             setTimeout(() => msg.remove(), 600);
         });
     }, 5000);
 </script>
 {% endif %}
-
-
 
     <!-- Hero Section -->
     <div class="hero fade-in">
@@ -63,11 +58,21 @@
         <div class="event-grid">
             {% for event in events %}
             <div class="event-card">
+
+                <!-- ⭐ ADDED ONLY THIS -->
+                {% if forloop.counter <= 3 %}
+                    <div class="event-indicator new">Newly Added Event</div>
+                {% else %}
+                    <div class="event-indicator recent">Recent Event</div>
+                {% endif %}
+                <!-- ⭐ END ADDED PART -->
+
                 <h3>{{ event.event_name }}</h3>
                 <a href="{% url 'accounts:event_detail' event.id %}" class="view-btn">View Details</a>
             </div>
             {% endfor %}
         </div>
+
         {% else %}
             {% if query %}
                 <div class="no-results">
@@ -98,7 +103,6 @@
     </div>
 
     <script>
-
 document.getElementById("search-input").addEventListener("keyup", function () {
     const q = this.value;
 
@@ -106,7 +110,7 @@ document.getElementById("search-input").addEventListener("keyup", function () {
         .then(response => response.json())
         .then(data => {
             const grid = document.querySelector(".event-grid");
-            grid.innerHTML = ""; // clear grid
+            grid.innerHTML = "";
 
             if (data.events.length === 0) {
                 grid.innerHTML = `<p style="grid-column: 1 / -1;">No events found.</p>`;
@@ -123,7 +127,7 @@ document.getElementById("search-input").addEventListener("keyup", function () {
             });
         });
 });
-
 </script>
+
 </body>
 </html>
