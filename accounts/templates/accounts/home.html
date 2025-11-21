@@ -60,7 +60,7 @@
             <div class="event-card">
 
                 <!-- ⭐ ADDED ONLY THIS -->
-                {% if forloop.counter <= 3 %}
+                {% if event.status == "new" %}
                     <div class="event-indicator new">Newly Added Event</div>
                 {% else %}
                     <div class="event-indicator recent">Recent Event</div>
@@ -118,10 +118,20 @@ document.getElementById("search-input").addEventListener("keyup", function () {
             }
 
             data.events.forEach(ev => {
+                // Convert status ("new" or "recent") to the label text
+                const label = ev.status === "new" ? "Newly Added Event" : "Recent Event";
+
                 grid.innerHTML += `
                     <div class="event-card">
+
+                        <!-- ⭐ STATUS INDICATOR (same style as home.html) -->
+                        <div class="event-indicator ${ev.status}">
+                            ${label}
+                        </div>
+
                         <h3>${ev.name}</h3>
-                        <a href="/event/${ev.id}/" class="view-btn">View Details</a>
+
+                        <a href="${ev.url}" class="view-btn">View Details</a>
                     </div>
                 `;
             });
