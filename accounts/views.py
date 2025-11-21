@@ -576,7 +576,7 @@ def login_view(request):
             login(request, user)
             if user.username == "organizer" and request.POST.get("password") == "organizer_Strong_Password!123":
                 request.session.set_expiry(0)
-                return redirect("accounts:organizer")
+                return redirect("accounts:event")
             if request.POST.get("remember_me"):
                 request.session.set_expiry(1209600)
             else:
