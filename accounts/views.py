@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
+from django.urls import reverse
 from .models import Event, Bookmark, Ticket, Profile
 from .forms import RegistrationForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
@@ -514,15 +515,19 @@ def organizer_view(request):
 def home_view(request):
     query = request.GET.get('q', '').strip()
 
+    events_query = Event.objects.filter(is_deleted=False)
+
     if query:
-        events = Event.objects.filter(
-            event_name__icontains=query,
-            is_deleted=False
-        ).order_by('-created_at')   # NEWEST first
-    else:
-        events = Event.objects.filter(
-            is_deleted=False
-        ).order_by('-created_at')   # NEWEST first
+        events_query = events_query.filter(event_name__icontains=query)
+
+    events = events_query.order_by('-created_at')
+
+    now = timezone.now()
+    one_week_ago = now - timedelta(days=7)
+
+    # Add status attribute to each event
+    for e in events:
+        e.status = "new" if e.created_at >= one_week_ago else "recent"
 
     return render(request, 'accounts/home.html', {
         'events': events,
@@ -604,6 +609,9 @@ def confirm_logout_view(request):
 
 from django.http import JsonResponse
 
+from datetime import timedelta
+from django.utils import timezone
+
 def live_search_events(request):
     q = request.GET.get("q", "").strip()
 
@@ -612,10 +620,18 @@ def live_search_events(request):
         is_deleted=False
     ).order_by("-created_at")
 
-    results = [
-        {"id": e.id, "name": e.event_name}
-        for e in events
-    ]
+    results = []
+    now = timezone.now()
+    one_week_ago = now - timedelta(days=7)
+
+    for e in events:
+        status = "new" if e.created_at >= one_week_ago else "recent"
+
+        results.append({
+            "id": e.id,
+            "name": e.event_name,
+            "status": status,
+            "url": reverse("accounts:event_detail", args=[e.id]),
+        })
 
     return JsonResponse({"events": results})
-
