@@ -344,6 +344,15 @@ body {
     cursor: pointer;
 }
 
+.message {
+    width: 100%;
+    max-width: 400px;      /* 🔥 PERFECT SIZE (adjustable) */
+    margin: 0 auto 10px;   /* center + spacing */
+    padding: 14px 18px;
+    border-radius: 10px;
+    text-align: center;
+}
+
 /* Success */
 .message.success {
     background-color: #e6ffed;

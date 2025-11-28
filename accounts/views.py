@@ -347,10 +347,16 @@ def confirmation_bookmark_view(request, event_id):
 
 
 @login_required
-def remove_bookmark_view(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    Bookmark.objects.filter(user=request.user, event=event).delete()
-    return redirect("accounts:event_detail", event_id=event_id)
+def remove_bookmark(request, event_id):
+    bookmark = Bookmark.objects.filter(user=request.user, event_id=event_id).first()
+    if bookmark:
+        bookmark.delete()
+        from django.contrib import messages
+        messages.success(request, "⭐ Bookmark removed successfully!")
+    else:
+        messages.warning(request, "Bookmark not found.")
+    return redirect('accounts:bookmarks')
+
 
 
 @login_required
@@ -364,6 +370,10 @@ def remove_bookmark(request, event_id):
     bookmark = Bookmark.objects.filter(user=request.user, event_id=event_id).first()
     if bookmark:
         bookmark.delete()
+        messages.success(request, "⭐ Bookmark removed successfully!")
+    else:
+        messages.warning(request, "Bookmark not found!")
+
     return redirect('accounts:bookmarks')
 
 @login_required
@@ -373,7 +383,7 @@ def view_events_view(request):
 
 @login_required
 def organizer_events_view(request):
-    events = Event.objects.filter(organizer=request.user)
+    events = Event.objects.filter(organizer=request.user).order_by('-created_at')
     return render(request, 'accounts/event.html', {'events': events})
 
 
@@ -573,24 +583,30 @@ def home_view(request):
     })
 
 
+from accounts.models import Bookmark
+
 def event_detail_view(request, event_id):
     event = get_object_or_404(Event, id=event_id, is_deleted=False)
+
     user_has_ticket = False
     if request.user.is_authenticated:
         user_has_ticket = Ticket.objects.filter(user=request.user, event=event).exists()
 
-    try:
-        remaining = int(event.ticket_limit)
-    except Exception:
-        remaining = event.ticket_limit or 0
+    # ADD THIS:
+    is_bookmarked = False
+    if request.user.is_authenticated:
+        is_bookmarked = Bookmark.objects.filter(user=request.user, event=event).exists()
 
+    remaining = int(event.ticket_limit or 0)
     sold_out = (remaining <= 0)
 
     return render(request, 'accounts/event_detail.html', {
         'event': event,
         'user_has_ticket': user_has_ticket,
         'sold_out': sold_out,
+        'is_bookmarked': is_bookmarked,  # 👈 add this
     })
+
 
 
 def register_view(request):
