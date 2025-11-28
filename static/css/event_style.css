@@ -1,10 +1,12 @@
-/* Reset & Base */
+/* ============================= */
+/* RESET & BASE                  */
+/* ============================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    transition: all 0.3s ease-in-out;
+    transition: 0.3s all ease-in-out;
 }
 
 body {
@@ -12,82 +14,93 @@ body {
     color: #333;
 }
 
+/* ============================= */
+/* CONTAINER                     */
+/* ============================= */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 70px auto;
+}
 
-delete-container {
-            text-align: center;
-            padding: 50px;
-            max-width: 500px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        .delete-container h2 {
-            color: #d9534f;
-            margin-bottom: 20px;
-        }
-        .delete-container p {
-            color: #444;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-        .btn-delete {
-            background: #d9534f;
-            color: white;
-            padding: 10px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .btn-cancel {
-            background: #6c757d;
-            color: white;
-            padding: 10px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-left: 10px;
-        }
-        .btn-delete:hover { background: #c9302c; }
-        .btn-cancel:hover { background: #5a6268; }
+/* ============================= */
+/* HEADER                        */
+/* ============================= */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
 
-        
-/* Back button container */
-        .back-btn-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            animation: floatIn 1.3s ease-out forwards;
-        }
+header h1 {
+    color: #004aad;
+    font-size: 2rem;
+    margin: 0;
+}
 
-        /* Back button styling */
-        .back-btn {
-            background: linear-gradient(135deg, #007bff, #00a2ff);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-            transition: all 0.3s ease;
-            animation: floatIn 1.3s ease-out forwards;
-        }
+/* Create Event Button */
+.btn-create {
+    background: #1e88e5;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(30,136,229,0.25);
+}
+.btn-create:hover {
+    background: #1565c0;
+    transform: translateY(-2px);
+}
 
-        .back-btn:hover {
-            background: linear-gradient(135deg, #0066d3, #008cff);
-            box-shadow: 0 6px 14px rgba(0, 123, 255, 0.5);
-            transform: translateY(-2px) scale(1.05);
-        }
+/* ============================= */
+/* SEARCH INPUT                  */
+/* ============================= */
+.search-input {
+    padding: 12px 20px;
+    width: 700px;              /* 🔥 wider search bar */
+    max-width: 90%;            /* prevents overflow on small screens */
+    border: 2px solid #004aad;
+    border-radius: 30px;
+    outline: none;
+    font-size: 16px;           /* slightly bigger text for proportion */
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 74, 173, 0.12);
+    transition: 0.2s ease;
+}
+.search-input:focus {
+    border-color: #1565c0;
+    box-shadow: 0 0 12px rgba(21, 101, 192, 0.35);
+}
 
-        /* Floating entry animation */
-        @keyframes floatIn {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* ============================= */
+/* BACK BUTTON                   */
+/* ============================= */
+.back-btn-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
 
+.back-btn {
+    background: linear-gradient(135deg, #007bff, #00a2ff);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.35);
+}
+.back-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 14px rgba(0,123,255,0.5);
+}
 
-/* Logout Button */
+/* ============================= */
+/* LOGOUT BUTTON                 */
+/* ============================= */
 .logout-container {
     position: absolute;
     top: 20px;
@@ -95,285 +108,30 @@ delete-container {
 }
 
 .logout-btn {
-    background-color: #fff;
+    background: #fff;
     color: #103c6e;
     border: 2px solid #103c6e;
     border-radius: 25px;
     padding: 8px 18px;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
 }
-
 .logout-btn:hover {
-    background-color: #103c6e;
+    background: #103c6e;
     color: #fff;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
-/* Page Header */
-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-header h1 {
-    color: #004aad;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s forwards;
-    animation-delay: 0.3s;
-}
-
-/* Create Event Button */
-.btn-create {
-    display: inline-block;
-    background: #004aad;
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 500;
-    box-shadow: 0 5px 15px rgba(0,74,173,0.2);
-    transition: all 0.3s ease;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s forwards;
-    animation-delay: 0.5s;
-}
-
-.btn-create:hover {
-    background: #00337a;
-    transform: translateY(-2px) scale(1.02);
-}
-
-/* Event List Grid */
-.event-list {
-    display: grid;
-    gap: 25px;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    margin-top: 20px;
-}
-
-/* Event Card */
-.event-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,50,150,0.1);
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s forwards;
-}
-
-.event-card:nth-child(1) { animation-delay: 0.6s; }
-.event-card:nth-child(2) { animation-delay: 0.8s; }
-.event-card:nth-child(3) { animation-delay: 1s; }
-.event-card:nth-child(4) { animation-delay: 1.2s; }
-
-.event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 25px rgba(0,50,150,0.15);
-}
-
-.event-card h2 {
-    color: #004aad;
-    margin-bottom: 8px;
-}
-
-.event-card p {
-    margin: 5px 0;
-    color: #333;
-}
-
-.event-card .desc {
-    color: #555;
-    margin-top: 10px;
-    font-size: 0.95rem;
-}
-
-/* Action Buttons */
-.actions {
-    margin-top: 15px;
-    display: flex;
-    gap: 10px;
-}
-
-.actions button {
-    background: #004aad;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
-    cursor: pointer;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0,74,173,0.2);
-    transition: all 0.3s ease;
-}
-
-.actions button.delete {
-    background: #d9534f;
-    box-shadow: 0 4px 12px rgba(213,83,79,0.2);
-}
-
-.actions button:hover {
-    background: #00337a;
-    transform: translateY(-2px);
-}
-
-.actions button.delete:hover {
-    background: #b52b27;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Staggered Delay Classes */
-.delay-1 { animation-delay: 0.3s; }
-.delay-2 { animation-delay: 0.6s; }
-.delay-3 { animation-delay: 0.9s; }
-.delay-4 { animation-delay: 1.2s; }
-.delay-5 { animation-delay: 1.5s; }
-.delay-6 { animation-delay: 1.8s; }
-
-/* ==========================
-   EDIT EVENT & DELETE STYLES
-   ========================== */
-
-/* Form Container */
-.edit-form {
-    background: #fff;
-    padding: 40px;
-    max-width: 600px;
-    margin: 40px auto;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(0, 74, 173, 0.1);
-}
-
-/* Form Groups */
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-weight: 600;
-    color: #004aad;
-    margin-bottom: 6px;
-}
-
-.form-group input,
-.form-group textarea {
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-    transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #004aad;
-    box-shadow: 0 0 8px rgba(0, 74, 173, 0.2);
-}
-
-/* Buttons */
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-}
-
-.btn-save {
-    background: linear-gradient(135deg, #004aad, #0066ff);
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.2);
-}
-
-.btn-save:hover {
-    background: linear-gradient(135deg, #00337a, #005ae0);
-    transform: translateY(-2px);
-}
-
-/* Delete Confirmation Container */
-.delete-container {
-    text-align: center;
-    padding: 50px;
-    max-width: 500px;
-    margin: 100px auto;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 5px 18px rgba(0,0,0,0.1);
-}
-
-.delete-container h2 {
-    color: #d9534f;
-    font-size: 2rem;
-    margin-bottom: 15px;
-}
-
-.delete-container p {
-    color: #444;
-    font-size: 16px;
-    margin-bottom: 30px;
-}
-
-/* Delete and Cancel Buttons */
-.btn-delete {
-    background: #d9534f;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(213,83,79,0.2);
-}
-
-.btn-delete:hover {
-    background: #b52b27;
-    transform: translateY(-2px);
-}
-
-.btn-cancel {
-    background: #6c757d;
-    color: white;
-    padding: 12px 25px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(108,117,125,0.2);
-}
-
-.btn-cancel:hover {
-    background: #5a6268;
-    transform: translateY(-2px);
-}
-
+/* ============================= */
+/* EVENT GRID (3 columns)        */
+/* ============================= */
 .event-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns fixed */
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
-    max-height: 80vh; /* Limit visible area */
-    overflow-y: auto; /* Scroll vertically if too many events */
+    max-height: 80vh;
+    overflow-y: auto;
     padding-right: 10px;
-    scroll-behavior: smooth;
 }
-
-/* Hide scrollbar (optional but clean) */
 .event-grid::-webkit-scrollbar {
     width: 8px;
 }
@@ -385,177 +143,151 @@ header h1 {
     background: #90a4ae;
 }
 
-/* Event Card */
+/* ============================= */
+/* EVENT CARD                    */
+/* ============================= */
 .event-card {
     background: #fff;
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 14px;
+    padding: 22px;
     box-shadow: 0 5px 15px rgba(0,50,150,0.1);
-    transition: all 0.3s ease;
+    transition: 0.25s ease;
     opacity: 0;
     transform: translateY(20px);
-    animation: fadeInUp 0.8s forwards;
+    animation: fadeInUp 0.7s forwards;
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
     box-shadow: 0 15px 25px rgba(0,50,150,0.15);
 }
 
-/* Empty Message */
-.no-events {
-    grid-column: span 3;
-    text-align: center;
-    font-size: 1.2rem;
-    color: #777;
-    margin-top: 20px;
+.event-card h2 {
+    color: #004aad;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
 }
 
+.event-card p {
+    margin: 4px 0;
+    color: #333;
+}
+
+/* ============================= */
+/* ACTION BUTTONS                */
+/* ============================= */
 .actions {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
 
-        .actions .edit,
-        .actions .delete {
-            padding: 8px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            color: #fff;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
+.actions a {
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
 
-        /* ✏️ Edit Button Style */
-        .actions .edit {
-            background-color: #1e88e5; /* blue */
-            box-shadow: 0 3px 6px rgba(30,136,229,0.3);
-        }
+/* EDIT */
+.actions .edit {
+    background: #1e88e5;
+}
+.actions .edit:hover {
+    background: #1565c0;
+}
 
-        .actions .edit:hover {
-            background-color: #1565c0;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(21,101,192,0.3);
-        }
+/* DELETE */
+.actions .delete {
+    background: #e53935;
+}
+.actions .delete:hover {
+    background: #c62828;
+}
 
-        /* 🗑️ Delete Button Style */
-        .actions .delete {
-            background-color: #e53935; /* red */
-            box-shadow: 0 3px 6px rgba(229,57,53,0.3);
-        }
-
-        .actions .delete:hover {
-            background-color: #c62828;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(198,40,40,0.3);
-        }
-
-        /* =============================== */
-/* Flash Messages (Django)         */
-/* =============================== */
-
+/* ============================= */
+/* FLASH MESSAGES                */
+/* ============================= */
 .messages {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2000;
+    width: 90%;
+    max-width: 420px;
     display: flex;
     flex-direction: column;
+    z-index: 1200;
     gap: 12px;
-    width: 90%;
-    max-width: 480px;
-    pointer-events: none; /* so it doesn’t block clicking below */
 }
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.message.fade-out {
-    animation: fadeOut 0.6s ease forwards;
-}
-
 
 .message {
     padding: 14px 18px;
+    border-radius: 12px;
     text-align: center;
-    border-radius: 10px;
     font-size: 15px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    animation: fadeSlideDown 0.6s ease-out forwards;
     opacity: 0;
-    pointer-events: auto; /* allow dismissing */
-    cursor: pointer;
+    animation: fadeSlideDown 0.6s ease forwards;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Success */
-.message.success {
-    background-color: #e6ffed;
-    color: #0f5132;
-    border-left: 5px solid #198754;
+.search-bar-container {
+    width: 100%;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
 }
 
-/* Error */
-.message.error {
-    background-color: #f8d7da;
-    color: #842029;
-    border-left: 5px solid #dc3545;
+.search-input {
+    padding: 10px 18px;
+    width: 900px;
+    border: 2px solid #004aad;
+    border-radius: 25px;
+    outline: none;
+    font-size: 15px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.15);
 }
 
-/* Warning */
-.message.warning {
-    background-color: #fff3cd;
-    color: #856404;
-    border-left: 5px solid #ffca2c;
+.search-input:focus {
+    border-color: #1565c0;
+    box-shadow: 0 0 10px rgba(21, 101, 192, 0.4);
 }
 
-/* Info */
-.message.info {
-    background-color: #cfe2ff;
-    color: #084298;
-    border-left: 5px solid #0d6efd;
+/* Types */
+.message.success  { background: #e6ffed; color: #0f5132; }
+.message.error    { background: #f8d7da; color: #842029; }
+.message.warning  { background: #fff3cd; color: #856404; }
+.message.info     { background: #cfe2ff; color: #084298; }
+
+.message.fade-out {
+    animation: fadeOut 0.6s forwards;
 }
 
-input[disabled], input[readonly] {
-    background-color: #e6edf7 !important;
-    color: #6a7a90 !important;
-    cursor: not-allowed !important;
-    opacity: 1 !important;
+/* ============================= */
+/* ANIMATIONS                    */
+/* ============================= */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-
-
-/* Animation */
 @keyframes fadeSlideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+    to { opacity: 0; }
 }
 
-
-/* Responsive Fix (for small screens) */
+/* Responsive */
 @media (max-width: 1024px) {
-    .event-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    .event-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 700px) {
-    .event-grid {
-        grid-template-columns: 1fr;
-    }
+    .event-grid { grid-template-columns: 1fr; }
 }
