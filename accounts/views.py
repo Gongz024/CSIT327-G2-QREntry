@@ -552,6 +552,46 @@ def send_event_status_email(user, event, status):
     except Exception as e:
         print("Email failed:", e)
 
+@login_required
+def live_search_organizer_events(request):
+    """
+    Live search for organizer's events (exclude deleted).
+    Returns the full set of fields needed by the frontend.
+    """
+    query = request.GET.get("q", "").strip()
+    user = request.user
+
+    # Only organizer's not-deleted events
+    events = Event.objects.filter(organizer=user, is_deleted=False).select_related()
+
+    if query:
+        events = events.filter(event_name__icontains=query)
+
+    # Order newest -> oldest so frontend will place newest first
+    events = events.order_by("-created_at")
+
+    results = []
+    for e in events:
+        results.append({
+            "id": e.id,
+            "event_name": e.event_name,
+            "event_venue": e.event_venue,
+            "event_category": e.event_category,
+            "event_date": e.event_date.strftime("%Y-%m-%d"),
+            "event_time_in": e.event_time_in.strftime("%H:%M"),
+            "event_time_out": e.event_time_out.strftime("%H:%M"),
+            "ticket_price": str(e.ticket_price),
+            "ticket_limit": e.ticket_limit,
+            "event_description": e.event_description,
+            "is_deleted": e.is_deleted,
+            # Provide edit/delete urls for organizer UI
+            "edit_url": reverse("accounts:edit_event", args=[e.id]),
+            "delete_url": reverse("accounts:delete_event", args=[e.id]),
+            # Optional detail url (if you use it)
+            "detail_url": reverse("accounts:event_detail", args=[e.id]),
+        })
+
+    return JsonResponse({"events": results})
 
 
 @login_required
