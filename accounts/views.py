@@ -17,6 +17,44 @@ from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileT
 from django.conf import settings
 from decimal import Decimal
 
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
+from django.urls import reverse
+
+@login_required
+def live_search_tickets(request):
+    query = request.GET.get('q', '').strip().lower()
+    user = request.user
+    tickets = user.ticket_set.select_related("event").all()
+
+    if query:
+        tickets = tickets.filter(event__event_name__icontains=query)
+
+    data = {
+        "tickets": [
+            {
+                "id": t.id,
+                "event_name": t.event.event_name,
+                "event_venue": t.event.event_venue,
+                "event_date": t.event.event_date.strftime("%Y-%m-%d"),
+                "event_time_in": t.event.event_time_in.strftime("%H:%M"),
+                "event_time_out": t.event.event_time_out.strftime("%H:%M"),
+                "ticket_price": t.event.ticket_price,
+                "is_edited": t.event.is_edited,
+                "is_deleted": t.event.is_deleted,
+
+                # 🔥 IMPORTANT FIX:
+                # Return event_detail link ONLY if not deleted
+                "event_url": reverse("accounts:event_detail", args=[t.event.id]) 
+                                if not t.event.is_deleted else None,
+            }
+            for t in tickets
+        ]
+    }
+    return JsonResponse(data)
+
+
 @login_required
 def ticket_owned_view(request):
     """
