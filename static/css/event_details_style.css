@@ -158,30 +158,32 @@ body {
     transform: translateY(-2px);
 }
 
-/* Bookmark Button */
+/* Default bookmark button */
 .bookmark-btn {
-    display: inline-flex;           /* makes button respect flex alignment */
-    align-items: center;            /* centers text vertically */
-    justify-content: center;
-    background-color: #ffeb3b;
-    color: black;
-    padding: 12px 25px;             /* balanced horizontal padding */
-    border-radius: 25px;
+    background-color: #ffcc00;
+    color: #333;
+    padding: 12px 20px;
+    font-weight: 700;
+    border-radius: 25px;    /* ✅ Same as buy-btn */
     text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: background 0.3s, transform 0.2s;
-    border: none;
-    cursor: pointer;
+    display: inline-block;
+    transition: 0.3s ease;
 }
 
-.bookmark-btn:hover {
-    background-color: #fdd835;
-    transform: translateY(-2px);    /* subtle hover lift */
+/* When user already bookmarked it */
+.bookmark-btn.bookmarked {
+    background-color: rgb(255, 244, 198); /* transparent yellow */
+    color: #777;
+    cursor: not-allowed;
+    pointer-events: none; /* makes it unclickable */
+    border: 2px dashed #aaa;
+    transform: none !important;
 }
 
-.bookmarked {
-    background-color: #ffc107;
+/* Hover effect only when NOT bookmarked */
+.bookmark-btn:not(.bookmarked):hover {
+    transform: scale(1.05);
+    background-color: #f8d441;
 }
 
 /* ============================= */
