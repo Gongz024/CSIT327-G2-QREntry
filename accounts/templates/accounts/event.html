@@ -7,13 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event List</title>
     <link rel="stylesheet" href="{% static 'css/event_style.css' %}">
+
+    <style>
+        /* Disable animations while searching */
+        .no-anim, .no-anim * {
+            animation: none !important;
+            transition: none !important;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- 🔙 Back Button -->
-    <div class="back-btn-container">
-        <a href="{% url 'accounts:confirm_logout' %}" class="back-btn">Logout</a>
+    <!-- 🔙 Logout Button -->
+    <div class="back-btn-container fade-up delay-1">
+        <a href="{% url 'accounts:confirmlogout_organizer' %}" class="back-btn">Logout</a>
     </div>
 
     {% if messages %}
@@ -35,20 +43,20 @@
     <div class="container">
 
         <!-- Page Header -->
-        <header>
-            <h1 class="fade-in delay-1">Upcoming Events</h1>
-            <a href="{% url 'accounts:create_event' %}" class="btn-create fade-in delay-2">+ Create Event</a>
+        <header class="fade-up delay-1">
+            <h1 class="fade-up delay-1">Upcoming Events</h1>
+            <a href="{% url 'accounts:create_event' %}" class="btn-create fade-up delay-2">+ Create Event</a>
         </header>
 
         <!-- Search Bar -->
-        <div class="search-bar-container">
-            <input type="text" id="searchBar" placeholder="Search events..." class="search-input">
+        <div class="search-bar-container fade-up delay-2">
+            <input type="text" id="searchBar" placeholder="Search events..." class="search-input fade-up delay-2">
         </div>
 
         <!-- Event Grid -->
-        <div class="event-grid fade-in delay-3">
+        <div class="event-grid" id="eventGrid">
             {% for event in events %}
-                <div class="event-card fade-in {% cycle 'delay-1' 'delay-2' 'delay-3' 'delay-4' 'delay-5' 'delay-6' %}">
+                <div class="event-card">
                     <h2>{{ event.event_name }}</h2>
                     <p><strong>Venue:</strong> {{ event.event_venue }}</p>
                     <p><strong>Category:</strong> {{ event.event_category }}</p>
@@ -61,12 +69,16 @@
 
                     <div class="actions">
                         <a href="{% url 'accounts:edit_event' event.id %}" class="edit">Edit</a>
+
+                        <!-- ONE confirmation only -->
                         <a href="{% url 'accounts:delete_event' event.id %}" class="delete"
-                        onclick="return confirm('Are you sure you want to delete this event?');">Delete</a>
+                           onclick="return confirm('Are you sure you want to delete this event?');">
+                            Delete
+                        </a>
                     </div>
                 </div>
             {% empty %}
-                <p class="no-events">No events created yet.</p>
+                <p class="no-events fade-up delay-2">No events created yet.</p>
             {% endfor %}
         </div>
     </div>
@@ -77,28 +89,26 @@
 
 <script>
 const searchInput = document.getElementById("searchBar");
+const grid = document.getElementById("eventGrid");
+
 if (searchInput) {
     searchInput.addEventListener("input", function () {
         const q = this.value.trim();
 
+        grid.classList.add("no-anim");
+
         fetch("/accounts/live-search-organizer-events/?q=" + encodeURIComponent(q))
             .then(resp => resp.json())
             .then(data => {
-                const grid = document.querySelector(".event-grid");
-                if (!grid) return;
-
                 grid.innerHTML = "";
 
                 if (!data.events || data.events.length === 0) {
                     grid.innerHTML = `<p class="no-events">No events found.</p>`;
+                    setTimeout(() => grid.classList.remove("no-anim"), 150);
                     return;
                 }
 
                 data.events.forEach(e => {
-                    const editBtn = `<a href="${e.edit_url}" class="edit">Edit</a>`;
-                    const deleteBtn = `<a href="${e.delete_url}" class="delete"
-                                        onclick="return confirm('Are you sure you want to delete this event?');">
-                                        Delete</a>`;
 
                     grid.innerHTML += `
                         <div class="event-card">
@@ -113,12 +123,18 @@ if (searchInput) {
                             <p class="desc"><strong>Description:</strong> ${escapeHtml(e.event_description)}</p>
 
                             <div class="actions">
-                                ${editBtn}
-                                ${deleteBtn}
+                                <a href="${e.edit_url}" class="edit">Edit</a>
+
+                                <!-- DO NOT add confirmation here (already added above) -->
+                                <a href="${e.delete_url}" class="delete">Delete</a>
                             </div>
                         </div>
                     `;
                 });
+
+                setTimeout(() => {
+                    grid.classList.remove("no-anim");
+                }, 150);
             })
             .catch(err => console.error("live search error:", err));
     });

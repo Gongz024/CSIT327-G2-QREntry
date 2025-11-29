@@ -341,6 +341,9 @@ def create_event_view(request):
 
     return render(request, 'accounts/create_event.html')
 
+def confirmlogout_organizer_view(request):
+    return render(request, 'accounts/confirmlogout_organizer.html')
+
 
 @login_required
 def event_created_view(request):
