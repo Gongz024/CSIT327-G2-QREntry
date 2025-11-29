@@ -80,14 +80,22 @@
              data-event-date="{{ event.event_date|date:'F j, Y'|lower }}"
              data-event-category="{{ event.event_category|lower }}">
 
-            {% if event.status == "new" %}
-                <div class="event-indicator new">Newly Added Event</div>
-            {% else %}
-                <div class="event-indicator recent">Recent Event</div>
-            {% endif %}
+            {% if event.is_expired %}
+    <div class="event-indicator expired">❌ Event Expired</div>
+
+{% elif event.status == "new" %}
+    <div class="event-indicator new">Newly Added Event</div>
+
+{% else %}
+    <div class="event-indicator recent">Recent Event</div>
+{% endif %}
 
             <h3>{{ event.event_name }}</h3>
-            <a href="{% url 'accounts:event_detail' event.id %}" class="view-btn">View Details</a>
+            {% if event.is_expired %}
+    <button class="view-btn expired-btn" disabled>Event Ended</button>
+{% else %}
+    <a href="{% url 'accounts:event_detail' event.id %}" class="view-btn">View Details</a>
+{% endif %}
         </div>
         {% endfor %}
     </div>

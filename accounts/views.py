@@ -22,78 +22,96 @@ from django.contrib.auth.decorators import login_required
 
 from django.urls import reverse
 
+from datetime import datetime
+
 @login_required
 def live_search_tickets(request):
     query = request.GET.get('q', '').strip().lower()
     user = request.user
     tickets = user.ticket_set.select_related("event").all()
 
+    now = datetime.now()
+
     if query:
         tickets = tickets.filter(event__event_name__icontains=query)
 
     data = {
-        "tickets": [
-            {
-                "id": t.id,
-                "event_name": t.event.event_name,
-                "event_venue": t.event.event_venue,
-                "event_date": t.event.event_date.strftime("%Y-%m-%d"),
-                "event_time_in": t.event.event_time_in.strftime("%I:%M %p"),
-                "event_time_out": t.event.event_time_out.strftime("%I:%M %p"),
-                "ticket_price": t.event.ticket_price,
-                "is_edited": t.event.is_edited,
-                "is_deleted": t.event.is_deleted,
-
-                # 🔥 IMPORTANT FIX:
-                # Return event_detail link ONLY if not deleted
-                "event_url": reverse("accounts:event_detail", args=[t.event.id]) 
-                                if not t.event.is_deleted else None,
-            }
-            for t in tickets
-        ]
+        "tickets": []
     }
+
+    for t in tickets:
+        event_end = datetime.combine(t.event.event_date, t.event.event_time_out)
+        is_expired = now > event_end
+
+        data["tickets"].append({
+            "id": t.id,
+            "event_name": t.event.event_name,
+            "event_venue": t.event.event_venue,
+            "event_date": t.event.event_date.strftime("%Y-%m-%d"),
+            "event_time_in": t.event.event_time_in.strftime("%I:%M %p"),
+            "event_time_out": t.event.event_time_out.strftime("%I:%M %p"),
+            "ticket_price": t.event.ticket_price,
+            "is_edited": t.event.is_edited,
+            "is_deleted": t.event.is_deleted,
+            "is_expired": is_expired,
+        })
     return JsonResponse(data)
 
 
 @login_required
 def ticket_owned_view(request):
-    """
-    Displays all tickets owned by the logged-in user.
-    """
     tickets = Ticket.objects.filter(user=request.user).select_related('event')
-    return render(request, 'accounts/ticket_owned.html', {'tickets': tickets})
+
+    now = datetime.now()
+
+    for t in tickets:
+        event_datetime_end = datetime.combine(t.event.event_date, t.event.event_time_out)
+        t.is_expired = now > event_datetime_end  # ✔ Add field dynamically
+
+    return render(request, 'accounts/ticket_owned.html', {
+        'tickets': tickets
+    })
 
 
 @login_required
 def delete_ticket_view(request, ticket_id):
-    """
-    Deletes a user's ticket and refunds the price to their wallet.
-    """
     ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
     event = ticket.event
     profile = get_object_or_404(Profile, user=request.user)
 
+    # Determine if expired
+    event_end = datetime.combine(event.event_date, event.event_time_out)
+    is_expired = datetime.now() > event_end
+
     try:
         with transaction.atomic():
-            # Refund
-            profile.wallet_balance += event.ticket_price
-            profile.save(update_fields=['wallet_balance'])
 
-            # Increase ticket availability
-            event.ticket_limit = F('ticket_limit') + 1
-            event.save(update_fields=['ticket_limit'])
+            # If NOT expired → refund + return ticket to event
+            if not is_expired:
+                profile.wallet_balance += event.ticket_price
+                profile.save(update_fields=['wallet_balance'])
 
-            # Delete ticket
+                event.ticket_limit = F('ticket_limit') + 1
+                event.save(update_fields=['ticket_limit'])
+
+                messages.success(
+                    request,
+                    f"🗑️ Ticket for '{event.event_name}' deleted. Refunded ₱{event.ticket_price:.2f}."
+                )
+
+            else:
+                # EXPIRED → delete without refund
+                messages.warning(
+                    request,
+                    f"❌ Ticket for '{event.event_name}' was expired and has been deleted with no refund."
+                )
+
+            # Delete the ticket
             ticket.delete()
 
-        messages.success(
-            request,
-            f"🗑️ Ticket for '{event.event_name}' deleted successfully! "
-            f"Refunded ₱{event.ticket_price:.2f} to your wallet."
-        )
     except Exception as e:
         print("❌ Error deleting ticket:", e)
-        messages.error(request, "❌ Something went wrong while deleting your ticket. Please try again.")
+        messages.error(request, "Something went wrong. Please try again.")
 
     return redirect('accounts:ticket_owned')
 
@@ -362,6 +380,14 @@ def remove_bookmark(request, event_id):
 @login_required
 def bookmarks_view(request):
     bookmarks = Bookmark.objects.filter(user=request.user).select_related("event")
+
+    now = timezone.now()
+
+    for b in bookmarks:
+        event_end = datetime.combine(b.event.event_date, b.event.event_time_out)
+        event_end = timezone.make_aware(event_end)
+        b.is_expired = now > event_end
+
     return render(request, "accounts/bookmark.html", {"bookmarks": bookmarks})
 
 
@@ -600,6 +626,9 @@ def organizer_view(request):
     return render(request, "accounts/organizer.html", {"event_created": event_created})
 
 
+from datetime import datetime
+from django.utils import timezone
+
 def home_view(request):
     query = request.GET.get('q', '').strip()
 
@@ -616,17 +645,21 @@ def home_view(request):
     events = events_query.order_by('-created_at')
 
     now = timezone.now()
-    one_week_ago = now - timedelta(days=7)
 
-    # Add status attribute to each event
     for e in events:
+        # new/recent tag
+        one_week_ago = now - timedelta(days=7)
         e.status = "new" if e.created_at >= one_week_ago else "recent"
+
+        # EXPIRED CHECK
+        event_end = datetime.combine(e.event_date, e.event_time_out)
+        event_end = timezone.make_aware(event_end)  # FIX offset-aware comparison
+        e.is_expired = now > event_end
 
     return render(request, 'accounts/home.html', {
         'events': events,
         'query': query,
     })
-
 
 from accounts.models import Bookmark
 

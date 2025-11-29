@@ -344,6 +344,27 @@ body {
     animation: fadeIn 0.4s ease-out forwards;
 }
 
+.expired-text {
+    background-color: #ffdddd;
+    color: #b30000;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #ff4f4f;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.expired-btn {
+    background-color: transparent !important;
+    color: #999 !important;
+    border: 2px solid #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+
 /* Edited badge (optional small badge) */
 .edit-badge {
     background: #ffca28;

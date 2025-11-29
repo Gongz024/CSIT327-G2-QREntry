@@ -9,80 +9,90 @@
 </head>
 <body>
 
-    <!-- HEADER with Search -->
-    <div class="header">
-        <h1>🎟️ My Tickets</h1>
-        <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Home</a>
+<!-- HEADER with Search -->
+<div class="header">
+    <h1>🎟️ My Tickets</h1>
+    <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Back to Home</a>
 
-        <!-- 🔍 Search bar added here -->
-        <div class="search-bar">
-            <form method="get" action="">
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    name="q" 
-                    placeholder="Search your tickets..." 
-                    autocomplete="off"
-                >
-                <button type="submit">🔍</button>
-            </form>
-        </div>
+    <!-- Search bar -->
+    <div class="search-bar">
+        <form method="get" action="">
+            <input 
+                type="text" 
+                id="search-input" 
+                name="q" 
+                placeholder="Search your tickets..." 
+                autocomplete="off"
+            >
+            <button type="submit">🔍</button>
+        </form>
     </div>
+</div>
 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    </div>
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
 
-    <script>
-        // Auto fade out messages
-        setTimeout(() => {
-            document.querySelectorAll('.message').forEach(msg => {
-                msg.classList.add('fade-out');
-                setTimeout(() => msg.remove(), 600);
-            });
-        }, 5000);
-    </script>
-    {% endif %}
+<script>
+setTimeout(() => {
+    document.querySelectorAll('.message').forEach(msg => {
+        msg.classList.add('fade-out');
+        setTimeout(() => msg.remove(), 600);
+    });
+}, 5000);
+</script>
+{% endif %}
 
-    {% if tickets %}
-        <div class="ticket-grid" id="ticket-grid">
-            {% for ticket in tickets %}
-                <div class="ticket-card {% if ticket.event.is_deleted %}deleted{% endif %}">
-                    <h3>{{ ticket.event.event_name }}</h3>
+{% if tickets %}
+<div class="ticket-grid" id="ticket-grid">
+    {% for ticket in tickets %}
+        <div class="ticket-card {% if ticket.event.is_deleted %}deleted{% endif %}">
 
-                    {% if ticket.event.is_edited and not ticket.event.is_deleted %}
-                    <div class="edited-warning">⚠ This event has been modified</div>
-                    {% endif %}
+            <h3>{{ ticket.event.event_name }}</h3>
 
-                    {% if ticket.event.is_deleted %}
-                        <div class="deleted-text">This event has been deleted</div>
-                    {% endif %}
+            {% if ticket.event.is_deleted %}
+            <div class="deleted-text">This event has been deleted</div>
 
-                    {% if not ticket.event.is_edited and not ticket.event.is_deleted %}
-                        <div class="blank-status-bar">This event is available</div>
-                    {% endif %}
+            {% elif ticket.is_expired %}
+            <div class="expired-text">❌ Ticket has been expired!</div>
 
-                    <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
-                    <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
-                    <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>
-                    <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
+            {% elif ticket.event.is_edited %}       
+            <div class="edited-warning">⚠ This event has been modified</div>
 
-                    <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-btn">Delete & Refund</button>
-                    </form>
-                </div>
-            {% endfor %}
+            {% else %}
+            <div class="blank-status-bar">This event is available</div>
+            {% endif %}
+
+
+            <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
+            <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
+            <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>
+            <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
+
+            {% if ticket.is_expired %}
+                <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn expired-btn">Delete</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Delete & Refund</button>
+                </form>
+            {% endif %}
+
         </div>
-    {% else %}
-        <p class="no-tickets">You don’t own any tickets yet.</p>
-    {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<p class="no-tickets">You don’t own any tickets yet.</p>
+{% endif %}
 
-    <!-- 🧠 Live search for owned tickets -->
-    <script>
+<!-- Live search -->
+<script>
 document.getElementById("search-input").addEventListener("keyup", function () {
     const q = this.value.trim();
 
@@ -93,38 +103,46 @@ document.getElementById("search-input").addEventListener("keyup", function () {
             grid.innerHTML = "";
 
             if (data.tickets.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1 / -1; text-align:center;">
-                    No tickets found.
-                </p>`;
+                grid.innerHTML = `
+                    <p style="grid-column: 1 / -1; text-align:center;">
+                        No tickets found.
+                    </p>`;
                 return;
             }
 
             data.tickets.forEach(tk => {
 
-                // status display
                 let statusUI = "";
                 if (tk.is_deleted) {
                     statusUI = `<div class="deleted-text">This event has been deleted</div>`;
-                } else if (tk.is_edited) {
+                } 
+                else if (tk.is_edited) {
                     statusUI = `<div class="edited-warning">⚠ This event has been modified</div>`;
-                } else {
+                }
+                else if (tk.is_expired) {
+                    statusUI = `<div class="expired-text">❌ Ticket has been expired!</div>`;
+                }
+                else {
                     statusUI = `<div class="blank-status-bar">This event is available</div>`;
                 }
 
-                // UI class for deleted
-                let cardClass = tk.is_deleted ? "ticket-card deleted" : "ticket-card";
-
-                // 🔥 ALWAYS show delete & refund button
-                // (same as your non-search UI)
-                const deleteButtonUI = `
-                    <form method="post" action="/accounts/delete-ticket/${tk.id}/">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                        <button type="submit" class="delete-btn">Delete & Refund</button>
-                    </form>
-                `;
+                let deleteButtonUI = "";
+                if (tk.is_expired) {
+                    deleteButtonUI = `
+                        <form method="post" action="/accounts/delete-ticket/${tk.id}/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <button type="submit" class="delete-btn expired-btn">Delete</button>
+                        </form>`;
+                } else {
+                    deleteButtonUI = `
+                        <form method="post" action="/accounts/delete-ticket/${tk.id}/">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <button type="submit" class="delete-btn">Delete & Refund</button>
+                        </form>`;
+                }
 
                 grid.innerHTML += `
-                    <div class="${cardClass}">
+                    <div class="ticket-card ${tk.is_deleted ? "deleted" : ""}">
                         <h3>${tk.event_name}</h3>
                         ${statusUI}
 
@@ -140,5 +158,6 @@ document.getElementById("search-input").addEventListener("keyup", function () {
         });
 });
 </script>
+
 </body>
 </html>
