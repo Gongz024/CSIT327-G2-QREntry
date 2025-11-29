@@ -16,73 +16,7 @@ body {
 }
 
 /* =============================== */
-/* Search Bar (same as home.html) */
-/* =============================== */
-.search-bar {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    background: #fff;
-    border-radius: 30px;
-    padding: 10px 20px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-}
-
-.search-bar form {
-    display: flex;
-    width: 100%;
-    align-items: center;
-}
-
-.search-bar input {
-    flex: 1;
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 12px 15px;
-    font-size: 16px;
-    border-radius: 30px;
-}
-
-.search-bar button {
-    border: none;
-    background: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 0 8px;
-    color: #333;
-    transition: 0.3s;
-}
-
-.search-bar button:hover {
-    color: #103c6e;
-}
-
-.expired-text {
-    background-color: #ffdddd;
-    color: #b30000;
-    font-weight: bold;
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    margin-top: 8px;
-    border-left: 6px solid #ff4f4f;
-}
-
-.expired-btn {
-    background-color: #6c757d !important;
-}
-
-.expired-btn:hover {
-    background-color: #565e64 !important;
-}
-
-/* =============================== */
-/* Header Section */
+/* Header Section (ANIMATED) */
 /* =============================== */
 .header {
     text-align: center;
@@ -99,6 +33,7 @@ body {
     letter-spacing: 1px;
 }
 
+/* Back to Home (ANIMATED) */
 .header .back-btn {
     position: absolute;
     left: 30px;
@@ -110,6 +45,7 @@ body {
     border-radius: 25px;
     text-decoration: none;
     font-weight: 600;
+    animation: fadeInDown 1s ease-out forwards;
 }
 
 .header .back-btn:hover {
@@ -117,6 +53,52 @@ body {
     color: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     transform: scale(1.05);
+}
+
+/* =============================== */
+/* Search Bar (ANIMATED) */
+/* =============================== */
+.search-bar {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #fff;
+    border-radius: 30px;
+    padding: 10px 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.search-bar form {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 30px;
+}
+
+.search-bar button {
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: #333;
+}
+
+.search-bar button:hover {
+    color: #103c6e;
 }
 
 /* =============================== */
@@ -129,11 +111,10 @@ body {
     width: 90%;
     max-width: 1100px;
     margin: 50px auto;
-    animation: fadeInUp 1s ease-out forwards;
 }
 
 /* =============================== */
-/* Ticket Cards */
+/* Ticket Cards (NO ANIMATIONS) */
 /* =============================== */
 .ticket-card {
     background-color: #fff;
@@ -144,38 +125,16 @@ body {
     color: #333;
     position: relative;
     overflow: hidden;
-    transform: translateY(20px);
-    opacity: 0;
-    animation: fadeUpCard 0.8s ease forwards;
-}
 
-.ticket-card:nth-child(odd) {
-    animation-delay: 0.1s;
-}
-
-.ticket-card:nth-child(even) {
-    animation-delay: 0.3s;
+    /* REMOVE ALL ANIMATIONS */
+    transform: none !important;
+    opacity: 1 !important;
+    animation: none !important;
 }
 
 .ticket-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 8px 20px rgba(16, 60, 110, 0.2);
-}
-
-/* Decorative top border */
-.ticket-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 4px;
-    background-color: #103c6e;
-    transition: 0.4s ease;
-}
-
-.ticket-card:hover::before {
-    width: 100%;
 }
 
 .ticket-card h3 {
@@ -184,32 +143,28 @@ body {
     font-size: 1.3rem;
 }
 
-/* When event is deleted */
+/* Deleted card background */
 .ticket-card.deleted {
-    background-color: rgba(255, 255, 255, 0.4); /* Transparent white */
-    filter: grayscale(40%); /* optional, makes it look disabled */
+    background-color: rgba(255, 255, 255, 0.4);
+    filter: grayscale(40%);
 }
 
-/* Re-enable clicking for elements inside deleted cards */
+/* Allow clicking inside deleted ticket */
 .ticket-card.deleted * {
     pointer-events: auto !important;
 }
 
 /* =============================== */
-/* Edited + Deleted warnings */
+/* Status Bars (NO ANIMATIONS) */
 /* =============================== */
-.edited-warning {
-    background-color: #deffdd;
-    color: #48b300;
-    font-weight: 700;
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    margin-top: 8px;
-    border-left: 6px solid #4fff8a;
-    animation: fadeIn 0.4s ease-out forwards;
+.deleted-text,
+.edited-warning,
+.blank-status-bar,
+.expired-text {
+    animation: none !important;
 }
 
+/* Deleted */
 .deleted-text {
     background-color: #ffdddd;
     color: #b30000;
@@ -217,38 +172,48 @@ body {
     padding: 10px 14px;
     border-radius: 8px;
     margin-bottom: 12px;
-    margin-top: 8px;
     border-left: 6px solid #ff4f4f;
-    animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Edited badge (optional small badge) */
-.edit-badge {
-    background: #ffca28;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 12px;
-    margin-left: 8px;
-}
-
-.blank-status-bar {
-    background-color: #919191;
-    color: #ffffff;
+/* Edited */
+.edited-warning {
+    background-color: #deffdd;
+    color: #48b300;
     font-weight: 700;
     padding: 10px 14px;
     border-radius: 8px;
     margin-bottom: 12px;
-    margin-top: 8px;
-    border-left: 6px solid #3a3a3a;
-    animation: fadeIn 0.4s ease-out forwards;
+    border-left: 6px solid #4fff8a;
 }
 
-/* =============================== */
-/* Paragraph Defaults */
-/* =============================== */
-.ticket-card p {
-    margin: 5px 0;
-    font-size: 0.95rem;
+/* Blank */
+.blank-status-bar {
+    background-color: #919191;
+    color: white;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 6px solid #3a3a3a;
+}
+
+/* Expired */
+.expired-text {
+    background-color: #ffdddd;
+    color: #b30000;
+    font-weight: bold;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 6px solid #ff4f4f;
+}
+
+/* Expired delete button */
+.expired-btn {
+    background-color: #6c757d !important;
+}
+.expired-btn:hover {
+    background-color: #565e64 !important;
 }
 
 /* =============================== */
@@ -264,12 +229,10 @@ body {
     cursor: pointer;
     font-weight: 600;
     width: 100%;
-    transition: all 0.3s ease;
 }
 
 .delete-btn:hover {
     background-color: #b52b27;
-    box-shadow: 0 0 10px rgba(181, 43, 39, 0.4);
     transform: scale(1.03);
 }
 
@@ -281,12 +244,11 @@ body {
     color: #555;
     margin-top: 80px;
     font-size: 1.2rem;
-    opacity: 0;
-    animation: fadeInUp 1s ease 0.3s forwards;
+    animation: fadeInUp 1s ease forwards;
 }
 
 /* =============================== */
-/* Flash Messages */
+/* Flash Messages (KEEP ANIMATION) */
 /* =============================== */
 .messages {
     position: fixed;
@@ -299,103 +261,37 @@ body {
     gap: 12px;
     width: 90%;
     max-width: 480px;
-    pointer-events: none;
 }
 
 .message {
     padding: 14px 18px;
-    text-align: center;
     border-radius: 10px;
-    font-size: 15px;
+    text-align: center;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     animation: fadeSlideDown 0.6s ease-out forwards;
     opacity: 0;
-    pointer-events: auto;
-    cursor: pointer;
 }
 
-.message.success {
-    background-color: #e6ffed;
-    color: #0f5132;
-    border-left: 5px solid #198754;
-}
-
-.message.error {
-    background-color: #f8d7da;
-    color: #842029;
-    border-left: 5px solid #dc3545;
-}
-
-.message.warning {
-    background-color: #fff3cd;
-    color: #856404;
-    border-left: 5px solid #ffca2c;
-}
-
-.message.info {
-    background-color: #cfe2ff;
-    color: #084298;
-    border-left: 5px solid #0d6efd;
-}
+/* Message Types */
+.message.success { background: #e6ffed; color: #0f5132; border-left: 5px solid #198754; }
+.message.error   { background: #f8d7da; color: #842029; border-left: 5px solid #dc3545; }
+.message.warning { background: #fff3cd; color: #856404; border-left: 5px solid #ffca2c; }
+.message.info    { background: #cfe2ff; color: #084298; border-left: 5px solid #0d6efd; }
 
 /* =============================== */
 /* Animations */
 /* =============================== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-25px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeUpCard {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeSlideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
