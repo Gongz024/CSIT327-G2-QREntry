@@ -13,7 +13,19 @@
     <!-- Hero Section -->
     <div class="hero fade-in">
         <h1>Your Starred Moments 🌟<br><span>Bookmarked Events</span></h1>
-        <p class="fade-in delay-1">
+        <div class="search-bar fade-in delay-1">
+            <form method="get" action="" id="searchForm">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    name="q" 
+                    placeholder="Search for event"
+                    autocomplete="off"
+                >
+                <button type="submit">🔍</button>
+            </form>
+        </div>
+        <p class="fade-in delay-2">
             All your favorite events in one place — easy to find, easy to revisit.
         </p>
     </div>
@@ -39,13 +51,16 @@
 {% endif %}
 
     <!-- Bookmarked Events -->
-    <div class="events-section fade-in delay-2">
+    <div class="events-section fade-in delay-3">
         <h2>⭐ Saved Events</h2>
 
         {% if bookmarks %}
-        <div class="event-grid">
+        <div class="event-grid" id="eventGrid">
             {% for b in bookmarks %}
-            <div class="event-card {% if b.event.is_deleted %}deleted{% endif %}">
+            <div class="event-card {% if b.event.is_deleted %}deleted{% endif %}" 
+                 data-event-name="{{ b.event.event_name|lower }}" 
+                 data-event-venue="{{ b.event.event_venue|lower }}" 
+                 data-event-date="{{ b.event.event_date|date:'F j, Y'|lower }}">
 
                 <h3>{{ b.event.event_name }}</h3>
 
@@ -83,8 +98,8 @@
             {% endfor %}
         </div>
         {% else %}
-            <div class="no-results fade-in delay-2">
-                <p>You haven’t bookmarked any events yet.</p>
+            <div class="no-results fade-in delay-3">
+                <p>You haven't bookmarked any events yet.</p>
                 <a href="{% url 'accounts:home' %}" class="back-btn">Browse Events</a>
             </div>
         {% endif %}
@@ -104,6 +119,92 @@
     <div class="bookmark-container fade-in">
         <a href="{% url 'accounts:home' %}" class="bookmark-btn-top">🏠 Home</a>
     </div>
+
+    <!-- Live Search Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchForm = document.getElementById('searchForm');
+            const eventGrid = document.getElementById('eventGrid');
+            const eventCards = document.querySelectorAll('.event-card');
+
+            // Prevent form submission for live search
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    performClientSideSearch();
+                });
+            }
+
+            // Live search with client-side filtering (instant results)
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    performClientSideSearch();
+                });
+            }
+
+            function performClientSideSearch() {
+                if (!searchInput) return;
+                
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+                // If no bookmarks exist, show message
+                if (eventCards.length === 0) {
+                    return;
+                }
+
+                // Remove any existing "no results" message
+                const noResultsMsg = document.getElementById('noSearchResults');
+                if (noResultsMsg) {
+                    noResultsMsg.remove();
+                }
+
+                if (searchTerm === '') {
+                    // Show all events when search is empty
+                    eventCards.forEach(card => {
+                        card.style.display = '';
+                    });
+                    return;
+                }
+
+                let visibleCount = 0;
+
+                eventCards.forEach(function(card) {
+                    const eventName = card.getAttribute('data-event-name') || '';
+                    const eventVenue = card.getAttribute('data-event-venue') || '';
+                    const eventDate = card.getAttribute('data-event-date') || '';
+
+                    const matches = eventName.includes(searchTerm) || 
+                                  eventVenue.includes(searchTerm) || 
+                                  eventDate.includes(searchTerm);
+
+                    if (matches) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show no results message if no cards match
+                if (visibleCount === 0 && searchTerm !== '' && eventGrid) {
+                    const msg = document.createElement('div');
+                    msg.id = 'noSearchResults';
+                    msg.className = 'no-results';
+                    msg.innerHTML = '<p>No events found matching "<strong>' + searchTerm + '</strong>"</p><p>Try searching by name, venue, or date.</p>';
+                    eventGrid.appendChild(msg);
+                }
+            }
+
+            // Initialize: handle URL query parameter if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryParam = urlParams.get('q');
+            if (queryParam && searchInput) {
+                searchInput.value = queryParam;
+                performClientSideSearch();
+            }
+        });
+    </script>
 
 </body>
 </html>

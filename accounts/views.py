@@ -606,7 +606,12 @@ def home_view(request):
     events_query = Event.objects.filter(is_deleted=False)
 
     if query:
-        events_query = events_query.filter(event_name__icontains=query)
+        from django.db.models import Q
+        events_query = events_query.filter(
+            Q(event_name__icontains=query) |
+            Q(event_venue__icontains=query) |
+            Q(event_date__icontains=query)
+        )
 
     events = events_query.order_by('-created_at')
 
@@ -709,8 +714,13 @@ from django.utils import timezone
 def live_search_events(request):
     q = request.GET.get("q", "").strip()
 
+    # Search by name, venue, or date
+    from django.db.models import Q
+    
     events = Event.objects.filter(
-        event_name__icontains=q,
+        Q(event_name__icontains=q) |
+        Q(event_venue__icontains=q) |
+        Q(event_date__icontains=q),
         is_deleted=False
     ).order_by("-created_at")
 
