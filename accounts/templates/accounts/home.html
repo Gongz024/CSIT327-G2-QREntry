@@ -32,7 +32,7 @@
     <div class="hero fade-in">
         <h1>Skip the Line.<br><span>Join the Fun.</span></h1>
         <div class="search-bar fade-in delay-1">
-            <form method="get" action="">
+            <form method="get" action="" id="searchForm">
                 <input 
                     type="text" 
                     id="search-input"
@@ -55,9 +55,13 @@
 
         {% if events %}
         
-        <div class="event-grid">
+        <div class="event-grid" id="eventGrid">
             {% for event in events %}
-            <div class="event-card">
+            <div class="event-card" 
+                 data-event-name="{{ event.event_name|lower }}" 
+                 data-event-venue="{{ event.event_venue|lower }}" 
+                 data-event-date="{{ event.event_date|date:'F j, Y'|lower }}"
+                 data-event-category="{{ event.event_category|lower }}">
 
                 <!-- ⭐ ADDED ONLY THIS -->
                 {% if event.status == "new" %}
@@ -103,39 +107,84 @@
     </div>
 
     <script>
-document.getElementById("search-input").addEventListener("keyup", function () {
-    const q = this.value;
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchForm = document.getElementById('searchForm');
+    const eventGrid = document.getElementById('eventGrid');
+    const eventCards = document.querySelectorAll('.event-card');
 
-    fetch("/accounts/live-search/?q=" + encodeURIComponent(q))
-        .then(response => response.json())
-        .then(data => {
-            const grid = document.querySelector(".event-grid");
-            grid.innerHTML = "";
-
-            if (data.events.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1 / -1;">No events found.</p>`;
-                return;
-            }
-
-            data.events.forEach(ev => {
-                // Convert status ("new" or "recent") to the label text
-                const label = ev.status === "new" ? "Newly Added Event" : "Recent Event";
-
-                grid.innerHTML += `
-                    <div class="event-card">
-
-                        <!-- ⭐ STATUS INDICATOR (same style as home.html) -->
-                        <div class="event-indicator ${ev.status}">
-                            ${label}
-                        </div>
-
-                        <h3>${ev.name}</h3>
-
-                        <a href="${ev.url}" class="view-btn">View Details</a>
-                    </div>
-                `;
-            });
+    // Prevent form submission for live search
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            performClientSideSearch();
         });
+    }
+
+    // Live search with client-side filtering (instant results)
+    if (searchInput && eventCards.length > 0) {
+        searchInput.addEventListener('input', function() {
+            // Instant client-side filtering
+            performClientSideSearch();
+        });
+    }
+
+    function performClientSideSearch() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const originalCards = Array.from(eventGrid.querySelectorAll('.event-card'));
+        
+        // Remove any existing "no results" message
+        const noResultsMsg = eventGrid.querySelector('.no-search-results');
+        if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
+
+        if (searchTerm === '') {
+            // Show all events when search is empty
+            originalCards.forEach(card => {
+                card.style.display = '';
+            });
+            return;
+        }
+
+        let visibleCount = 0;
+
+        originalCards.forEach(function(card) {
+            const eventName = card.getAttribute('data-event-name') || '';
+            const eventVenue = card.getAttribute('data-event-venue') || '';
+            const eventDate = card.getAttribute('data-event-date') || '';
+            const eventCategory = card.getAttribute('data-event-category') || '';
+
+            const matches = eventName.includes(searchTerm) || 
+                          eventVenue.includes(searchTerm) || 
+                          eventDate.includes(searchTerm) ||
+                          eventCategory.includes(searchTerm);
+
+            if (matches) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Show no results message if no cards match
+        if (visibleCount === 0 && searchTerm !== '') {
+            const msg = document.createElement('div');
+            msg.className = 'no-search-results';
+            msg.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;';
+            msg.innerHTML = '<p>No events found matching "<strong>' + searchTerm + '</strong>"</p><p>Try searching by name, venue, date, or category.</p>';
+            eventGrid.appendChild(msg);
+        }
+    }
+
+    // Initialize: handle URL query parameter if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParam = urlParams.get('q');
+    if (queryParam && searchInput) {
+        searchInput.value = queryParam;
+        performClientSideSearch();
+    }
 });
 </script>
 
