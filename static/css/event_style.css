@@ -6,7 +6,6 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    transition: 0.3s all ease-in-out;
 }
 
 body {
@@ -15,12 +14,31 @@ body {
 }
 
 /* ============================= */
+/* FADE ANIMATIONS (Only for specific UI) */
+/* ============================= */
+
+.fade-up {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.6s ease forwards;
+}
+
+.fade-up.delay-1 { animation-delay: 0.15s; }
+.fade-up.delay-2 { animation-delay: 0.30s; }
+.fade-up.delay-3 { animation-delay: 0.45s; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================= */
 /* CONTAINER                     */
 /* ============================= */
 .container {
-    width: 90%;
+    width: 95%;
     max-width: 1200px;
-    margin: 70px auto;
+    margin: 40px auto;
 }
 
 /* ============================= */
@@ -30,16 +48,19 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 35px;
 }
 
+/* 🔵 Upcoming Events Title — with fade-up */
 header h1 {
     color: #004aad;
     font-size: 2rem;
     margin: 0;
 }
 
-/* Create Event Button */
+/* ============================= */
+/* CREATE EVENT BUTTON (fade-up) */
+/* ============================= */
 .btn-create {
     background: #1e88e5;
     color: #fff;
@@ -51,24 +72,30 @@ header h1 {
 }
 .btn-create:hover {
     background: #1565c0;
-    transform: translateY(-2px);
 }
 
 /* ============================= */
-/* SEARCH INPUT                  */
+/* SEARCH INPUT (fade-up)        */
 /* ============================= */
+.search-bar-container {
+    width: 100%;
+    margin: 30px auto 40px;
+    display: flex;
+    justify-content: center;
+}
+
 .search-input {
-    padding: 12px 20px;
-    width: 700px;              /* 🔥 wider search bar */
-    max-width: 90%;            /* prevents overflow on small screens */
+    padding: 12px 22px;
+    width: 800px;
+    max-width: 90%;
     border: 2px solid #004aad;
     border-radius: 30px;
     outline: none;
-    font-size: 16px;           /* slightly bigger text for proportion */
+    font-size: 16px;
     background: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 74, 173, 0.12);
-    transition: 0.2s ease;
 }
+
 .search-input:focus {
     border-color: #1565c0;
     box-shadow: 0 0 12px rgba(21, 101, 192, 0.35);
@@ -94,12 +121,11 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0,123,255,0.35);
 }
 .back-btn:hover {
-    transform: translateY(-2px) scale(1.03);
     box-shadow: 0 6px 14px rgba(0,123,255,0.5);
 }
 
 /* ============================= */
-/* LOGOUT BUTTON                 */
+/* LOGOUT BUTTON (fade-up)       */
 /* ============================= */
 .logout-container {
     position: absolute;
@@ -122,16 +148,17 @@ header h1 {
 }
 
 /* ============================= */
-/* EVENT GRID (3 columns)        */
+/* EVENT GRID (no animations)    */
 /* ============================= */
 .event-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    gap: 28px;
+    padding-bottom: 40px;
     max-height: 80vh;
     overflow-y: auto;
-    padding-right: 10px;
 }
+
 .event-grid::-webkit-scrollbar {
     width: 8px;
 }
@@ -149,42 +176,39 @@ header h1 {
 .event-card {
     background: #fff;
     border-radius: 14px;
-    padding: 22px;
+    padding: 25px;
     box-shadow: 0 5px 15px rgba(0,50,150,0.1);
-    transition: 0.25s ease;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.7s forwards;
+    /* NO animations here */
 }
 
 .event-card:hover {
-    transform: translateY(-6px);
     box-shadow: 0 15px 25px rgba(0,50,150,0.15);
 }
 
 .event-card h2 {
     color: #004aad;
     font-size: 1.5rem;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .event-card p {
-    margin: 4px 0;
+    margin: 6px 0;
     color: #333;
+    line-height: 1.4;
 }
 
 /* ============================= */
 /* ACTION BUTTONS                */
 /* ============================= */
 .actions {
-    margin-top: 15px;
+    margin-top: 18px;
     display: flex;
     gap: 10px;
     justify-content: flex-end;
 }
 
 .actions a {
-    padding: 8px 18px;
+    padding: 9px 18px;
     font-size: 0.9rem;
     border-radius: 8px;
     color: white;
@@ -230,64 +254,68 @@ header h1 {
     text-align: center;
     font-size: 15px;
     font-weight: 600;
-    opacity: 0;
-    animation: fadeSlideDown 0.6s ease forwards;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.search-bar-container {
-    width: 100%;
-    margin-top: 50px;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-
-.search-input {
-    padding: 10px 18px;
-    width: 900px;
-    border: 2px solid #004aad;
-    border-radius: 25px;
-    outline: none;
-    font-size: 15px;
-    background: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 74, 173, 0.15);
-}
-
-.search-input:focus {
-    border-color: #1565c0;
-    box-shadow: 0 0 10px rgba(21, 101, 192, 0.4);
-}
-
-/* Types */
+/* Message Types */
 .message.success  { background: #e6ffed; color: #0f5132; }
 .message.error    { background: #f8d7da; color: #842029; }
 .message.warning  { background: #fff3cd; color: #856404; }
 .message.info     { background: #cfe2ff; color: #084298; }
 
-.message.fade-out {
-    animation: fadeOut 0.6s forwards;
-}
+.message.fade-out { opacity: 0; }
 
 /* ============================= */
-/* ANIMATIONS                    */
+/* RESPONSIVE                    */
 /* ============================= */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeSlideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeOut {
-    to { opacity: 0; }
-}
-
-/* Responsive */
 @media (max-width: 1024px) {
     .event-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 700px) {
     .event-grid { grid-template-columns: 1fr; }
+}
+/* ============================= */
+/* FLASH MESSAGE ANIMATIONS      */
+/* ============================= */
+
+/* Slide + fade in */
+@keyframes messageFadeSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Smooth fade-out (auto triggered by JS) */
+@keyframes messageFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+.message {
+    padding: 14px 18px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    /* NEW ANIMATION */
+    animation: messageFadeSlide 0.45s ease forwards;
+}
+
+/* Apply fade-out animation when JS adds class */
+.message.fade-out {
+    animation: messageFadeOut 0.5s ease forwards;
 }

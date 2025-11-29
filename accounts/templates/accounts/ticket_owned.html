@@ -53,19 +53,21 @@ setTimeout(() => {
 
             <h3>{{ ticket.event.event_name }}</h3>
 
-            {% if ticket.event.is_deleted %}
-            <div class="deleted-text">This event has been deleted</div>
+            {% if ticket.event.is_deleted and ticket.is_expired %}
+                <div class="deleted-text">This event deleted & expired!</div>
+
+            {% elif ticket.event.is_deleted %}
+                <div class="deleted-text">This event has been deleted</div>
 
             {% elif ticket.is_expired %}
-            <div class="expired-text">❌ Ticket has been expired!</div>
+                <div class="expired-text">❌ Ticket has been expired!</div>
 
-            {% elif ticket.event.is_edited %}       
-            <div class="edited-warning">⚠ This event has been modified</div>
+            {% elif ticket.event.is_edited %}     
+                <div class="edited-warning">⚠ This event has been modified</div>
 
             {% else %}
-            <div class="blank-status-bar">This event is available</div>
+                <div class="blank-status-bar">This event is available</div>
             {% endif %}
-
 
             <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
             <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
@@ -113,14 +115,18 @@ document.getElementById("search-input").addEventListener("keyup", function () {
             data.tickets.forEach(tk => {
 
                 let statusUI = "";
-                if (tk.is_deleted) {
+
+                if (tk.is_deleted && tk.is_expired) {
+                    statusUI = `<div class="deleted-text">deleted & expired!</div>`;
+                }
+                else if (tk.is_deleted) {
                     statusUI = `<div class="deleted-text">This event has been deleted</div>`;
-                } 
-                else if (tk.is_edited) {
-                    statusUI = `<div class="edited-warning">⚠ This event has been modified</div>`;
                 }
                 else if (tk.is_expired) {
                     statusUI = `<div class="expired-text">❌ Ticket has been expired!</div>`;
+                }
+                else if (tk.is_edited) {
+                    statusUI = `<div class="edited-warning">⚠ This event has been modified</div>`;
                 }
                 else {
                     statusUI = `<div class="blank-status-bar">This event is available</div>`;
