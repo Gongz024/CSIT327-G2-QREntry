@@ -125,7 +125,7 @@ body, html {
 }
 
 .error-message {
-    color: #ffda00;
+    color: #940000;
     font-size: 11px; /* ADJUSTED: Smaller error message font size */
     margin-top: -6px; /* ADJUSTED: Tighter spacing */
     margin-bottom: 8px; /* ADJUSTED: Tighter spacing */

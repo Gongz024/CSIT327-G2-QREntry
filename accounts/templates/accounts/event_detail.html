@@ -10,6 +10,67 @@
 </head>
 
 <style>
+
+    /* ===== Confirmation Modal ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: white;
+    padding: 25px;
+    width: 90%;
+    max-width: 350px;
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-box h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-confirm {
+    background: #198754;
+    color: white;
+}
+
+.modal-cancel {
+    background: #dc3545;
+    color: white;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
     .messages {
     width: 90%;
     max-width: 800px;
@@ -118,4 +179,43 @@
     </div>
 
 </body>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <h2>Are you sure you want to purchase this ticket?</h2>
+
+        <div class="modal-buttons">
+            <button class="modal-btn modal-cancel" id="cancelBtn">Cancel</button>
+
+            <!-- Confirm will redirect to buy link -->
+            <a id="confirmBuyBtn">
+                <button class="modal-btn modal-confirm">Confirm</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const buyBtn = document.querySelector(".buy-btn:not(.disabled)");
+    const modal = document.getElementById("confirmModal");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const confirmBuyBtn = document.getElementById("confirmBuyBtn");
+
+    if (buyBtn) {
+        const buyLink = buyBtn.getAttribute("href");
+
+        buyBtn.addEventListener("click", function(e) {
+            e.preventDefault(); // Stop default redirect
+            modal.style.display = "flex";
+            confirmBuyBtn.setAttribute("href", buyLink);
+        });
+    }
+
+    cancelBtn.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+});
+</script>
 </html>
