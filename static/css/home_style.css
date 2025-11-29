@@ -235,6 +235,26 @@ body {
     box-shadow: 0 0 6px rgba(16, 60, 110, 0.3);
 }
 
+.event-indicator.expired {
+    background-color: #ffdddd;
+    color: #b30000;
+    border-left: 5px solid #ff4f4f;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    width: fit-content;
+    margin-bottom: 10px;
+    animation: fadeInUp 0.4s ease-out forwards;
+}
+
+/* Disabled button for expired events */
+.expired-btn {
+    background-color: #ccc !important;
+    color: #777 !important;
+    cursor: not-allowed !important;
+    border: none !important;
+}
 
 /* =============================== */
 /* No Results Message */

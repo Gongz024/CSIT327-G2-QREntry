@@ -62,6 +62,25 @@ body {
     color: #103c6e;
 }
 
+.expired-text {
+    background-color: #ffdddd;
+    color: #b30000;
+    font-weight: bold;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+    border-left: 6px solid #ff4f4f;
+}
+
+.expired-btn {
+    background-color: #6c757d !important;
+}
+
+.expired-btn:hover {
+    background-color: #565e64 !important;
+}
+
 /* =============================== */
 /* Header Section */
 /* =============================== */

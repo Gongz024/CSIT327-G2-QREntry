@@ -31,24 +31,21 @@
     </div>
 
     {% if messages %}
-<div class="messages">
-    {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-</div>
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
 
-<script>
-    // Wait 5 seconds then fade out each message
-    setTimeout(() => {
-        document.querySelectorAll('.message').forEach(msg => {
-            msg.classList.add('fade-out');
-
-            // Remove from DOM after animation finishes (0.6s)
-            setTimeout(() => msg.remove(), 600);
-        });
-    }, 5000);
-</script>
-{% endif %}
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.classList.add('fade-out');
+                setTimeout(() => msg.remove(), 600);
+            });
+        }, 5000);
+    </script>
+    {% endif %}
 
     <!-- Bookmarked Events -->
     <div class="events-section fade-in delay-3">
@@ -64,26 +61,29 @@
 
                 <h3>{{ b.event.event_name }}</h3>
 
-                {% if b.event.is_edited and not b.event.is_deleted %}
-                    <div class="edited-warning">
-                        This event has been modified
-                    </div>
-                {% endif %}
+                <!-- ✔ PRIORITY: EXPIRED > DELETED > EDITED > AVAILABLE -->
+                {% if b.is_expired %}
+                    <div class="expired-text">❌ This event has already ended</div>
 
-                {% if b.event.is_deleted %}
+                {% elif b.event.is_deleted %}
                     <p class="deleted-text">❌ This event has been deleted</p>
-                {% endif %}
 
-                {% if not b.event.is_edited and not b.event.is_deleted %}
-                        <div class="blank-status-bar">This event is available</div>
-                    {% endif %}
+                {% elif b.event.is_edited %}
+                    <div class="edited-warning">⚠ This event has been modified</div>
+
+                {% else %}
+                    <div class="blank-status-bar">This event is available</div>
+                {% endif %}
 
                 <p><strong>📍 Venue:</strong> {{ b.event.event_venue }}</p>
                 <p><strong>📅 Date:</strong> {{ b.event.event_date|date:"F j, Y" }}</p>
 
                 <div class="button-container">
 
-                    {% if not b.event.is_deleted %}
+                    {% if b.is_expired %}
+                        <button class="view-btn expired-btn" disabled>Event Ended</button>
+
+                    {% elif not b.event.is_deleted %}
                         <a href="{% url 'accounts:event_detail' b.event.id %}" class="view-btn">
                             View Details
                         </a>
@@ -128,7 +128,6 @@
             const eventGrid = document.getElementById('eventGrid');
             const eventCards = document.querySelectorAll('.event-card');
 
-            // Prevent form submission for live search
             if (searchForm) {
                 searchForm.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -136,7 +135,6 @@
                 });
             }
 
-            // Live search with client-side filtering (instant results)
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
                     performClientSideSearch();
@@ -148,19 +146,16 @@
                 
                 const searchTerm = searchInput.value.toLowerCase().trim();
 
-                // If no bookmarks exist, show message
                 if (eventCards.length === 0) {
                     return;
                 }
 
-                // Remove any existing "no results" message
                 const noResultsMsg = document.getElementById('noSearchResults');
                 if (noResultsMsg) {
                     noResultsMsg.remove();
                 }
 
                 if (searchTerm === '') {
-                    // Show all events when search is empty
                     eventCards.forEach(card => {
                         card.style.display = '';
                     });
@@ -174,9 +169,10 @@
                     const eventVenue = card.getAttribute('data-event-venue') || '';
                     const eventDate = card.getAttribute('data-event-date') || '';
 
-                    const matches = eventName.includes(searchTerm) || 
-                                  eventVenue.includes(searchTerm) || 
-                                  eventDate.includes(searchTerm);
+                    const matches =
+                        eventName.includes(searchTerm) ||
+                        eventVenue.includes(searchTerm) ||
+                        eventDate.includes(searchTerm);
 
                     if (matches) {
                         card.style.display = '';
@@ -186,17 +182,18 @@
                     }
                 });
 
-                // Show no results message if no cards match
                 if (visibleCount === 0 && searchTerm !== '' && eventGrid) {
                     const msg = document.createElement('div');
                     msg.id = 'noSearchResults';
                     msg.className = 'no-results';
-                    msg.innerHTML = '<p>No events found matching "<strong>' + searchTerm + '</strong>"</p><p>Try searching by name, venue, or date.</p>';
+                    msg.innerHTML =
+                        '<p>No events found matching "<strong>' +
+                        searchTerm +
+                        '</strong>"</p><p>Try searching by name, venue, or date.</p>';
                     eventGrid.appendChild(msg);
                 }
             }
 
-            // Initialize: handle URL query parameter if present
             const urlParams = new URLSearchParams(window.location.search);
             const queryParam = urlParams.get('q');
             if (queryParam && searchInput) {
