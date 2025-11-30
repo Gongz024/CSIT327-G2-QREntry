@@ -62,7 +62,7 @@ setTimeout(() => {
             {% elif ticket.is_expired %}
                 <div class="expired-text">❌ Ticket has been expired!</div>
 
-            {% elif ticket.event.is_edited %}     
+            {% elif ticket.event.is_edited %}
                 <div class="edited-warning">⚠ This event has been modified</div>
 
             {% else %}
@@ -74,17 +74,16 @@ setTimeout(() => {
             <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>
             <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
 
-            {% if ticket.is_expired %}
-                <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="delete-btn expired-btn">Delete</button>
-                </form>
-            {% else %}
-                <form method="post" action="{% url 'accounts:delete_ticket' ticket.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="delete-btn">Delete & Refund</button>
-                </form>
-            {% endif %}
+            <!-- Delete button triggers modal -->
+            <button type="button" 
+                    class="delete-btn open-delete-modal {% if ticket.is_expired %}expired-btn{% endif %}" 
+                    data-ticket-id="{{ ticket.id }}">
+                {% if ticket.is_expired %}
+                    Delete
+                {% else %}
+                    Delete & Refund
+                {% endif %}
+            </button>
 
         </div>
     {% endfor %}
@@ -132,21 +131,6 @@ document.getElementById("search-input").addEventListener("keyup", function () {
                     statusUI = `<div class="blank-status-bar">This event is available</div>`;
                 }
 
-                let deleteButtonUI = "";
-                if (tk.is_expired) {
-                    deleteButtonUI = `
-                        <form method="post" action="/accounts/delete-ticket/${tk.id}/">
-                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                            <button type="submit" class="delete-btn expired-btn">Delete</button>
-                        </form>`;
-                } else {
-                    deleteButtonUI = `
-                        <form method="post" action="/accounts/delete-ticket/${tk.id}/">
-                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                            <button type="submit" class="delete-btn">Delete & Refund</button>
-                        </form>`;
-                }
-
                 grid.innerHTML += `
                     <div class="ticket-card ${tk.is_deleted ? "deleted" : ""}">
                         <h3>${tk.event_name}</h3>
@@ -157,11 +141,65 @@ document.getElementById("search-input").addEventListener("keyup", function () {
                         <p><strong>Time:</strong> ${tk.event_time_in} - ${tk.event_time_out}</p>
                         <p><strong>Price:</strong> ₱${tk.ticket_price}</p>
 
-                        ${deleteButtonUI}
+                        <button type="button" 
+                                class="delete-btn open-delete-modal ${tk.is_expired ? "expired-btn" : ""}"
+                                data-ticket-id="${tk.id}">
+                            ${tk.is_expired ? "Delete" : "Delete & Refund"}
+                        </button>
                     </div>
                 `;
             });
         });
+});
+</script>
+
+<!-- =============================== -->
+<!-- DELETE CONFIRMATION MODAL -->
+<!-- =============================== -->
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <h2>Are you sure you want to delete/refund this ticket?</h2>
+
+        <div class="modal-buttons">
+            <button id="cancelModalBtn" class="modal-btn modal-cancel">Cancel</button>
+            <button id="confirmModalBtn" class="modal-btn modal-confirm">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- =============================== -->
+<!-- MODAL SCRIPT -->
+<!-- =============================== -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modal = document.getElementById("confirmModal");
+    const confirmBtn = document.getElementById("confirmModalBtn");
+    const cancelBtn = document.getElementById("cancelModalBtn");
+
+    let ticketToDelete = null;
+
+    // OPEN modal
+    document.querySelectorAll(".open-delete-modal").forEach(btn => {
+        btn.addEventListener("click", () => {
+            ticketToDelete = btn.dataset.ticketId;
+            modal.style.display = "flex";
+        });
+    });
+
+    // CANCEL modal
+    cancelBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+        ticketToDelete = null;
+    });
+
+    // CONFIRM delete
+    confirmBtn.addEventListener("click", () => {
+        if (ticketToDelete) {
+            window.location.href = `/accounts/delete-ticket/${ticketToDelete}/`;
+        }
+    });
+
 });
 </script>
 

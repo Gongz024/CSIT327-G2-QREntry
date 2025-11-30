@@ -65,52 +65,61 @@
     </p>
 </div>
 
-<!-- =========================== -->
-<!-- EVENT GRID SECTION -->
-<!-- =========================== -->
+<!-- ====================================================== -->
+<!-- AVAILABLE EVENTS SECTION -->
+<!-- ====================================================== -->
 <div class="events-section fade-in">
     <h2>Available Events</h2>
 
-    {% if events %}
     <div class="event-grid" id="eventGrid">
         {% for event in events %}
-        <div class="event-card"
-             data-event-name="{{ event.event_name|lower }}"
-             data-event-venue="{{ event.event_venue|lower }}"
-             data-event-date="{{ event.event_date|date:'F j, Y'|lower }}"
-             data-event-category="{{ event.event_category|lower }}">
+            {% if not event.is_expired %}
+                <div class="event-card"
+                     data-event-name="{{ event.event_name|lower }}"
+                     data-event-venue="{{ event.event_venue|lower }}"
+                     data-event-date="{{ event.event_date|date:'F j, Y'|lower }}"
+                     data-event-category="{{ event.event_category|lower }}">
 
-            {% if event.is_expired %}
-    <div class="event-indicator expired">❌ Event Expired</div>
+                    {% if event.status == "new" %}
+                        <div class="event-indicator new">🆕 Newly Added Event</div>
+                    {% else %}
+                        <div class="event-indicator recent">Recent Event</div>
+                    {% endif %}
 
-{% elif event.status == "new" %}
-    <div class="event-indicator new">Newly Added Event</div>
+                    <h3>{{ event.event_name }}</h3>
 
-{% else %}
-    <div class="event-indicator recent">Recent Event</div>
-{% endif %}
-
-            <h3>{{ event.event_name }}</h3>
-            {% if event.is_expired %}
-    <button class="view-btn expired-btn" disabled>Event Ended</button>
-{% else %}
-    <a href="{% url 'accounts:event_detail' event.id %}" class="view-btn">View Details</a>
-{% endif %}
-        </div>
+                    <a href="{% url 'accounts:event_detail' event.id %}" class="view-btn">View Details</a>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
+</div>
 
-    {% else %}
-        {% if query %}
-            <div class="no-results">
-                <p>No event named "<strong>{{ query }}</strong>" found.</p>
-                <p>Do you wish to go back?</p>
-                <a href="{% url 'accounts:home' %}" class="back-btn">⬅ Go Back</a>
-            </div>
-        {% else %}
-            <p>No events available yet.</p>
-        {% endif %}
-    {% endif %}
+<!-- ====================================================== -->
+<!-- EXPIRED EVENTS SECTION -->
+<!-- ====================================================== -->
+<div class="events-section fade-in">
+    <h2>Expired Events</h2>
+
+    <div class="event-grid">
+        {% for event in events %}
+            {% if event.is_expired %}
+                <div class="event-card expired-card"
+                     data-event-name="{{ event.event_name|lower }}"
+                     data-event-venue="{{ event.event_venue|lower }}"
+                     data-event-date="{{ event.event_date|date:'F j, Y'|lower }}"
+                     data-event-category="{{ event.event_category|lower }}">
+
+                    <div class="event-indicator expired">❌ Event Expired</div>
+                    <h3>{{ event.event_name }}</h3>
+
+                    <button class="view-btn expired-btn" disabled>Event Ended</button>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p>No expired events.</p>
+        {% endfor %}
+    </div>
 </div>
 
 <!-- =========================== -->
@@ -141,28 +150,20 @@ document.addEventListener("DOMContentLoaded", function() {
     const eventGrid = document.getElementById("eventGrid");
     const searchForm = document.getElementById("searchForm");
 
-    // Prevent form submit
     if (searchForm) {
         searchForm.addEventListener("submit", function(e) {
             e.preventDefault();
-            performClientSideSearch();
+            performSearch();
         });
     }
 
-    if (searchInput) {
-        searchInput.addEventListener("input", performClientSideSearch);
-    }
-    if (categoryFilter) {
-        categoryFilter.addEventListener("change", performClientSideSearch);
-    }
+    if (searchInput) searchInput.addEventListener("input", performSearch);
+    if (categoryFilter) categoryFilter.addEventListener("change", performSearch);
 
-    function performClientSideSearch() {
+    function performSearch() {
         const searchTerm = searchInput.value.toLowerCase().trim();
         const category = categoryFilter.value;
-        const cards = Array.from(document.querySelectorAll(".event-card"));
-
-        const oldMsg = eventGrid.querySelector(".no-search-results");
-        if (oldMsg) oldMsg.remove();
+        const cards = document.querySelectorAll("#eventGrid .event-card");
 
         let visibleCount = 0;
 
@@ -178,8 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 date.includes(searchTerm) ||
                 cat.includes(searchTerm);
 
-            const matchesCategory =
-                category === "" || cat === category;
+            const matchesCategory = category === "" || cat === category;
 
             if (matchesSearch && matchesCategory) {
                 card.style.display = "";
@@ -189,21 +189,25 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
+        const noResults = document.querySelector(".no-search-results");
         if (visibleCount === 0) {
-            const msg = document.createElement("div");
-            msg.className = "no-search-results";
-            msg.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;";
-            msg.innerHTML = `<p>No events found.</p>`;
-            eventGrid.appendChild(msg);
+            if (!noResults) {
+                const msg = document.createElement("div");
+                msg.className = "no-search-results";
+                msg.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;";
+                msg.innerHTML = `<p>No events found.</p>`;
+                eventGrid.appendChild(msg);
+            }
+        } else if (noResults) {
+            noResults.remove();
         }
     }
 
-    // Check URL ?q=
     const params = new URLSearchParams(window.location.search);
     const qParam = params.get("q");
     if (qParam) {
         searchInput.value = qParam;
-        performClientSideSearch();
+        performSearch();
     }
 });
 </script>
