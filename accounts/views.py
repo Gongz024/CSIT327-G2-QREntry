@@ -300,6 +300,8 @@ def create_event_view(request):
         description = request.POST.get('description', '').strip()
 
         errors = {}
+
+        # =============== REQUIRED FIELD CHECKS ===============
         if not event_name:
             errors['eventName'] = "Event name is required."
         if not venue:
@@ -317,12 +319,39 @@ def create_event_view(request):
         if not description:
             errors['description'] = "Description is required."
 
+        # =============== VALIDATIONS ===============
+        if event_date:
+            try:
+                event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
+                start_time_obj = datetime.strptime(start_time, "%H:%M").time() if start_time else None
+                end_time_obj = datetime.strptime(end_time, "%H:%M").time() if end_time else None
+
+                today = datetime.now().date()
+                current_time = datetime.now().time()
+
+                # ❌ Rule 1: Past Date
+                if event_date_obj < today:
+                    errors['eventDate'] = "❌ You cannot create an event before today's date."
+
+                # ❌ Rule 2: Same-day but past start time
+                if event_date_obj == today and start_time_obj and start_time_obj <= current_time:
+                    errors['startTime'] = "❌ Start time cannot be earlier than the current time."
+
+                # ❌ Rule 3: End time must be after start time
+                if start_time_obj and end_time_obj and end_time_obj <= start_time_obj:
+                    errors['endTime'] = "❌ End time must be later than the start time."
+
+            except ValueError:
+                errors['eventDate'] = "Invalid event date."
+
+        # =============== RETURN IF ERRORS ===============
         if errors:
             return render(request, 'accounts/create_event.html', {
                 'errors': errors,
                 'values': request.POST,
             })
 
+        # =============== CREATE EVENT ===============
         Event.objects.create(
             organizer=request.user,
             event_name=event_name,
@@ -435,7 +464,6 @@ def edit_event_view(request, event_id):
 
     if request.method == 'POST':
 
-        # ------ BEFORE CHANGES (used to detect edits) ------
         before = {
             "name": event.event_name,
             "venue": event.event_venue,
@@ -448,7 +476,6 @@ def edit_event_view(request, event_id):
             "description": event.event_description,
         }
 
-        # ------ NEW VALUES FROM FORM ------
         event_name = request.POST.get('event_name', '').strip()
         event_venue = request.POST.get('event_venue', '').strip()
         event_category = request.POST.get('event_category', '').strip()
@@ -459,10 +486,9 @@ def edit_event_view(request, event_id):
         ticket_price = request.POST.get('ticket_price', '').replace(',', '').strip()
         event_description = request.POST.get('event_description', '').strip()
 
-        # Keep user-typed ticket limit
         event.ticket_limit = int(ticket_limit or 0)
 
-        # ------ VALIDATION ------
+        # -------- REQUIRED FIELD CHECK --------
         if not all([
             event_name, event_venue, event_category, event_date,
             event_time_in, event_time_out, ticket_price, event_description
@@ -477,7 +503,7 @@ def edit_event_view(request, event_id):
             event.event_description = event_description
             return render(request, 'accounts/edit_event.html', {'event': event})
 
-        # Validate year
+        # -------- VALIDATION: YEAR --------
         try:
             event_year = datetime.strptime(event_date, "%Y-%m-%d").year
             if event_year < 2025 or event_year > 2030:
@@ -487,17 +513,47 @@ def edit_event_view(request, event_id):
             messages.error(request, "⚠️ Invalid date format. Please select a valid date.")
             return render(request, 'accounts/edit_event.html', {'event': event})
 
-        # Validate price
+        # -------- VALIDATION: PRICE --------
         try:
             ticket_price_value = float(ticket_price)
             if ticket_price_value <= 0:
                 messages.error(request, "⚠️ Ticket price cannot be less than or equal to 0.")
                 return render(request, 'accounts/edit_event.html', {'event': event})
         except ValueError:
-            messages.error(request, "⚠️ Please enter a valid numeric ticket price.")
+            messages.error(request, "⚠️ Enter a valid numeric ticket price.")
             return render(request, 'accounts/edit_event.html', {'event': event})
 
-        # ------ SAVE UPDATED EVENT ------
+        # ============= NEW RULES BELOW =============
+
+        try:
+            # Convert
+            event_date_obj = datetime.strptime(event_date, "%Y-%m-%d").date()
+            start_time_obj = datetime.strptime(event_time_in, "%H:%M").time()
+            end_time_obj = datetime.strptime(event_time_out, "%H:%M").time()
+
+            today = datetime.now().date()
+            current_time = datetime.now().time()
+
+            # ❌ RULE 1: Date cannot be before today
+            if event_date_obj < today:
+                messages.error(request, "❌ You cannot set an event date BEFORE today.")
+                return render(request, 'accounts/edit_event.html', {'event': event})
+
+            # ❌ RULE 2: Start time cannot be before current time if event is today
+            if event_date_obj == today and start_time_obj <= current_time:
+                messages.error(request, "❌ Start time cannot be earlier than the current time.")
+                return render(request, 'accounts/edit_event.html', {'event': event})
+
+            # ❌ RULE 3: End time must be after start time
+            if end_time_obj <= start_time_obj:
+                messages.error(request, "❌ End time must be later than the start time.")
+                return render(request, 'accounts/edit_event.html', {'event': event})
+
+        except Exception:
+            messages.error(request, "⚠️ Invalid date or time format.")
+            return render(request, 'accounts/edit_event.html', {'event': event})
+
+        # ============= SAVE EVENT =============
         event.event_name = event_name
         event.event_venue = event_venue
         event.event_category = event_category
@@ -508,7 +564,7 @@ def edit_event_view(request, event_id):
         event.event_description = event_description
         event.save()
 
-        # ------ AFTER CHANGES ------
+        # -------- CHANGE DETECTION --------
         after = {
             "name": event.event_name,
             "venue": event.event_venue,
@@ -521,14 +577,11 @@ def edit_event_view(request, event_id):
             "description": event.event_description,
         }
 
-        # ------ DETECT CHANGE ------
         if before != after:
             event.is_edited = True
             event.save(update_fields=['is_edited'])
 
-            # Notify all users with tickets
             tickets = Ticket.objects.filter(event=event).select_related('user')
-
             for ticket in tickets:
                 send_event_status_email(ticket.user, event, status="edited")
 
