@@ -61,7 +61,6 @@
 
                 <h3>{{ b.event.event_name }}</h3>
 
-                <!-- ✔ PRIORITY: EXPIRED > DELETED > EDITED > AVAILABLE -->
                 {% if b.is_expired %}
                     <div class="expired-text">❌ This event has already ended</div>
 
@@ -89,9 +88,12 @@
                         </a>
                     {% endif %}
 
-                    <a href="{% url 'accounts:remove_bookmark' b.event.id %}" class="remove-btn">
+                    <!-- REMOVE with modal trigger -->
+                    <button 
+                        class="remove-btn open-remove-modal" 
+                        data-event-id="{{ b.event.id }}">
                         Remove
-                    </a>
+                    </button>
                 </div>
 
             </div>
@@ -120,86 +122,95 @@
         <a href="{% url 'accounts:home' %}" class="bookmark-btn-top">🏠 Home</a>
     </div>
 
+    <!-- =============================== -->
+    <!-- REMOVE BOOKMARK MODAL -->
+    <!-- =============================== -->
+    <div id="removeBookmarkModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Remove this bookmarked event?</h2>
+
+            <div class="modal-buttons">
+                <button id="cancelRemoveBtn" class="modal-btn modal-cancel">Cancel</button>
+                <button id="confirmRemoveBtn" class="modal-btn modal-confirm">Remove</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Live Search Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const searchForm = document.getElementById('searchForm');
-            const eventGrid = document.getElementById('eventGrid');
-            const eventCards = document.querySelectorAll('.event-card');
+        document.addEventListener("DOMContentLoaded", function() {
 
-            if (searchForm) {
-                searchForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    performClientSideSearch();
+            /* =======================
+               REMOVE BOOKMARK MODAL
+            ======================= */
+
+            const modal = document.getElementById("removeBookmarkModal");
+            const cancelBtn = document.getElementById("cancelRemoveBtn");
+            const confirmBtn = document.getElementById("confirmRemoveBtn");
+
+            let eventToRemove = null;
+
+            document.querySelectorAll(".open-remove-modal").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    eventToRemove = btn.dataset.eventId;
+                    modal.style.display = "flex";
                 });
-            }
+            });
 
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    performClientSideSearch();
-                });
-            }
+            cancelBtn.addEventListener("click", () => {
+                modal.style.display = "none";
+                eventToRemove = null;
+            });
 
-            function performClientSideSearch() {
-                if (!searchInput) return;
-                
-                const searchTerm = searchInput.value.toLowerCase().trim();
-
-                if (eventCards.length === 0) {
-                    return;
+            confirmBtn.addEventListener("click", () => {
+                if (eventToRemove) {
+                    window.location.href = `/accounts/remove-bookmark/${eventToRemove}/`;
                 }
+            });
 
-                const noResultsMsg = document.getElementById('noSearchResults');
-                if (noResultsMsg) {
-                    noResultsMsg.remove();
-                }
+            /* =======================
+               LIVE SEARCH
+            ======================= */
+            const searchInput = document.getElementById("searchInput");
+            const eventGrid = document.getElementById("eventGrid");
+            const eventCards = document.querySelectorAll(".event-card");
 
-                if (searchTerm === '') {
-                    eventCards.forEach(card => {
-                        card.style.display = '';
-                    });
-                    return;
-                }
+            function performSearch() {
+                const term = searchInput.value.toLowerCase().trim();
 
-                let visibleCount = 0;
+                let visible = 0;
 
-                eventCards.forEach(function(card) {
-                    const eventName = card.getAttribute('data-event-name') || '';
-                    const eventVenue = card.getAttribute('data-event-venue') || '';
-                    const eventDate = card.getAttribute('data-event-date') || '';
+                eventCards.forEach(card => {
+                    const name = card.dataset.eventName;
+                    const venue = card.dataset.eventVenue;
+                    const date = card.dataset.eventDate;
 
-                    const matches =
-                        eventName.includes(searchTerm) ||
-                        eventVenue.includes(searchTerm) ||
-                        eventDate.includes(searchTerm);
+                    const match =
+                        name.includes(term) ||
+                        venue.includes(term) ||
+                        date.includes(term);
 
-                    if (matches) {
-                        card.style.display = '';
-                        visibleCount++;
+                    if (match) {
+                        card.style.display = "";
+                        visible++;
                     } else {
-                        card.style.display = 'none';
+                        card.style.display = "none";
                     }
                 });
 
-                if (visibleCount === 0 && searchTerm !== '' && eventGrid) {
-                    const msg = document.createElement('div');
-                    msg.id = 'noSearchResults';
-                    msg.className = 'no-results';
-                    msg.innerHTML =
-                        '<p>No events found matching "<strong>' +
-                        searchTerm +
-                        '</strong>"</p><p>Try searching by name, venue, or date.</p>';
+                const oldMsg = document.getElementById("noSearchResults");
+                if (oldMsg) oldMsg.remove();
+
+                if (visible === 0 && term !== "") {
+                    const msg = document.createElement("div");
+                    msg.id = "noSearchResults";
+                    msg.className = "no-results";
+                    msg.innerHTML = `<p>No events found matching "<strong>${term}</strong>"</p>`;
                     eventGrid.appendChild(msg);
                 }
             }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const queryParam = urlParams.get('q');
-            if (queryParam && searchInput) {
-                searchInput.value = queryParam;
-                performClientSideSearch();
-            }
+            searchInput.addEventListener("input", performSearch);
         });
     </script>
 

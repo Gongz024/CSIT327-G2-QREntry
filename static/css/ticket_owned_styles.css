@@ -272,6 +272,80 @@ body {
     opacity: 0;
 }
 
+/* =============================== */
+/* Confirmation Modal */
+/* =============================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 25px 30px;
+    width: 90%;
+    max-width: 360px;
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-box h2 {
+    margin-bottom: 18px;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Cancel button (red) */
+.modal-cancel {
+    background: #dc3545;
+    color: #fff;
+}
+
+/* Confirm button (blue) */
+.modal-confirm {
+    background: #004b9b;
+    color: #fff;
+    transition: 0.2s ease;
+}
+
+.modal-confirm:hover {
+    background: #66b2ff;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+
 /* Message Types */
 .message.success { background: #e6ffed; color: #0f5132; border-left: 5px solid #198754; }
 .message.error   { background: #f8d7da; color: #842029; border-left: 5px solid #dc3545; }

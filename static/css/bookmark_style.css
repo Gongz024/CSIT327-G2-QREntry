@@ -299,9 +299,86 @@ body {
     animation: popIn 0.6s ease-out forwards;
 }
 
+/* =============================== */
+/* REMOVE BOOKMARK CONFIRMATION MODAL */
+/* =============================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: #fff;
+    padding: 25px 30px;
+    width: 90%;
+    max-width: 360px;
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-box h2 {
+    margin-bottom: 18px;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+/* Cancel button */
+.modal-cancel {
+    background: #dc3545;
+    color: white;
+}
+
+/* Confirm (blue) */
+.modal-confirm {
+    background: #007bff;
+    color: white;
+}
+
+.modal-confirm:hover {
+    background: #66b2ff;
+}
+
+/* Fade-in animation for modal */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+
+
 .event-card.deleted {
-    opacity: 0.5;
-    background: #ffe5e5;
+    background: #ffffff !important;
+    opacity: 1 !important;
+    filter: none !important;
+    border: none !important;
 }
 
 .deleted-text {
@@ -386,11 +463,7 @@ body {
     animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Make Remove button fully visible even when event is deleted */
-.event-card.deleted {
-    opacity: 1 !important;
-    filter: brightness(1) !important;
-}
+
 
 .message.fade-out {
     animation: fadeOut 0.6s ease forwards;

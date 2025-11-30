@@ -10,7 +10,6 @@ body {
     background: #f9f9f9;
     color: #333;
 }
-
 /* Remove any leftover circular image styling */
 .profile-btn img {
     display: none;

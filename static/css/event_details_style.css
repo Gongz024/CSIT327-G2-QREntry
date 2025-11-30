@@ -170,6 +170,15 @@ body {
     transition: 0.3s ease;
 }
 
+.modal-confirm {
+    background: #007bff;      /* Normal blue */
+    color: white;
+    transition: background 0.2s ease;
+}
+
+.modal-confirm:hover {
+    background: #66b2ff;      /* Light blue on hover */
+}
 /* When user already bookmarked it */
 .bookmark-btn.bookmarked {
     background-color: rgb(255, 244, 198); /* transparent yellow */
