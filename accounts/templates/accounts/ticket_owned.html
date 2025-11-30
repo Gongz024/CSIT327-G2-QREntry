@@ -168,7 +168,7 @@ document.getElementById("search-input").addEventListener("keyup", function () {
 </div>
 
 <!-- =============================== -->
-<!-- MODAL SCRIPT -->
+<!-- MODAL SCRIPT (FIXED VERSION) -->
 <!-- =============================== -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -179,12 +179,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let ticketToDelete = null;
 
-    // OPEN modal
-    document.querySelectorAll(".open-delete-modal").forEach(btn => {
-        btn.addEventListener("click", () => {
-            ticketToDelete = btn.dataset.ticketId;
+    /* =====================================
+       DELEGATED LISTENER (WORKS AFTER SEARCH)
+    ===================================== */
+    document.addEventListener("click", function(e) {
+
+        // OPEN modal
+        if (e.target.classList.contains("open-delete-modal")) {
+            ticketToDelete = e.target.dataset.ticketId;
             modal.style.display = "flex";
-        });
+        }
     });
 
     // CANCEL modal
