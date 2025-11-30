@@ -80,9 +80,8 @@ setTimeout(() => {
 
             <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
 
-            <!-- ⭐ FINAL CORRECT BUTTON LOGIC ⭐ -->
+            <!-- ⭐ FINAL BUTTON LOGIC ⭐ -->
             {% if ticket.is_expired %}
-                <!-- Expired = delete only -->
                 <button type="button" 
                         class="delete-btn open-delete-modal expired-btn" 
                         data-ticket-id="{{ ticket.id }}">
@@ -90,7 +89,6 @@ setTimeout(() => {
                 </button>
 
             {% elif ticket.event.is_deleted %}
-                <!-- Deleted event = refund -->
                 <button type="button" 
                         class="delete-btn open-delete-modal" 
                         data-ticket-id="{{ ticket.id }}">
@@ -98,7 +96,6 @@ setTimeout(() => {
                 </button>
 
             {% else %}
-                <!-- Event active + ticket active -->
                 <button type="button" 
                         class="delete-btn ticket-in-use-btn" 
                         disabled>
@@ -154,7 +151,6 @@ document.getElementById("search-input").addEventListener("keyup", function () {
                     statusUI = `<div class="blank-status-bar">This event is available</div>`;
                 }
 
-                // ⭐ Correct date format "Nov 28, 2026"
                 let d = new Date(tk.event_date);
                 let formattedDate = d.toLocaleDateString("en-US", { 
                     month: "short", 
@@ -164,7 +160,6 @@ document.getElementById("search-input").addEventListener("keyup", function () {
 
                 let buttonHTML = "";
 
-                // ⭐ SAME LOGIC AS ABOVE (search version)
                 if (tk.is_expired) {
                     buttonHTML = `
                         <button class="delete-btn open-delete-modal expired-btn" 
@@ -207,7 +202,7 @@ document.getElementById("search-input").addEventListener("keyup", function () {
 <!-- DELETE CONFIRMATION MODAL -->
 <div id="confirmModal" class="modal-overlay">
     <div class="modal-box">
-        <h2>Are you sure you want to delete/refund this ticket?</h2>
+        <h2 id="modalMessage">Are you sure you want to delete/refund this ticket?</h2>
 
         <div class="modal-buttons">
             <button id="cancelModalBtn" class="modal-btn modal-cancel">Cancel</button>
@@ -216,10 +211,12 @@ document.getElementById("search-input").addEventListener("keyup", function () {
     </div>
 </div>
 
+<!-- ⭐ UPDATED MODAL LOGIC -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
     const modal = document.getElementById("confirmModal");
+    const modalText = document.getElementById("modalMessage");
     const confirmBtn = document.getElementById("confirmModalBtn");
     const cancelBtn = document.getElementById("cancelModalBtn");
 
@@ -227,7 +224,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", function(e) {
         if (e.target.classList.contains("open-delete-modal")) {
+
             ticketToDelete = e.target.dataset.ticketId;
+
+            const isExpired = e.target.classList.contains("expired-btn");
+
+            if (isExpired) {
+                modalText.innerHTML =
+                    "⚠️ You will <b>NOT</b> be refunded after deleting this ticket!";
+            } 
+            else {
+                modalText.innerHTML =
+                    "Are you sure you want to delete/refund this ticket?";
+            }
+
             modal.style.display = "flex";
         }
     });
