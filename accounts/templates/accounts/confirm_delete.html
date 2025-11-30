@@ -11,7 +11,7 @@
 
     <!-- 🔙 Back Button -->
     <div class="back-btn-container">
-        <a href="{% url 'accounts:organizer' %}" class="back-btn">← Back</a>
+        <a href="{% url 'accounts:event' %}" class="back-btn">← Back</a>
     </div>
 
     <div class="delete-container fade-in delay-1">
@@ -21,7 +21,7 @@
         <form method="POST">
             {% csrf_token %}
             <button type="submit" class="btn-delete">Yes, Delete</button>
-            <a href="{% url 'accounts:organizer' %}" class="btn-cancel">Cancel</a>
+            <a href="{% url 'accounts:event' %}" class="btn-cancel">Cancel</a>
         </form>
     </div>
 
