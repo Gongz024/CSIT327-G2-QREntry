@@ -9,17 +9,43 @@
     <link rel="stylesheet" href="{% static 'css/event_style.css' %}">
 
     <style>
-        /* Disable animations while searching */
         .no-anim, .no-anim * {
             animation: none !important;
             transition: none !important;
+        }
+
+        .event-card.expired {
+            background: #ffe5e5 !important;
+            border-left: 6px solid #ff1a1a !important;
+            opacity: 0.9;
+        }
+
+        .expired-badge {
+            display: inline-block;
+            background: #ff1a1a;
+            color: white;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .available-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- 🔙 Logout Button -->
     <div class="back-btn-container fade-up delay-1">
         <a href="{% url 'accounts:confirmlogout_organizer' %}" class="back-btn">Logout</a>
     </div>
@@ -42,27 +68,34 @@
 
     <div class="container">
 
-        <!-- Page Header -->
         <header class="fade-up delay-1">
-            <h1 class="fade-up delay-1">Upcoming Events</h1>
+            <h1 class="fade-up delay-1">Your Events</h1>
             <a href="{% url 'accounts:create_event' %}" class="btn-create fade-up delay-2">+ Create Event</a>
         </header>
 
-        <!-- Search Bar -->
         <div class="search-bar-container fade-up delay-2">
             <input type="text" id="searchBar" placeholder="Search events..." class="search-input fade-up delay-2">
         </div>
 
-        <!-- Event Grid -->
         <div class="event-grid" id="eventGrid">
             {% for event in events %}
-                <div class="event-card">
+                <div class="event-card {% if event.is_expired %}expired{% endif %}">
+
+                    {% if event.is_expired %}
+                        <div class="expired-badge">Expired!</div>
+                    {% else %}
+                        <div class="available-badge">Available!</div>
+                    {% endif %}
+
                     <h2>{{ event.event_name }}</h2>
                     <p><strong>Venue:</strong> {{ event.event_venue }}</p>
                     <p><strong>Category:</strong> {{ event.event_category }}</p>
                     <p><strong>Date:</strong> {{ event.event_date|date:"M d, Y" }}</p>
-                    <p><strong>Time In:</strong> {{ event.event_time_in|time:"g:i A" }}</p>
-                    <p><strong>Time Out:</strong> {{ event.event_time_out|time:"g:i A" }}</p>
+
+                    <!-- ⭐ FIXED TIME FORMAT (non-search) -->
+                    <p><strong>Time In:</strong> {{ event.event_time_in|time:"h:i a" }}</p>
+                    <p><strong>Time Out:</strong> {{ event.event_time_out|time:"h:i a" }}</p>
+
                     <p><strong>Ticket Price:</strong> ₱{{ event.ticket_price|intcomma }}</p>
                     <p><strong>Ticket Limit:</strong> {{ event.ticket_limit }}</p>
                     <p class="desc"><strong>Description:</strong> {{ event.event_description }}</p>
@@ -70,7 +103,6 @@
                     <div class="actions">
                         <a href="{% url 'accounts:edit_event' event.id %}" class="edit">Edit</a>
 
-                        <!-- ONE confirmation only -->
                         <a href="{% url 'accounts:delete_event' event.id %}" class="delete"
                            onclick="return confirm('Are you sure you want to delete this event?');">
                             Delete
@@ -110,31 +142,53 @@ if (searchInput) {
 
                 data.events.forEach(e => {
 
+                    // Expiration check
+                    let isExpired = false;
+                    const now = new Date();
+                    const eventEnd = new Date(`${e.event_date} ${e.event_time_out}`);
+                    if (now > eventEnd) isExpired = true;
+
+                    // ⭐ Date Format: "Nov 28, 2026"
+                    const d = new Date(e.event_date);
+                    const formattedDate = d.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                    });
+
+                    // ⭐ Convert time to lowercase "pm"
+                    const timeIn = e.event_time_in.toLowerCase();
+                    const timeOut = e.event_time_out.toLowerCase();
+
                     grid.innerHTML += `
-                        <div class="event-card">
+                        <div class="event-card ${isExpired ? "expired" : ""}">
+
+                            ${isExpired 
+                                ? `<div class="expired-badge">Expired!</div>`
+                                : `<div class="available-badge">Available!</div>`}
+
                             <h2>${escapeHtml(e.event_name)}</h2>
                             <p><strong>Venue:</strong> ${escapeHtml(e.event_venue)}</p>
                             <p><strong>Category:</strong> ${escapeHtml(e.event_category)}</p>
-                            <p><strong>Date:</strong> ${escapeHtml(e.event_date)}</p>
-                            <p><strong>Time In:</strong> ${escapeHtml(e.event_time_in)}</p>
-                            <p><strong>Time Out:</strong> ${escapeHtml(e.event_time_out)}</p>
+
+                            <p><strong>Date:</strong> ${formattedDate}</p>
+
+                            <p><strong>Time In:</strong> ${timeIn}</p>
+                            <p><strong>Time Out:</strong> ${timeOut}</p>
+
                             <p><strong>Ticket Price:</strong> ₱${escapeHtml(e.ticket_price)}</p>
                             <p><strong>Ticket Limit:</strong> ${escapeHtml(String(e.ticket_limit))}</p>
                             <p class="desc"><strong>Description:</strong> ${escapeHtml(e.event_description)}</p>
 
                             <div class="actions">
                                 <a href="${e.edit_url}" class="edit">Edit</a>
-
-                                <!-- DO NOT add confirmation here (already added above) -->
                                 <a href="${e.delete_url}" class="delete">Delete</a>
                             </div>
                         </div>
                     `;
                 });
 
-                setTimeout(() => {
-                    grid.classList.remove("no-anim");
-                }, 150);
+                setTimeout(() => grid.classList.remove("no-anim"), 150);
             })
             .catch(err => console.error("live search error:", err));
     });
@@ -146,7 +200,7 @@ function escapeHtml(str) {
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
+        .replaceAll("\"", "&quot;")
         .replaceAll("'", "&#039;");
 }
 </script>

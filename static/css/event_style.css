@@ -74,6 +74,22 @@ header h1 {
     background: #1565c0;
 }
 
+.event-card.expired {
+    border: 2px solid #d9534f;
+    background: #ffe5e5;
+}
+
+.expired-badge {
+    background: #d9534f;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+
 /* ============================= */
 /* SEARCH INPUT (fade-up)        */
 /* ============================= */

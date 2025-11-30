@@ -70,20 +70,41 @@ setTimeout(() => {
             {% endif %}
 
             <p><strong>Venue:</strong> {{ ticket.event.event_venue }}</p>
+
             <p><strong>Date:</strong> {{ ticket.event.event_date }}</p>
-            <p><strong>Time:</strong> {{ ticket.event.event_time_in }} - {{ ticket.event.event_time_out }}</p>
+
+            <p><strong>Time:</strong> 
+                {{ ticket.event.event_time_in|time:"h:i A" }} - 
+                {{ ticket.event.event_time_out|time:"h:i A" }}
+            </p>
+
             <p><strong>Price:</strong> ₱{{ ticket.event.ticket_price }}</p>
 
-            <!-- Delete button triggers modal -->
-            <button type="button" 
-                    class="delete-btn open-delete-modal {% if ticket.is_expired %}expired-btn{% endif %}" 
-                    data-ticket-id="{{ ticket.id }}">
-                {% if ticket.is_expired %}
+            <!-- ⭐ FINAL CORRECT BUTTON LOGIC ⭐ -->
+            {% if ticket.is_expired %}
+                <!-- Expired = delete only -->
+                <button type="button" 
+                        class="delete-btn open-delete-modal expired-btn" 
+                        data-ticket-id="{{ ticket.id }}">
                     Delete
-                {% else %}
+                </button>
+
+            {% elif ticket.event.is_deleted %}
+                <!-- Deleted event = refund -->
+                <button type="button" 
+                        class="delete-btn open-delete-modal" 
+                        data-ticket-id="{{ ticket.id }}">
                     Delete & Refund
-                {% endif %}
-            </button>
+                </button>
+
+            {% else %}
+                <!-- Event active + ticket active -->
+                <button type="button" 
+                        class="delete-btn ticket-in-use-btn" 
+                        disabled>
+                    Ticket In Use!
+                </button>
+            {% endif %}
 
         </div>
     {% endfor %}
@@ -92,7 +113,9 @@ setTimeout(() => {
 <p class="no-tickets">You don’t own any tickets yet.</p>
 {% endif %}
 
-<!-- Live search -->
+<!-- ========================================================= -->
+<!-- LIVE SEARCH -->
+<!-- ========================================================= -->
 <script>
 document.getElementById("search-input").addEventListener("keyup", function () {
     const q = this.value.trim();
@@ -131,21 +154,49 @@ document.getElementById("search-input").addEventListener("keyup", function () {
                     statusUI = `<div class="blank-status-bar">This event is available</div>`;
                 }
 
+                // ⭐ Correct date format "Nov 28, 2026"
+                let d = new Date(tk.event_date);
+                let formattedDate = d.toLocaleDateString("en-US", { 
+                    month: "short", 
+                    day: "numeric", 
+                    year: "numeric" 
+                });
+
+                let buttonHTML = "";
+
+                // ⭐ SAME LOGIC AS ABOVE (search version)
+                if (tk.is_expired) {
+                    buttonHTML = `
+                        <button class="delete-btn open-delete-modal expired-btn" 
+                                data-ticket-id="${tk.id}">
+                            Delete
+                        </button>`;
+                }
+                else if (tk.is_deleted) {
+                    buttonHTML = `
+                        <button class="delete-btn open-delete-modal" 
+                                data-ticket-id="${tk.id}">
+                            Delete & Refund
+                        </button>`;
+                }
+                else {
+                    buttonHTML = `
+                        <button class="delete-btn ticket-in-use-btn" disabled>
+                            Ticket In Use!
+                        </button>`;
+                }
+
                 grid.innerHTML += `
                     <div class="ticket-card ${tk.is_deleted ? "deleted" : ""}">
                         <h3>${tk.event_name}</h3>
                         ${statusUI}
 
                         <p><strong>Venue:</strong> ${tk.event_venue}</p>
-                        <p><strong>Date:</strong> ${tk.event_date}</p>
+                        <p><strong>Date:</strong> ${formattedDate}</p>
                         <p><strong>Time:</strong> ${tk.event_time_in} - ${tk.event_time_out}</p>
                         <p><strong>Price:</strong> ₱${tk.ticket_price}</p>
 
-                        <button type="button" 
-                                class="delete-btn open-delete-modal ${tk.is_expired ? "expired-btn" : ""}"
-                                data-ticket-id="${tk.id}">
-                            ${tk.is_expired ? "Delete" : "Delete & Refund"}
-                        </button>
+                        ${buttonHTML}
                     </div>
                 `;
             });
@@ -153,9 +204,7 @@ document.getElementById("search-input").addEventListener("keyup", function () {
 });
 </script>
 
-<!-- =============================== -->
 <!-- DELETE CONFIRMATION MODAL -->
-<!-- =============================== -->
 <div id="confirmModal" class="modal-overlay">
     <div class="modal-box">
         <h2>Are you sure you want to delete/refund this ticket?</h2>
@@ -167,9 +216,6 @@ document.getElementById("search-input").addEventListener("keyup", function () {
     </div>
 </div>
 
-<!-- =============================== -->
-<!-- MODAL SCRIPT (FIXED VERSION) -->
-<!-- =============================== -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -179,25 +225,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let ticketToDelete = null;
 
-    /* =====================================
-       DELEGATED LISTENER (WORKS AFTER SEARCH)
-    ===================================== */
     document.addEventListener("click", function(e) {
-
-        // OPEN modal
         if (e.target.classList.contains("open-delete-modal")) {
             ticketToDelete = e.target.dataset.ticketId;
             modal.style.display = "flex";
         }
     });
 
-    // CANCEL modal
     cancelBtn.addEventListener("click", () => {
         modal.style.display = "none";
         ticketToDelete = null;
     });
 
-    // CONFIRM delete
     confirmBtn.addEventListener("click", () => {
         if (ticketToDelete) {
             window.location.href = `/accounts/delete-ticket/${ticketToDelete}/`;

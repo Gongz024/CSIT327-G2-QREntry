@@ -407,7 +407,20 @@ def remove_bookmark(request, event_id):
 
 @login_required
 def view_events_view(request):
-    events = Event.objects.filter(is_deleted=False)
+    events = Event.objects.filter(is_deleted=False).order_by('-created_at')
+
+    now = timezone.now()
+
+    for e in events:
+        # Combine event date + time into a full datetime
+        event_end = datetime.combine(e.event_date, e.event_time_out)
+
+        # Make it timezone-aware so comparison won't error
+        event_end = timezone.make_aware(event_end)
+
+        # Add custom field so template can show “Expired!”
+        e.is_expired = now > event_end
+
     return render(request, 'accounts/event.html', {'events': events})
 
 @login_required
