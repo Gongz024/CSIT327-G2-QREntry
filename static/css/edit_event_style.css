@@ -15,7 +15,7 @@ body {
 }
 
 /* ===============================
-   BACK BUTTON
+   BACK BUTTON (Animation kept)
    =============================== */
 .back-btn-container {
     position: fixed;
@@ -45,15 +45,16 @@ body {
 
 /* ===============================
    PAGE CONTAINER
+   (NO ANIMATION)
    =============================== */
 .container {
-    max-width: 850px; /* ⬅ widened from 700px */
+    max-width: 850px;
     margin: 100px auto;
     padding: 30px;
 }
 
 /* ===============================
-   HEADER
+   HEADER (Keep animation)
    =============================== */
 header {
     text-align: center;
@@ -71,23 +72,33 @@ header h1 {
 }
 
 /* ===============================
-   FORM STYLES
+   FORM STYLES (NO ANIMATIONS)
    =============================== */
 .edit-form {
     background: #fff;
     padding: 40px;
-    max-width: 800px; /* ⬅ widened from 600px */
+    max-width: 800px;
     margin: 0 auto;
     border-radius: 15px;
     box-shadow: 0 6px 20px rgba(0, 74, 173, 0.1);
-    width: 100%; /* ⬅ ensure full width */
+    width: 100%;
+
+    /* REMOVE ANIMATIONS */
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 .form-group {
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    width: 100%; /* ⬅ make sure each input fills available space */
+    width: 100%;
+
+    /* REMOVE ANIMATIONS */
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 .form-group label {
@@ -105,7 +116,7 @@ header h1 {
     font-size: 15px;
     transition: all 0.3s ease;
     background-color: #fff;
-    width: 100%; /* ⬅ inputs fully stretch */
+    width: 100%;
 }
 
 .form-group input:focus,
@@ -143,7 +154,7 @@ header h1 {
 }
 
 /* ===============================
-   BUTTONS
+   BUTTONS (NO ANIMATION)
    =============================== */
 .form-actions {
     display: flex;
@@ -184,7 +195,7 @@ header h1 {
 }
 
 /* ===============================
-   ANIMATIONS
+   ANIMATIONS (ONLY FOR TITLE + BACK BUTTON)
    =============================== */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -196,11 +207,11 @@ header h1 {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Delay utility classes */
-.fade-in { animation: fadeInUp 0.8s ease-out forwards; }
-.delay-1 { animation-delay: 0.3s; }
-.delay-2 { animation-delay: 0.6s; }
-.delay-3 { animation-delay: 0.9s; }
+/* Delay utility classes — disabled for form */
+.fade-in { animation: none !important; }
+.delay-1 { animation-delay: 0s !important; }
+.delay-2 { animation-delay: 0s !important; }
+.delay-3 { animation-delay: 0s !important; }
 
 /* ===============================
    RESPONSIVE DESIGN
@@ -231,29 +242,22 @@ header h1 {
         align-items: stretch;
     }
 
-    /* ===============================
-   TICKET LIMIT FIELD
-   =============================== */
-#ticket_limit {
-    width: 100%;                /* match other wide fields */
-    padding: 12px 16px;         /* same padding */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
-    background-color: #fff;
-    transition: all 0.3s ease;
+    #ticket_limit {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    #ticket_limit:focus {
+        border-color: #004aad;
+        box-shadow: 0 0 8px rgba(0, 74, 173, 0.2);
+    }
+
+    #ticket_limit:hover {
+        background-color: #f9fbff;
+    }
 }
-
-#ticket_limit:focus {
-    border-color: #004aad;
-    box-shadow: 0 0 8px rgba(0, 74, 173, 0.2);
-}
-
-/* Optional: visually highlight if you want it distinct */
-#ticket_limit:hover {
-    background-color: #f9fbff;
-}
-
-}
-
-
