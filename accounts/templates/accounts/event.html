@@ -92,7 +92,6 @@
                     <p><strong>Category:</strong> {{ event.event_category }}</p>
                     <p><strong>Date:</strong> {{ event.event_date|date:"M d, Y" }}</p>
 
-                    <!-- ⭐ FIXED TIME FORMAT (non-search) -->
                     <p><strong>Time In:</strong> {{ event.event_time_in|time:"h:i a" }}</p>
                     <p><strong>Time Out:</strong> {{ event.event_time_out|time:"h:i a" }}</p>
 
@@ -102,10 +101,7 @@
 
                     <div class="actions">
                         <a href="{% url 'accounts:edit_event' event.id %}" class="edit">Edit</a>
-
-                        <a href="{% url 'accounts:delete_event' event.id %}" class="delete">
-                            Delete
-                        </a>
+                        <a href="{% url 'accounts:delete_event' event.id %}" class="delete">Delete</a>
                     </div>
                 </div>
             {% empty %}
@@ -114,13 +110,28 @@
         </div>
     </div>
 
+
 <!-- ======================== -->
-<!--   LIVE SEARCH SCRIPT     -->
+<!--      LIVE SEARCH FIX     -->
 <!-- ======================== -->
 
 <script>
 const searchInput = document.getElementById("searchBar");
 const grid = document.getElementById("eventGrid");
+
+// --- FIXED: Convert "05:00 PM" into 24-hour Date correctly ---
+function parseEventDate(dateStr, timeStr) {
+    let [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":");
+
+    hours = parseInt(hours, 10);
+    minutes = parseInt(minutes, 10);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    return new Date(`${dateStr}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`);
+}
 
 if (searchInput) {
     searchInput.addEventListener("input", function () {
@@ -131,6 +142,7 @@ if (searchInput) {
         fetch("/accounts/live-search-organizer-events/?q=" + encodeURIComponent(q))
             .then(resp => resp.json())
             .then(data => {
+
                 grid.innerHTML = "";
 
                 if (!data.events || data.events.length === 0) {
@@ -141,13 +153,10 @@ if (searchInput) {
 
                 data.events.forEach(e => {
 
-                    // Expiration check
-                    let isExpired = false;
                     const now = new Date();
-                    const eventEnd = new Date(`${e.event_date} ${e.event_time_out}`);
-                    if (now > eventEnd) isExpired = true;
+                    const eventEnd = parseEventDate(e.event_date, e.event_time_out);
+                    const isExpired = now > eventEnd;
 
-                    // ⭐ Date Format: "Nov 28, 2026"
                     const d = new Date(e.event_date);
                     const formattedDate = d.toLocaleDateString("en-US", {
                         month: "short",
@@ -155,13 +164,11 @@ if (searchInput) {
                         year: "numeric"
                     });
 
-                    // ⭐ Convert time to lowercase "pm"
                     const timeIn = e.event_time_in.toLowerCase();
                     const timeOut = e.event_time_out.toLowerCase();
 
                     grid.innerHTML += `
                         <div class="event-card ${isExpired ? "expired" : ""}">
-
                             ${isExpired 
                                 ? `<div class="expired-badge">Expired!</div>`
                                 : `<div class="available-badge">Available!</div>`}
@@ -171,7 +178,6 @@ if (searchInput) {
                             <p><strong>Category:</strong> ${escapeHtml(e.event_category)}</p>
 
                             <p><strong>Date:</strong> ${formattedDate}</p>
-
                             <p><strong>Time In:</strong> ${timeIn}</p>
                             <p><strong>Time Out:</strong> ${timeOut}</p>
 
