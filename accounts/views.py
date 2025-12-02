@@ -418,12 +418,23 @@ def remove_bookmark(request, event_id):
 def bookmarks_view(request):
     bookmarks = Bookmark.objects.filter(user=request.user).select_related("event")
 
-    now = timezone.now()
+    now_naive = datetime.now()  # match JS live search logic
 
     for b in bookmarks:
-        event_end = datetime.combine(b.event.event_date, b.event.event_time_out)
-        event_end = timezone.make_aware(event_end)
-        b.is_expired = now > event_end
+        event = b.event
+
+        # Convert time to 12-hour format: "05:00 PM"
+        time_out_str = event.event_time_out.strftime("%I:%M %p")
+
+        # Build datetime string identical to JS:
+        # "2025-12-02 05:00 PM"
+        dt_str = f"{event.event_date} {time_out_str}"
+
+        # Convert to datetime same as JS parseEventDate()
+        event_end = datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+
+        # Set dynamic field for template
+        b.is_expired = now_naive > event_end
 
     return render(request, "accounts/bookmark.html", {"bookmarks": bookmarks})
 
@@ -439,27 +450,50 @@ def remove_bookmark(request, event_id):
 
     return redirect('accounts:bookmarks')
 
+
 @login_required
 def view_events_view(request):
     events = Event.objects.filter(is_deleted=False).order_by('-created_at')
 
-    now = timezone.now()
+    now = datetime.now()   # match JS logic
 
     for e in events:
-        # Combine event date + time into a full datetime
-        event_end = datetime.combine(e.event_date, e.event_time_out)
 
-        # Make it timezone-aware so comparison won't error
-        event_end = timezone.make_aware(event_end)
+        # Convert Django TimeField → "05:00 PM"
+        time_out_str = e.event_time_out.strftime("%I:%M %p")
 
-        # Add custom field so template can show “Expired!”
+        # Combine date and time EXACTLY like the JS live search logic
+        # JS uses: new Date(`${date}T${hours}:${minutes}:00`)
+        # So we must parse "%Y-%m-%d %I:%M %p"
+        dt_str = f"{e.event_date} {time_out_str}"
+
+        event_end = datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+
+        # Set template field
         e.is_expired = now > event_end
 
     return render(request, 'accounts/event.html', {'events': events})
 
 @login_required
 def organizer_events_view(request):
-    events = Event.objects.filter(organizer=request.user).order_by('-created_at')
+    events = Event.objects.filter(organizer=request.user, is_deleted=False).order_by('-created_at')
+
+    now = datetime.now()
+
+    for e in events:
+
+        # Convert Django time → "05:00 PM"
+        time_out_str = e.event_time_out.strftime("%I:%M %p")
+
+        # Convert date + "05:00 PM" to datetime
+        event_end = datetime.strptime(
+            f"{e.event_date} {time_out_str}",
+            "%Y-%m-%d %I:%M %p"
+        )
+
+        # SAME LOGIC AS JS LIVE SEARCH
+        e.is_expired = now > event_end
+
     return render(request, 'accounts/event.html', {'events': events})
 
 
@@ -703,6 +737,8 @@ def organizer_view(request):
 from datetime import datetime
 from django.utils import timezone
 
+from datetime import datetime, timedelta
+
 def home_view(request):
     query = request.GET.get('q', '').strip()
 
@@ -718,22 +754,37 @@ def home_view(request):
 
     events = events_query.order_by('-created_at')
 
-    now = timezone.now()
+    now_tz = timezone.now()      # timezone-aware (for created_at comparison)
+    now_naive = datetime.now()   # naive (for expiration logic)
 
     for e in events:
-        # new/recent tag
-        one_week_ago = now - timedelta(days=7)
+        # -------------------------------
+        # NEW / RECENT TAG (timezone-aware)
+        # -------------------------------
+        one_week_ago = now_tz - timedelta(days=7)
         e.status = "new" if e.created_at >= one_week_ago else "recent"
 
-        # EXPIRED CHECK
-        event_end = datetime.combine(e.event_date, e.event_time_out)
-        event_end = timezone.make_aware(event_end)  # FIX offset-aware comparison
-        e.is_expired = now > event_end
+        # -------------------------------
+        # EXPIRATION (match JS logic)
+        # -------------------------------
+
+        # TimeField → "05:00 PM"
+        time_out_str = e.event_time_out.strftime("%I:%M %p")
+
+        # "2025-12-02 05:00 PM"
+        dt_str = f"{e.event_date} {time_out_str}"
+
+        # Parse same as JS parseEventDate()
+        event_end = datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+
+        # Set expiration
+        e.is_expired = now_naive > event_end
 
     return render(request, 'accounts/home.html', {
         'events': events,
         'query': query,
     })
+
 
 from accounts.models import Bookmark
 
