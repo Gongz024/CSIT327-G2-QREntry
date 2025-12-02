@@ -52,14 +52,11 @@ body, html {
     margin-bottom: 25px;
 }
 
-.qr-logo { /* Your QR code image (e.g., logo.png) */
-    width: 120px; /* Size from design */
+.qr-logo {
+    width: 180px;
     height: auto;
-    margin-bottom: 10px;
-    /* filter: brightness(0) invert(1); Makes logo white if it's dark */
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 .brand-name {
