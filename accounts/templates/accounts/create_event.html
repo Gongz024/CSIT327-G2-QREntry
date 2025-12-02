@@ -21,6 +21,13 @@
             {% csrf_token %}
 
             <div class="form-group">
+                {% if messages %}
+    <div class="global-messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
                 <label for="eventName">Event Name</label>
                 <input type="text" id="eventName" name="eventName" 
                        value="{{ values.eventName|default:'' }}" 

@@ -346,6 +346,11 @@ def create_event_view(request):
 
         # =============== RETURN IF ERRORS ===============
         if errors:
+
+            # Show one combined message to the organizer
+            for field, error_text in errors.items():
+                messages.error(request, f"{error_text}")
+
             return render(request, 'accounts/create_event.html', {
                 'errors': errors,
                 'values': request.POST,
