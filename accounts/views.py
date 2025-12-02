@@ -481,20 +481,15 @@ def view_events_view(request):
 def organizer_events_view(request):
     events = Event.objects.filter(organizer=request.user, is_deleted=False).order_by('-created_at')
 
-    now = datetime.now()
+    now = timezone.localtime()  # ✔ FIXED TIMEZONE
 
     for e in events:
-
-        # Convert Django time → "05:00 PM"
         time_out_str = e.event_time_out.strftime("%I:%M %p")
+        dt_str = f"{e.event_date} {time_out_str}"
 
-        # Convert date + "05:00 PM" to datetime
-        event_end = datetime.strptime(
-            f"{e.event_date} {time_out_str}",
-            "%Y-%m-%d %I:%M %p"
-        )
+        event_end = datetime.strptime(dt_str, "%Y-%m-%d %I:%M %p")
+        event_end = timezone.make_aware(event_end)  # ✔ FIXED
 
-        # SAME LOGIC AS JS LIVE SEARCH
         e.is_expired = now > event_end
 
     return render(request, 'accounts/event.html', {'events': events})
