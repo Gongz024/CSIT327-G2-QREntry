@@ -5,314 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <title>User Profile</title>
-    <style>
-        /* Base */
-        body {
-            background: linear-gradient(to bottom, #103c6e 0%, #103c6e 30%, #ffffff 30%, #ffffff 100%);
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            color: #103c6e;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-
-        /* Back Button */
-        .btn-back {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: #ffffff;
-            color: #103c6e;
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-            transition: 0.3s ease;
-        }
-
-        .btn-back:hover {
-            background-color: #103c6e;
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Flash Messages */
-        .messages {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 90%;
-            max-width: 480px;
-            pointer-events: none;
-        }
-
-        .message {
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: fadeSlideDown 0.6s ease-out forwards;
-            opacity: 0;
-            pointer-events: auto;
-            cursor: pointer;
-        }
-
-        .message.success {
-            background-color: #e6ffed;
-            color: #0f5132;
-            border-left: 5px solid #198754;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #842029;
-            border-left: 5px solid #dc3545;
-        }
-
-        .message.warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border-left: 5px solid #ffca2c;
-        }
-
-        .message.info {
-            background-color: #cfe2ff;
-            color: #084298;
-            border-left: 5px solid #0d6efd;
-        }
-
-        /* Container */
-        .profile-container {
-            max-width: 1400px;
-            margin: 90px auto 40px auto;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(16, 60, 110, 0.15);
-            padding: 40px 30px;
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-
-        /* Title */
-        .profile-container h1 {
-            text-align: center;
-            color: #103c6e;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-        }
-
-        /* Three Column Layout */
-        .columns-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-            align-items: start;
-        }
-
-        .column {
-            background: #f4f7ff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 8px rgba(16, 60, 110, 0.08);
-            min-height: 400px;
-        }
-
-        .column h2 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #103c6e;
-            margin-bottom: 20px;
-            text-align: center;
-            padding-bottom: 12px;
-            border-bottom: 3px double #103c6e;
-        }
-
-        /* Hide Profile Picture */
-        .profile-pic-section,
-        .profile-pic,
-        .profile-pic-placeholder,
-        form input[type="file"],
-        form label[for="profile_picture"],
-        form div:has(input[type="file"]),
-        form p:has(input[type="file"]),
-        .helptext {
-            display: none !important;
-        }
-
-        /* Form Styling */
-        form p {
-            margin-bottom: 18px;
-        }
-
-        form label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #103c6e;
-        }
-
-        form input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e8f5;
-            border-radius: 8px;
-            font-size: 15px;
-            box-sizing: border-box;
-            color: #103c6e;
-        }
-
-        form input:focus {
-            border-color: #103c6e;
-            outline: none;
-            box-shadow: 0 0 6px rgba(16, 60, 110, 0.2);
-        }
-
-        input[disabled], input[readonly] {
-            background-color: #e6edf7 !important;
-            color: #6a7a90 !important;
-            cursor: not-allowed !important;
-            opacity: 1 !important;
-        }
-
-        /* Wallet Section in Profile Column */
-        .wallet-section {
-            text-align: center;
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(16, 60, 110, 0.08);
-            border-top: 3px double #103c6e;
-            border-bottom: 3px double #103c6e;
-        }
-
-        .wallet-section h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #103c6e;
-            margin-bottom: 8px;
-        }
-
-        .wallet-amount {
-            font-size: 32px;
-            font-weight: 700;
-            color: #103c6e;
-            margin: 0;
-        }
-
-        /* Forgot Password Button */
-        .forgot-password-section {
-            text-align: left;
-            margin-top: 15px;
-            margin-bottom: 25px;
-        }
-
-        .btn-forgot {
-            display: inline-block;
-            background: none;
-            color: #103c6e;
-            font-weight: 600;
-            font-size: 15px;
-            text-decoration: underline;
-            cursor: pointer;
-            transition: 0.3s ease;
-        }
-
-        .btn-forgot:hover {
-            color: #0d2e55;
-            text-shadow: 0 0 4px rgba(16, 60, 110, 0.2);
-        }
-
-        /* Save Button */
-        .btn-save {
-            background-color: #103c6e;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 30px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s, transform 0.2s;
-            margin-top: 20px;
-        }
-
-        .btn-save:hover {
-            background-color: #0d2e55;
-            transform: translateY(-2px);
-        }
-
-        /* List Styling */
-        .column ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .column li {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(16, 60, 110, 0.08);
-        }
-
-        .column li strong {
-            color: #103c6e;
-            font-size: 16px;
-        }
-
-        .column p {
-            text-align: center;
-            color: #6a7a90;
-            font-style: italic;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .columns-wrapper {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .column {
-                min-height: auto;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/user_profile_style.css' %}">
 </head>
 
 <body>
 
-<!-- Back Button -->
+<!-- Back Button (OUTSIDE container, top-left corner) -->
 <a href="{% url 'accounts:home' %}" class="btn-back">← Back to Home</a>
 
 {% if messages %}
@@ -327,68 +25,67 @@
 
     <h1>My Profile</h1>
 
-    <div class="columns-wrapper">
-        
-        <!-- Column 1: Profile -->
-        <div class="column">
-            <h2>Profile</h2>
-            
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ user_form.as_p }}
-                {{ profile_form.as_p }}
+    <div class="profile-section">
 
-                <div class="forgot-password-section">
-                    <a href="{% url 'accounts:password_reset' %}" class="btn-forgot">
-                        Forgot Password?
-                    </a>
-                </div>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
 
-                <button type="submit" class="btn-save">Save Changes</button>
-            </form>
+            <div class="forgot-password-section">
+    <a href="{% url 'accounts:password_reset' %}" class="btn-forgot">
+        Forgot Password?
+    </a>
+</div>
 
-            <div class="wallet-section">
-                <h3>Wallet Balance</h3>
-                <p class="wallet-amount">₱{{ profile.wallet_balance }}</p>
-            </div>
-        </div>
+            <button type="submit" class="btn-save">Save Changes</button>
+        </form>
 
-        <!-- Column 2: Bookmarks -->
-        <div class="column">
-            <h2>Bookmarks</h2>
-            
-            {% if bookmarks %}
-                <ul>
-                    {% for b in bookmarks %}
-                    <li>
-                        <strong>{{ b.event.event_name }}</strong><br>
-                        {{ b.event.event_date }} — {{ b.event.event_venue }}
-                    </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No bookmarks yet.</p>
-            {% endif %}
-        </div>
+    </div>
 
-        <!-- Column 3: Owned Tickets -->
-        <div class="column">
-            <h2>Owned Tickets</h2>
-            
-            {% if tickets %}
-                <ul>
-                    {% for t in tickets %}
-                    <li>
-                        <strong>{{ t.event.event_name }}</strong><br>
-                        ₱{{ t.event.ticket_price }}
-                    </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No tickets purchased yet.</p>
-            {% endif %}
-        </div>
+    <hr>
 
+    <div class="wallet-section">
+        <h2>Wallet Balance</h2>
+        <p class="wallet-amount">₱{{ profile.wallet_balance }}</p>
+    </div>
+
+    <hr>
+
+    <div class="bookmark-section">
+        <h2>Bookmarked Events</h2>
+
+        {% if bookmarks %}
+            <ul>
+                {% for b in bookmarks %}
+                <li>
+                    <strong>{{ b.event.event_name }}</strong><br>
+                    {{ b.event.event_date }} — {{ b.event.event_venue }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No bookmarks yet.</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <div class="tickets-section">
+        <h2>My Tickets</h2>
+
+        {% if tickets %}
+            <ul>
+                {% for t in tickets %}
+                <li>
+                    <strong>{{ t.event.event_name }}</strong><br>
+                    ₱{{ t.event.ticket_price }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tickets purchased yet.</p>
+        {% endif %}
     </div>
 
 </div>
